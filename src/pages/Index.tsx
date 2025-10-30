@@ -10,7 +10,7 @@ const Index = () => {
       <main className="container mx-auto px-4 py-16">
         <div className="text-center mb-16">
           <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            Campus Management Information System
+            Council of Management Information Systems
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Connect, collaborate, and grow with our comprehensive portal system designed for students, alumni, and partners.
@@ -37,7 +37,7 @@ const Index = () => {
             link="/sponsor"
           />
           <PortalCard
-            title="Analytics Dashboard"
+            title="Faculty Portal"
             description="Monitor engagement, track metrics, and gain insights across all portals."
             icon={BarChart3}
             link="/dashboard"

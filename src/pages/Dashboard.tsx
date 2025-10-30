@@ -16,7 +16,7 @@ const Dashboard = () => {
       
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Analytics Dashboard</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-2">Faculty Portal</h1>
           <p className="text-lg text-muted-foreground">Monitor key metrics and insights across all portals.</p>
         </div>
 

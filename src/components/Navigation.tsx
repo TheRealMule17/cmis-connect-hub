@@ -53,7 +53,7 @@ const Navigation = () => {
             >
               <Link to="/dashboard" className="flex items-center gap-2">
                 <BarChart3 className="h-4 w-4" />
-                Dashboard
+                Faculty Portal
               </Link>
             </Button>
           </div>
