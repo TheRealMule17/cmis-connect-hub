@@ -14,7 +14,104 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      student_profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          interests: string[] | null
+          name: string | null
+          resume_url: string | null
+          skills: string[] | null
+          updated_at: string
+          user_id: string
+          working_status: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          interests?: string[] | null
+          name?: string | null
+          resume_url?: string | null
+          skills?: string[] | null
+          updated_at?: string
+          user_id: string
+          working_status?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          interests?: string[] | null
+          name?: string | null
+          resume_url?: string | null
+          skills?: string[] | null
+          updated_at?: string
+          user_id?: string
+          working_status?: string | null
+        }
+        Relationships: []
+      }
+      workshop_registrations: {
+        Row: {
+          id: string
+          registered_at: string
+          user_id: string
+          workshop_id: string
+        }
+        Insert: {
+          id?: string
+          registered_at?: string
+          user_id: string
+          workshop_id: string
+        }
+        Update: {
+          id?: string
+          registered_at?: string
+          user_id?: string
+          workshop_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workshop_registrations_workshop_id_fkey"
+            columns: ["workshop_id"]
+            isOneToOne: false
+            referencedRelation: "workshops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workshops: {
+        Row: {
+          capacity: number | null
+          created_at: string
+          date: string
+          description: string | null
+          id: string
+          location: string | null
+          title: string
+        }
+        Insert: {
+          capacity?: number | null
+          created_at?: string
+          date: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          title: string
+        }
+        Update: {
+          capacity?: number | null
+          created_at?: string
+          date?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

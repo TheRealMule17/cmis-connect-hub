@@ -1,5 +1,7 @@
+import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import PortalCard from "@/components/PortalCard";
+import { Button } from "@/components/ui/button";
 import { GraduationCap, Users, Building2, BarChart3 } from "lucide-react";
 
 const Index = () => {
@@ -44,7 +46,10 @@ const Index = () => {
           />
         </div>
 
-        <div className="text-center">
+        <div className="text-center space-y-4">
+          <Button asChild size="lg">
+            <Link to="/auth">Get Started</Link>
+          </Button>
           <p className="text-sm text-muted-foreground">
             Demo Version • For authorized personnel only
           </p>

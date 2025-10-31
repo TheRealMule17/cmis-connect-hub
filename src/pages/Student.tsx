@@ -1,59 +1,105 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import Navigation from "@/components/Navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import ResumeUpload from "@/components/ResumeUpload";
+import WorkshopList from "@/components/WorkshopList";
+import ProfileSettings from "@/components/ProfileSettings";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Calendar, FileText, Award } from "lucide-react";
+import { LogOut } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Student = () => {
-  const quickLinks = [
-    { icon: BookOpen, title: "Course Materials", description: "Access your course content" },
-    { icon: Calendar, title: "Academic Calendar", description: "View important dates" },
-    { icon: FileText, title: "Assignments", description: "Submit and track assignments" },
-    { icon: Award, title: "Grades", description: "Check your academic progress" },
-  ];
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [userId, setUserId] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string>("");
+  const [resumeUrl, setResumeUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  const checkUser = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+      navigate("/auth");
+      return;
+    }
+
+    setUserId(session.user.id);
+
+    // Fetch profile
+    const { data: profile } = await supabase
+      .from('student_profiles')
+      .select('name, resume_url')
+      .eq('user_id', session.user.id)
+      .single();
+
+    if (profile) {
+      setUserName(profile.name || "Student");
+      setResumeUrl(profile.resume_url);
+    }
+
+    setLoading(false);
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    toast({
+      title: "Signed out",
+      description: "You have been signed out successfully",
+    });
+    navigate("/auth");
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="container mx-auto px-4 py-8">
+          <p>Loading...</p>
+        </main>
+      </div>
+    );
+  }
+
+  if (!userId) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       
       <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Student Portal</h1>
-          <p className="text-lg text-muted-foreground">Welcome back! Access your academic resources.</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-foreground mb-2">Student Portal</h1>
+            <p className="text-lg text-muted-foreground">Welcome back, {userName}!</p>
+          </div>
+          <Button variant="outline" onClick={handleSignOut}>
+            <LogOut className="h-4 w-4 mr-2" />
+            Sign Out
+          </Button>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          {quickLinks.map((link) => (
-            <Card key={link.title} className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <link.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <CardTitle>{link.title}</CardTitle>
-                    <CardDescription>{link.description}</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-            </Card>
-          ))}
+        <div className="grid lg:grid-cols-2 gap-6">
+          <div className="space-y-6">
+            <ResumeUpload 
+              userId={userId} 
+              currentResumeUrl={resumeUrl}
+              onResumeUpdate={setResumeUrl}
+            />
+            <WorkshopList userId={userId} />
+          </div>
+          
+          <div>
+            <ProfileSettings userId={userId} />
+          </div>
         </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Announcements</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="border-l-4 border-primary pl-4 py-2">
-              <h3 className="font-semibold">Registration for Spring 2024 Opens Soon</h3>
-              <p className="text-sm text-muted-foreground">Registration begins December 1st. Check your advisor for course recommendations.</p>
-            </div>
-            <div className="border-l-4 border-accent pl-4 py-2">
-              <h3 className="font-semibold">Final Exam Schedule Released</h3>
-              <p className="text-sm text-muted-foreground">Review the exam schedule and plan your study time accordingly.</p>
-            </div>
-          </CardContent>
-        </Card>
       </main>
     </div>
   );
