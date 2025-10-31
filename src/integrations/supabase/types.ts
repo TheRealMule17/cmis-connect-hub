@@ -113,6 +113,222 @@ export type Database = {
         }
         Relationships: []
       }
+      case_competitions: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          end_date: string
+          id: string
+          max_team_size: number | null
+          prize_pool: string | null
+          sponsor: string | null
+          start_date: string
+          status: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          end_date: string
+          id?: string
+          max_team_size?: number | null
+          prize_pool?: string | null
+          sponsor?: string | null
+          start_date: string
+          status?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          end_date?: string
+          id?: string
+          max_team_size?: number | null
+          prize_pool?: string | null
+          sponsor?: string | null
+          start_date?: string
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      events: {
+        Row: {
+          capacity: number | null
+          created_at: string
+          description: string | null
+          event_date: string
+          event_type: string | null
+          id: string
+          location: string | null
+          organizer_id: string
+          status: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          capacity?: number | null
+          created_at?: string
+          description?: string | null
+          event_date: string
+          event_type?: string | null
+          id?: string
+          location?: string | null
+          organizer_id: string
+          status?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          capacity?: number | null
+          created_at?: string
+          description?: string | null
+          event_date?: string
+          event_type?: string | null
+          id?: string
+          location?: string | null
+          organizer_id?: string
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      industry_speakers: {
+        Row: {
+          availability: string | null
+          bio: string | null
+          company: string
+          created_at: string
+          created_by: string
+          email: string | null
+          expertise: string[] | null
+          id: string
+          name: string
+          phone: string | null
+          speaking_topics: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          availability?: string | null
+          bio?: string | null
+          company: string
+          created_at?: string
+          created_by: string
+          email?: string | null
+          expertise?: string[] | null
+          id?: string
+          name: string
+          phone?: string | null
+          speaking_topics?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          availability?: string | null
+          bio?: string | null
+          company?: string
+          created_at?: string
+          created_by?: string
+          email?: string | null
+          expertise?: string[] | null
+          id?: string
+          name?: string
+          phone?: string | null
+          speaking_topics?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      mentor_listings: {
+        Row: {
+          availability: string | null
+          created_at: string
+          description: string | null
+          expertise_areas: string[] | null
+          id: string
+          max_mentees: number | null
+          mentor_id: string
+          status: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          availability?: string | null
+          created_at?: string
+          description?: string | null
+          expertise_areas?: string[] | null
+          id?: string
+          max_mentees?: number | null
+          mentor_id: string
+          status?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          availability?: string | null
+          created_at?: string
+          description?: string | null
+          expertise_areas?: string[] | null
+          id?: string
+          max_mentees?: number | null
+          mentor_id?: string
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      research_collaborations: {
+        Row: {
+          collaboration_type: string | null
+          created_at: string
+          description: string | null
+          id: string
+          lead_researcher_id: string
+          requirements: string | null
+          research_area: string | null
+          seeking_roles: string[] | null
+          status: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          collaboration_type?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          lead_researcher_id: string
+          requirements?: string | null
+          research_area?: string | null
+          seeking_roles?: string[] | null
+          status?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          collaboration_type?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          lead_researcher_id?: string
+          requirements?: string | null
+          research_area?: string | null
+          seeking_roles?: string[] | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       student_profiles: {
         Row: {
           created_at: string
@@ -185,6 +401,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       workshop_registrations: {
         Row: {
           id: string
@@ -249,10 +486,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "faculty" | "student" | "alumni" | "admin" | "sponsor"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -379,6 +622,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["faculty", "student", "alumni", "admin", "sponsor"],
+    },
   },
 } as const
