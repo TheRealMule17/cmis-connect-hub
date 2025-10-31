@@ -1,72 +1,110 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import Navigation from "@/components/Navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import MentorProgram from "@/components/MentorProgram";
+import CareerHistory from "@/components/CareerHistory";
+import SuccessStorySubmission from "@/components/SuccessStorySubmission";
+import SocialConnections from "@/components/SocialConnections";
 import { Button } from "@/components/ui/button";
-import { Users, Calendar, Heart, Briefcase } from "lucide-react";
+import { LogOut } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Alumni = () => {
-  const features = [
-    { icon: Users, title: "Alumni Network", description: "Connect with fellow graduates" },
-    { icon: Calendar, title: "Events", description: "Upcoming reunions and gatherings" },
-    { icon: Heart, title: "Give Back", description: "Support current students" },
-    { icon: Briefcase, title: "Career Services", description: "Exclusive job opportunities" },
-  ];
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [userId, setUserId] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  const checkUser = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+      navigate("/auth");
+      return;
+    }
+
+    setUserId(session.user.id);
+
+    // Create alumni profile if it doesn't exist
+    const { data: profile, error: fetchError } = await supabase
+      .from('alumni_profiles')
+      .select('name')
+      .eq('user_id', session.user.id)
+      .single();
+
+    if (fetchError && fetchError.code === 'PGRST116') {
+      // Profile doesn't exist, create it
+      await supabase
+        .from('alumni_profiles')
+        .insert({
+          user_id: session.user.id,
+          name: session.user.user_metadata?.name || "Alumni",
+          email: session.user.email,
+        });
+      setUserName(session.user.user_metadata?.name || "Alumni");
+    } else if (profile) {
+      setUserName(profile.name || "Alumni");
+    }
+
+    setLoading(false);
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    toast({
+      title: "Signed out",
+      description: "You have been signed out successfully",
+    });
+    navigate("/auth");
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="container mx-auto px-4 py-8">
+          <p>Loading...</p>
+        </main>
+      </div>
+    );
+  }
+
+  if (!userId) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       
       <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Alumni Portal</h1>
-          <p className="text-lg text-muted-foreground">Stay connected with your alma mater and fellow graduates.</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-foreground mb-2">Alumni Portal</h1>
+            <p className="text-lg text-muted-foreground">Welcome back, {userName}!</p>
+          </div>
+          <Button variant="outline" onClick={handleSignOut}>
+            <LogOut className="h-4 w-4 mr-2" />
+            Sign Out
+          </Button>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          {features.map((feature) => (
-            <Card key={feature.title} className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center">
-                    <feature.icon className="h-6 w-6 text-accent" />
-                  </div>
-                  <div>
-                    <CardTitle>{feature.title}</CardTitle>
-                    <CardDescription>{feature.description}</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-            </Card>
-          ))}
-        </div>
-
-        <Card className="bg-gradient-to-br from-primary to-primary/90 text-primary-foreground">
-          <CardHeader>
-            <CardTitle className="text-2xl">Upcoming Alumni Event</CardTitle>
-            <CardDescription className="text-primary-foreground/80">Annual Homecoming Weekend</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="mb-4">Join us for a weekend of celebration, networking, and memories. November 15-17, 2024.</p>
-            <Button variant="secondary" size="lg">Register Now</Button>
-          </CardContent>
-        </Card>
-
-        <div className="mt-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>Success Stories</CardTitle>
-              <CardDescription>Celebrating our accomplished alumni</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="border-l-4 border-accent pl-4 py-2">
-                <h3 className="font-semibold">Sarah Chen '18 - Tech Innovation Award</h3>
-                <p className="text-sm text-muted-foreground">Recognized for groundbreaking work in AI ethics.</p>
-              </div>
-              <div className="border-l-4 border-accent pl-4 py-2">
-                <h3 className="font-semibold">Marcus Johnson '15 - Community Leadership</h3>
-                <p className="text-sm text-muted-foreground">Founded non-profit serving underserved communities.</p>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="grid lg:grid-cols-2 gap-6">
+          <div className="space-y-6">
+            <MentorProgram userId={userId} />
+            <CareerHistory userId={userId} />
+          </div>
+          
+          <div className="space-y-6">
+            <SocialConnections userId={userId} />
+            <SuccessStorySubmission userId={userId} />
+          </div>
         </div>
       </main>
     </div>

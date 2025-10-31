@@ -14,6 +14,105 @@ export type Database = {
   }
   public: {
     Tables: {
+      alumni_profiles: {
+        Row: {
+          bio: string | null
+          created_at: string
+          current_company: string | null
+          current_position: string | null
+          degree: string | null
+          email: string | null
+          graduation_year: number | null
+          id: string
+          is_mentor: boolean | null
+          linkedin_url: string | null
+          major: string | null
+          mentor_availability: string | null
+          mentor_expertise: string[] | null
+          name: string | null
+          twitter_url: string | null
+          updated_at: string
+          user_id: string
+          website_url: string | null
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          current_company?: string | null
+          current_position?: string | null
+          degree?: string | null
+          email?: string | null
+          graduation_year?: number | null
+          id?: string
+          is_mentor?: boolean | null
+          linkedin_url?: string | null
+          major?: string | null
+          mentor_availability?: string | null
+          mentor_expertise?: string[] | null
+          name?: string | null
+          twitter_url?: string | null
+          updated_at?: string
+          user_id: string
+          website_url?: string | null
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          current_company?: string | null
+          current_position?: string | null
+          degree?: string | null
+          email?: string | null
+          graduation_year?: number | null
+          id?: string
+          is_mentor?: boolean | null
+          linkedin_url?: string | null
+          major?: string | null
+          mentor_availability?: string | null
+          mentor_expertise?: string[] | null
+          name?: string | null
+          twitter_url?: string | null
+          updated_at?: string
+          user_id?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
+      career_history: {
+        Row: {
+          company: string
+          created_at: string
+          description: string | null
+          end_date: string | null
+          id: string
+          is_current: boolean | null
+          position: string
+          start_date: string
+          user_id: string
+        }
+        Insert: {
+          company: string
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          is_current?: boolean | null
+          position: string
+          start_date: string
+          user_id: string
+        }
+        Update: {
+          company?: string
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          is_current?: boolean | null
+          position?: string
+          start_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       student_profiles: {
         Row: {
           created_at: string
@@ -50,6 +149,39 @@ export type Database = {
           updated_at?: string
           user_id?: string
           working_status?: string | null
+        }
+        Relationships: []
+      }
+      success_stories: {
+        Row: {
+          category: string | null
+          id: string
+          is_published: boolean | null
+          published_at: string | null
+          story: string
+          submitted_at: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          id?: string
+          is_published?: boolean | null
+          published_at?: string | null
+          story: string
+          submitted_at?: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          id?: string
+          is_published?: boolean | null
+          published_at?: string | null
+          story?: string
+          submitted_at?: string
+          title?: string
+          user_id?: string
         }
         Relationships: []
       }
