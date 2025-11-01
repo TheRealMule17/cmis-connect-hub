@@ -2,9 +2,9 @@ import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EventManager from "@/components/EventManager";
-import CaseCompetitionManager from "@/components/CaseCompetitionManager";
-import IndustrySpeakerManager from "@/components/IndustrySpeakerManager";
-import MentorMarketplace from "@/components/MentorMarketplace";
+import FacultyCaseCompetitionDirector from "@/components/FacultyCaseCompetitionDirector";
+import FacultySpeakerCommunications from "@/components/FacultySpeakerCommunications";
+import FacultyMentorMatcher from "@/components/FacultyMentorMatcher";
 import ResearchCollaborationHub from "@/components/ResearchCollaborationHub";
 import AnalyticsCommunicationDashboard from "@/components/AnalyticsCommunicationDashboard";
 
@@ -24,8 +24,8 @@ const Dashboard = () => {
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="events">Events</TabsTrigger>
             <TabsTrigger value="competitions">Competitions</TabsTrigger>
-            <TabsTrigger value="speakers">Speakers</TabsTrigger>
-            <TabsTrigger value="mentors">Mentors</TabsTrigger>
+            <TabsTrigger value="speakers">Communications</TabsTrigger>
+            <TabsTrigger value="mentors">Mentor Matcher</TabsTrigger>
             <TabsTrigger value="research">Research</TabsTrigger>
           </TabsList>
 
@@ -38,15 +38,15 @@ const Dashboard = () => {
           </TabsContent>
 
           <TabsContent value="competitions">
-            <CaseCompetitionManager />
+            <FacultyCaseCompetitionDirector />
           </TabsContent>
 
           <TabsContent value="speakers">
-            <IndustrySpeakerManager />
+            <FacultySpeakerCommunications />
           </TabsContent>
 
           <TabsContent value="mentors">
-            <MentorMarketplace />
+            <FacultyMentorMatcher />
           </TabsContent>
 
           <TabsContent value="research">

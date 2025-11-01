@@ -1,126 +1,159 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, Users, TrendingUp, MessageSquare, Calendar, Trophy } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { Activity, Users, Calendar, TrendingUp } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const AnalyticsCommunicationDashboard = () => {
-  const stats = [
-    { icon: Users, title: "Total Students", value: "12,458", change: "+5.2%", trend: "up" },
-    { icon: TrendingUp, title: "Engagement Rate", value: "87%", change: "+2.1%", trend: "up" },
-    { icon: Calendar, title: "Active Events", value: "24", change: "+8", trend: "up" },
-    { icon: Trophy, title: "Competitions", value: "6", change: "+2", trend: "up" },
-  ];
+  const { data: events } = useQuery({
+    queryKey: ["analytics_events"],
+    queryFn: async () => {
+      const { data } = await supabase.from("events").select("*, event_registrations(count)");
+      return data;
+    },
+  });
+
+  const { data: students } = useQuery({
+    queryKey: ["analytics_students"],
+    queryFn: async () => {
+      const { count } = await supabase.from("student_profiles").select("*", { count: "exact", head: true });
+      return count;
+    },
+  });
+
+  const { data: alumni } = useQuery({
+    queryKey: ["analytics_alumni"],
+    queryFn: async () => {
+      const { count } = await supabase.from("alumni_profiles").select("*", { count: "exact", head: true });
+      return count;
+    },
+  });
+
+  const { data: sponsors } = useQuery({
+    queryKey: ["analytics_sponsors"],
+    queryFn: async () => {
+      const { count } = await supabase.from("sponsor_profiles").select("*", { count: "exact", head: true });
+      return count;
+    },
+  });
+
+  const eventChartData = events?.slice(0, 5).map(e => ({
+    name: e.title?.substring(0, 15) || "Event",
+    registrations: e.event_registrations?.[0]?.count || 0,
+    capacity: e.capacity || 0
+  })) || [];
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-foreground">Analytics & Communication Dashboard</h2>
-        <p className="text-muted-foreground">Monitor engagement and communicate with stakeholders</p>
+        <h2 className="text-2xl font-bold text-foreground mb-2">Analytics & Communication Dashboard</h2>
+        <p className="text-muted-foreground">Real-time metrics and role-based insights</p>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => (
-          <Card key={stat.title}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardDescription>{stat.title}</CardDescription>
-              <stat.icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground">
-                <span className="text-accent">{stat.change}</span> from last month
-              </p>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="grid md:grid-cols-4 gap-6">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-sm font-medium">
+              <Calendar className="h-4 w-4" />
+              Total Events
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{events?.length || 0}</div>
+            <Badge variant="secondary" className="mt-2">Live Data</Badge>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-sm font-medium">
+              <Users className="h-4 w-4" />
+              Active Students
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{students || 0}</div>
+            <Badge variant="secondary" className="mt-2">Live Data</Badge>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-sm font-medium">
+              <Users className="h-4 w-4" />
+              Alumni Network
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{alumni || 0}</div>
+            <Badge variant="secondary" className="mt-2">Live Data</Badge>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-sm font-medium">
+              <TrendingUp className="h-4 w-4" />
+              Active Sponsors
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{sponsors || 0}</div>
+            <Badge variant="secondary" className="mt-2">Live Data</Badge>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Latest portal interactions</CardDescription>
+            <CardTitle>Event Registration Trends</CardTitle>
+            <CardDescription>Student registrations vs capacity</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center gap-4 pb-4 border-b">
-                <div className="w-2 h-2 rounded-full bg-primary"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">124 students accessed course materials</p>
-                  <p className="text-xs text-muted-foreground">2 hours ago</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4 pb-4 border-b">
-                <div className="w-2 h-2 rounded-full bg-accent"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">35 alumni registered for homecoming</p>
-                  <p className="text-xs text-muted-foreground">5 hours ago</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="w-2 h-2 rounded-full bg-primary"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">New case competition submissions: 12</p>
-                  <p className="text-xs text-muted-foreground">1 day ago</p>
-                </div>
-              </div>
-            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={eventChartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="registrations" fill="hsl(var(--primary))" name="Registrations" />
+                <Bar dataKey="capacity" fill="hsl(var(--secondary))" name="Capacity" />
+              </BarChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Portal Distribution</CardTitle>
-            <CardDescription>User engagement by portal type</CardDescription>
+            <CardTitle>Communication Repository</CardTitle>
+            <CardDescription>Automated communications sent</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">Student Portal</span>
-                  <span className="text-sm text-muted-foreground">65%</span>
+            <div className="space-y-3">
+              <div className="p-3 border rounded-lg">
+                <div className="flex justify-between items-start mb-1">
+                  <span className="font-medium text-sm">Event Reminders</span>
+                  <Badge variant="outline">Auto-sent</Badge>
                 </div>
-                <div className="w-full bg-secondary rounded-full h-2">
-                  <div className="bg-primary h-2 rounded-full" style={{ width: '65%' }}></div>
-                </div>
+                <p className="text-xs text-muted-foreground">Triggered for upcoming events</p>
               </div>
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">Alumni Portal</span>
-                  <span className="text-sm text-muted-foreground">25%</span>
+              <div className="p-3 border rounded-lg">
+                <div className="flex justify-between items-start mb-1">
+                  <span className="font-medium text-sm">Registration Confirmations</span>
+                  <Badge variant="outline">Auto-sent</Badge>
                 </div>
-                <div className="w-full bg-secondary rounded-full h-2">
-                  <div className="bg-accent h-2 rounded-full" style={{ width: '25%' }}></div>
-                </div>
+                <p className="text-xs text-muted-foreground">Sent upon event registration</p>
               </div>
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">Sponsor Portal</span>
-                  <span className="text-sm text-muted-foreground">10%</span>
+              <div className="p-3 border rounded-lg">
+                <div className="flex justify-between items-start mb-1">
+                  <span className="font-medium text-sm">Sponsor Thank You</span>
+                  <Badge variant="outline">Manual</Badge>
                 </div>
-                <div className="w-full bg-secondary rounded-full h-2">
-                  <div className="bg-primary/60 h-2 rounded-full" style={{ width: '10%' }}></div>
-                </div>
+                <p className="text-xs text-muted-foreground">Sent via Communications tab</p>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="h-5 w-5" />
-              Communication Center
-            </CardTitle>
-            <CardDescription>Send announcements and messages to portal users</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-sm text-muted-foreground">
-              <p>Communication features coming soon. This will allow you to:</p>
-              <ul className="list-disc list-inside mt-2 space-y-1">
-                <li>Send announcements to all portals</li>
-                <li>Schedule automated reminders</li>
-                <li>Track message engagement</li>
-                <li>Manage notification preferences</li>
-              </ul>
             </div>
           </CardContent>
         </Card>

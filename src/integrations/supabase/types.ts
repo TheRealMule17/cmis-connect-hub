@@ -277,6 +277,7 @@ export type Database = {
       }
       events: {
         Row: {
+          building: string | null
           capacity: number | null
           created_at: string
           description: string | null
@@ -285,11 +286,13 @@ export type Database = {
           id: string
           location: string | null
           organizer_id: string
+          room_number: string | null
           status: string | null
           title: string
           updated_at: string
         }
         Insert: {
+          building?: string | null
           capacity?: number | null
           created_at?: string
           description?: string | null
@@ -298,11 +301,13 @@ export type Database = {
           id?: string
           location?: string | null
           organizer_id: string
+          room_number?: string | null
           status?: string | null
           title: string
           updated_at?: string
         }
         Update: {
+          building?: string | null
           capacity?: number | null
           created_at?: string
           description?: string | null
@@ -311,8 +316,42 @@ export type Database = {
           id?: string
           location?: string | null
           organizer_id?: string
+          room_number?: string | null
           status?: string | null
           title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      faculty_communications: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          message: string
+          message_type: string
+          subject: string
+          target_tier: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          message: string
+          message_type: string
+          subject: string
+          target_tier?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          message?: string
+          message_type?: string
+          subject?: string
+          target_tier?: string | null
           updated_at?: string
         }
         Relationships: []

@@ -18,16 +18,21 @@ const EventManager = () => {
     description: "",
     event_date: "",
     location: "",
+    building: "",
+    room_number: "",
     capacity: "",
     event_type: "",
   });
 
   const { data: events } = useQuery({
-    queryKey: ["events"],
+    queryKey: ["events_with_data"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("events")
-        .select("*")
+        .select(`
+          *,
+          event_registrations (count)
+        `)
         .order("event_date", { ascending: true });
       if (error) throw error;
       return data;
@@ -47,10 +52,10 @@ const EventManager = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["events"] });
+      queryClient.invalidateQueries({ queryKey: ["events_with_data"] });
       toast({ title: "Event created successfully" });
       setIsCreating(false);
-      setFormData({ title: "", description: "", event_date: "", location: "", capacity: "", event_type: "" });
+      setFormData({ title: "", description: "", event_date: "", location: "", building: "", room_number: "", capacity: "", event_type: "" });
     },
   });
 
@@ -108,7 +113,28 @@ const EventManager = () => {
                     id="location"
                     value={formData.location}
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    placeholder="General location or campus"
                   />
+                </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="building">Building</Label>
+                    <Input
+                      id="building"
+                      value={formData.building}
+                      onChange={(e) => setFormData({ ...formData, building: e.target.value })}
+                      placeholder="Building name or number"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="room_number">Room Number</Label>
+                    <Input
+                      id="room_number"
+                      value={formData.room_number}
+                      onChange={(e) => setFormData({ ...formData, room_number: e.target.value })}
+                      placeholder="Room number"
+                    />
+                  </div>
                 </div>
               </div>
               <div className="grid md:grid-cols-2 gap-4">
@@ -144,7 +170,7 @@ const EventManager = () => {
               <CardTitle>{event.title}</CardTitle>
               <CardDescription>{event.event_type}</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-2">
+            <CardContent className="space-y-3">
               <p className="text-sm text-muted-foreground">{event.description}</p>
               <div className="flex items-center gap-2 text-sm">
                 <Calendar className="h-4 w-4" />
@@ -154,14 +180,15 @@ const EventManager = () => {
                 <div className="flex items-center gap-2 text-sm">
                   <MapPin className="h-4 w-4" />
                   {event.location}
+                  {event.building && ` - ${event.building}`}
+                  {event.room_number && ` Room ${event.room_number}`}
                 </div>
               )}
-              {event.capacity && (
-                <div className="flex items-center gap-2 text-sm">
-                  <Users className="h-4 w-4" />
-                  Capacity: {event.capacity}
-                </div>
-              )}
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Users className="h-4 w-4" />
+                {event.event_registrations?.[0]?.count || 0} students registered
+                {event.capacity && ` / ${event.capacity} capacity`}
+              </div>
             </CardContent>
           </Card>
         ))}
