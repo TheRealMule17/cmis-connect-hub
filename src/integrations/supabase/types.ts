@@ -113,6 +113,59 @@ export type Database = {
         }
         Relationships: []
       }
+      case_competition_scores: {
+        Row: {
+          analysis_score: number | null
+          competition_id: string
+          created_at: string
+          creativity_score: number | null
+          feedback: string | null
+          id: string
+          judge_id: string
+          overall_score: number | null
+          presentation_score: number | null
+          room_number: string | null
+          team_name: string
+          updated_at: string
+        }
+        Insert: {
+          analysis_score?: number | null
+          competition_id: string
+          created_at?: string
+          creativity_score?: number | null
+          feedback?: string | null
+          id?: string
+          judge_id: string
+          overall_score?: number | null
+          presentation_score?: number | null
+          room_number?: string | null
+          team_name: string
+          updated_at?: string
+        }
+        Update: {
+          analysis_score?: number | null
+          competition_id?: string
+          created_at?: string
+          creativity_score?: number | null
+          feedback?: string | null
+          id?: string
+          judge_id?: string
+          overall_score?: number | null
+          presentation_score?: number | null
+          room_number?: string | null
+          team_name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_competition_scores_competition_id_fkey"
+            columns: ["competition_id"]
+            isOneToOne: false
+            referencedRelation: "case_competitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       case_competitions: {
         Row: {
           created_at: string
@@ -158,6 +211,70 @@ export type Database = {
         }
         Relationships: []
       }
+      event_photos: {
+        Row: {
+          caption: string | null
+          created_at: string
+          event_id: string | null
+          id: string
+          photo_url: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          photo_url: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          photo_url?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_photos_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_registrations: {
+        Row: {
+          event_id: string
+          id: string
+          registered_at: string
+          user_id: string
+        }
+        Insert: {
+          event_id: string
+          id?: string
+          registered_at?: string
+          user_id: string
+        }
+        Update: {
+          event_id?: string
+          id?: string
+          registered_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_registrations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           capacity: number | null
@@ -194,6 +311,39 @@ export type Database = {
           id?: string
           location?: string | null
           organizer_id?: string
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      giving_opportunities: {
+        Row: {
+          category: string | null
+          contact_email: string | null
+          created_at: string
+          description: string | null
+          id: string
+          status: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          contact_email?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          status?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          contact_email?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
           status?: string | null
           title?: string
           updated_at?: string
@@ -248,6 +398,42 @@ export type Database = {
         }
         Relationships: []
       }
+      job_applications: {
+        Row: {
+          applied_date: string | null
+          company_name: string
+          created_at: string
+          id: string
+          notes: string | null
+          position: string
+          status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          applied_date?: string | null
+          company_name: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          position: string
+          status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          applied_date?: string | null
+          company_name?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          position?: string
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       mentor_listings: {
         Row: {
           availability: string | null
@@ -284,6 +470,33 @@ export type Database = {
           status?: string | null
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      mentor_matches: {
+        Row: {
+          created_at: string
+          id: string
+          match_score: number | null
+          mentor_id: string
+          status: string | null
+          student_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          match_score?: number | null
+          mentor_id: string
+          status?: string | null
+          student_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          match_score?: number | null
+          mentor_id?: string
+          status?: string | null
+          student_id?: string
         }
         Relationships: []
       }
@@ -326,6 +539,95 @@ export type Database = {
           status?: string | null
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      speaker_proposals: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          preferred_date: string | null
+          speaker_name: string
+          speaker_title: string
+          sponsor_id: string
+          status: string | null
+          topic: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          preferred_date?: string | null
+          speaker_name: string
+          speaker_title: string
+          sponsor_id: string
+          status?: string | null
+          topic: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          preferred_date?: string | null
+          speaker_name?: string
+          speaker_title?: string
+          sponsor_id?: string
+          status?: string | null
+          topic?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "speaker_proposals_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsor_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sponsor_profiles: {
+        Row: {
+          company_name: string
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          description: string | null
+          id: string
+          logo_url: string | null
+          tier: string | null
+          updated_at: string
+          user_id: string
+          website_url: string | null
+        }
+        Insert: {
+          company_name: string
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          tier?: string | null
+          updated_at?: string
+          user_id: string
+          website_url?: string | null
+        }
+        Update: {
+          company_name?: string
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          tier?: string | null
+          updated_at?: string
+          user_id?: string
+          website_url?: string | null
         }
         Relationships: []
       }

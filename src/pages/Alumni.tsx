@@ -6,6 +6,8 @@ import MentorProgram from "@/components/MentorProgram";
 import CareerHistory from "@/components/CareerHistory";
 import SuccessStorySubmission from "@/components/SuccessStorySubmission";
 import SocialConnections from "@/components/SocialConnections";
+import GivingOpportunities from "@/components/GivingOpportunities";
+import CaseCompetitionJudging from "@/components/CaseCompetitionJudging";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -98,12 +100,14 @@ const Alumni = () => {
         <div className="grid lg:grid-cols-2 gap-6">
           <div className="space-y-6">
             <MentorProgram userId={userId} />
+            <GivingOpportunities />
             <CareerHistory userId={userId} />
           </div>
           
           <div className="space-y-6">
             <SocialConnections userId={userId} />
             <SuccessStorySubmission userId={userId} />
+            <CaseCompetitionJudging userId={userId} />
           </div>
         </div>
       </main>

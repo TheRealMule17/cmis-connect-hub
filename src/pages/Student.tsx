@@ -5,6 +5,8 @@ import Navigation from "@/components/Navigation";
 import ResumeUpload from "@/components/ResumeUpload";
 import WorkshopList from "@/components/WorkshopList";
 import ProfileSettings from "@/components/ProfileSettings";
+import JobTracking from "@/components/JobTracking";
+import StudentEventRegistration from "@/components/StudentEventRegistration";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -93,10 +95,11 @@ const Student = () => {
               currentResumeUrl={resumeUrl}
               onResumeUpdate={setResumeUrl}
             />
-            <WorkshopList userId={userId} />
+            <StudentEventRegistration userId={userId} />
+            <JobTracking userId={userId} />
           </div>
           
-          <div>
+          <div className="space-y-6">
             <ProfileSettings userId={userId} />
           </div>
         </div>

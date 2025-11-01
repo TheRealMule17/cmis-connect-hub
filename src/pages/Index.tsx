@@ -3,6 +3,8 @@ import Navigation from "@/components/Navigation";
 import PortalCard from "@/components/PortalCard";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, Users, Building2, BarChart3 } from "lucide-react";
+import LandingEventsList from "@/components/LandingEventsList";
+import TopSponsors from "@/components/TopSponsors";
 
 const Index = () => {
   return (
@@ -17,6 +19,11 @@ const Index = () => {
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Connect, collaborate, and grow with our comprehensive portal system designed for students, alumni, and partners.
           </p>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-8 mb-12">
+          <LandingEventsList />
+          <TopSponsors />
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-5xl mx-auto mb-12">
