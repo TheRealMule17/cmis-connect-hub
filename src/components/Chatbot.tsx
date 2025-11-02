@@ -142,7 +142,7 @@ export const Chatbot = () => {
       {isOpen && (
         <div className="fixed bottom-6 right-6 w-96 h-[500px] bg-background border rounded-lg shadow-xl flex flex-col">
           <div className="flex items-center justify-between p-4 border-b">
-            <h3 className="font-semibold">CMIS Assistant</h3>
+            <h3 className="font-semibold">The Howdy Helper</h3>
             <Button
               variant="ghost"
               size="icon"
