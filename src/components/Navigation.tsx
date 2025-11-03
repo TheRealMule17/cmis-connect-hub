@@ -40,7 +40,7 @@ const Navigation = () => {
               asChild
             >
               <Link to="/student-council" className="flex items-center gap-2">
-                Student Council
+                Student Advisory Board
               </Link>
             </Button>
             
