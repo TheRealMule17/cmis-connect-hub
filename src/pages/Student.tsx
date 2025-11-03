@@ -8,7 +8,7 @@ import ProfileSettings from "@/components/ProfileSettings";
 import JobTracking from "@/components/JobTracking";
 import StudentEventRegistration from "@/components/StudentEventRegistration";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
+import { LogOut, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Student = () => {
@@ -77,6 +77,15 @@ const Student = () => {
       <Navigation />
       
       <main className="container mx-auto px-4 py-8">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/")}
+          className="mb-4"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Home
+        </Button>
+        
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold text-foreground mb-2">Student Portal</h1>

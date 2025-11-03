@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 import EventManager from "@/components/EventManager";
 import FacultyCaseCompetitionDirector from "@/components/FacultyCaseCompetitionDirector";
 import FacultySpeakerCommunications from "@/components/FacultySpeakerCommunications";
@@ -9,11 +12,22 @@ import ResearchCollaborationHub from "@/components/ResearchCollaborationHub";
 import AnalyticsCommunicationDashboard from "@/components/AnalyticsCommunicationDashboard";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       
       <main className="container mx-auto px-4 py-8">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/")}
+          className="mb-4"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Home
+        </Button>
+        
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-2">Faculty Portal</h1>
           <p className="text-lg text-muted-foreground">Comprehensive management tools for all campus activities</p>

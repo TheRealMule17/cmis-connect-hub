@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import Navigation from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Building2, Handshake, TrendingUp, Award, LogOut } from "lucide-react";
+import { Building2, Handshake, TrendingUp, Award, LogOut, ArrowLeft } from "lucide-react";
 import SponsorEventList from "@/components/SponsorEventList";
 import SponsorTierBenefits from "@/components/SponsorTierBenefits";
 import SpeakerProposalForm from "@/components/SpeakerProposalForm";
@@ -77,6 +77,15 @@ const Sponsor = () => {
       <Navigation />
       
       <main className="container mx-auto px-4 py-8">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/")}
+          className="mb-4"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Home
+        </Button>
+        
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold text-foreground mb-2">Company Sponsor Portal</h1>
