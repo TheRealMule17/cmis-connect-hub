@@ -18,42 +18,38 @@ const Navigation = () => {
           
           <div className="hidden md:flex items-center gap-2">
             <Button
-              variant={isActive("/student") ? "default" : "ghost"}
+              variant={isActive("/about") ? "default" : "ghost"}
               asChild
             >
-              <Link to="/student" className="flex items-center gap-2">
-                <GraduationCap className="h-4 w-4" />
-                Student Portal
+              <Link to="/about" className="flex items-center gap-2">
+                About Us
               </Link>
             </Button>
             
             <Button
-              variant={isActive("/alumni") ? "default" : "ghost"}
+              variant={isActive("/faculty-advisors") ? "default" : "ghost"}
               asChild
             >
-              <Link to="/alumni" className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                Alumni Portal
+              <Link to="/faculty-advisors" className="flex items-center gap-2">
+                Faculty Advisors
               </Link>
             </Button>
             
             <Button
-              variant={isActive("/sponsor") ? "default" : "ghost"}
+              variant={isActive("/student-council") ? "default" : "ghost"}
               asChild
             >
-              <Link to="/sponsor" className="flex items-center gap-2">
-                <Building2 className="h-4 w-4" />
-                Sponsor Portal
+              <Link to="/student-council" className="flex items-center gap-2">
+                Student Council
               </Link>
             </Button>
             
             <Button
-              variant={isActive("/dashboard") ? "default" : "ghost"}
+              variant={isActive("/contact") ? "default" : "ghost"}
               asChild
             >
-              <Link to="/dashboard" className="flex items-center gap-2">
-                <BarChart3 className="h-4 w-4" />
-                Faculty Portal
+              <Link to="/contact" className="flex items-center gap-2">
+                Contact Us
               </Link>
             </Button>
           </div>
