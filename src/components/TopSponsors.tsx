@@ -5,7 +5,32 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 const TopSponsors = () => {
-  const { data: sponsors } = useQuery({
+  // Static sponsor data for display
+  const staticSponsors = [
+    {
+      id: "1",
+      company_name: "ConocoPhillips",
+      tier: "gold",
+      logo_url: "/logos/conocophillips.png",
+      description: "Founding Member"
+    },
+    {
+      id: "2",
+      company_name: "Exabeam",
+      tier: "gold",
+      logo_url: "/logos/exabeam.png",
+      description: "Gold Sponsor"
+    },
+    {
+      id: "3",
+      company_name: "Valero",
+      tier: "gold",
+      logo_url: "/logos/valero.png",
+      description: "Gold Sponsor"
+    }
+  ];
+
+  const { data: dbSponsors } = useQuery({
     queryKey: ["top_sponsors"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -18,6 +43,9 @@ const TopSponsors = () => {
       return data;
     },
   });
+
+  // Combine static sponsors with database sponsors
+  const sponsors = [...staticSponsors, ...(dbSponsors || [])];
 
   return (
     <Card>
