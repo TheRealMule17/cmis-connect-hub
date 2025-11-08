@@ -58,15 +58,12 @@ const TopSponsors = () => {
       <CardContent>
         <div className="grid md:grid-cols-3 gap-6">
           {sponsors?.map((sponsor) => (
-            <div key={sponsor.id} className="group p-6 border rounded-lg text-center space-y-3 transition-all duration-300 hover:shadow-md">
+            <div key={sponsor.id} className="p-6 border rounded-lg text-center space-y-3">
               {sponsor.logo_url && (
                 <img src={sponsor.logo_url} alt={sponsor.company_name} className="h-20 mx-auto object-contain" />
               )}
               <h4 className="font-semibold">{sponsor.company_name}</h4>
-              <Badge 
-                variant={sponsor.tier === "gold" ? "default" : "secondary"}
-                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-              >
+              <Badge variant={sponsor.tier === "gold" ? "default" : "secondary"}>
                 {sponsor.tier?.toUpperCase()}
               </Badge>
             </div>
