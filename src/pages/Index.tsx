@@ -29,7 +29,7 @@ const Index = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-5xl mx-auto mb-12">
           <PortalCard
             title="Student Portal"
-            description="Access course materials, assignments, grades, and academic resources."
+            description="Access events, networking opportunities and mentorship hub."
             icon={GraduationCap}
             link="/student"
           />
