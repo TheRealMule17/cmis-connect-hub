@@ -21,36 +21,42 @@ const Navigation = () => {
               variant={isActive("/about") ? "default" : "ghost"}
               asChild
             >
-              <Link to="/about" className="flex items-center gap-2">
-                About Us
-              </Link>
+              <Link to="/about">About Us</Link>
             </Button>
             
             <Button
-              variant={isActive("/faculty-advisors") ? "default" : "ghost"}
+              variant={isActive("/student") ? "default" : "ghost"}
               asChild
             >
-              <Link to="/faculty-advisors" className="flex items-center gap-2">
-                Faculty Advisors
-              </Link>
+              <Link to="/student">Students</Link>
             </Button>
             
             <Button
-              variant={isActive("/student-council") ? "default" : "ghost"}
+              variant={isActive("/dashboard") ? "default" : "ghost"}
               asChild
             >
-              <Link to="/student-council" className="flex items-center gap-2">
-                Student Advisory Board
-              </Link>
+              <Link to="/dashboard">Faculty/Administrators</Link>
+            </Button>
+            
+            <Button
+              variant={isActive("/sponsor") ? "default" : "ghost"}
+              asChild
+            >
+              <Link to="/sponsor">Industry Sponsors</Link>
+            </Button>
+            
+            <Button
+              variant={isActive("/alumni") ? "default" : "ghost"}
+              asChild
+            >
+              <Link to="/alumni">Alumni</Link>
             </Button>
             
             <Button
               variant={isActive("/contact") ? "default" : "ghost"}
               asChild
             >
-              <Link to="/contact" className="flex items-center gap-2">
-                Contact Us
-              </Link>
+              <Link to="/contact">Contact Us</Link>
             </Button>
           </div>
         </div>
