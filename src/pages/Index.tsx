@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
-import PortalCard from "@/components/PortalCard";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Users, Building2, BarChart3 } from "lucide-react";
 import LandingEventsList from "@/components/LandingEventsList";
 import TopSponsors from "@/components/TopSponsors";
 
@@ -26,32 +24,6 @@ const Index = () => {
           <TopSponsors />
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-5xl mx-auto mb-12">
-          <PortalCard
-            title="Student Portal"
-            description="Access events, networking opportunities and mentorship hub."
-            icon={GraduationCap}
-            link="/student"
-          />
-          <PortalCard
-            title="Alumni Portal"
-            description="Stay connected with your network and access exclusive opportunities."
-            icon={Users}
-            link="/alumni"
-          />
-          <PortalCard
-            title="Sponsor Portal"
-            description="Partner with us to invest in future talent and innovation."
-            icon={Building2}
-            link="/sponsor"
-          />
-          <PortalCard
-            title="Faculty Portal"
-            description="Monitor engagement, track metrics, and gain insights across all portals."
-            icon={BarChart3}
-            link="/dashboard"
-          />
-        </div>
 
         <div className="text-center space-y-4">
           <Button asChild size="lg">
