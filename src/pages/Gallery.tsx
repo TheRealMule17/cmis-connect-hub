@@ -1,4 +1,5 @@
 import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 
 const Gallery = () => {
@@ -23,10 +24,10 @@ const Gallery = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 flex flex-col">
       <Navigation />
       
-      <main className="container mx-auto px-4 py-16">
+      <main className="container mx-auto px-4 py-16 flex-1">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             Gallery
@@ -84,6 +85,8 @@ const Gallery = () => {
           </div>
         </section>
       </main>
+      
+      <Footer />
     </div>
   );
 };
