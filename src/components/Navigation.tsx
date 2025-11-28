@@ -53,6 +53,13 @@ const Navigation = () => {
             </Button>
             
             <Button
+              variant={isActive("/gallery") ? "default" : "ghost"}
+              asChild
+            >
+              <Link to="/gallery">Gallery</Link>
+            </Button>
+            
+            <Button
               variant={isActive("/contact") ? "default" : "ghost"}
               asChild
             >
