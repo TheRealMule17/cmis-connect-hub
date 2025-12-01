@@ -69,7 +69,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
       body: JSON.stringify({
         from: "CMIS Contact <onboarding@resend.dev>",
-        to: ["cmis@mays.tamu.edu"],
+        to: ["mitch@tamu.edu"],
         reply_to: email,
         subject: `Contact Form: ${subject}`,
         html: `
