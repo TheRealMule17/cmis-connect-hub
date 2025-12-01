@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageCircle, X, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 interface Message {
   role: "user" | "assistant";
@@ -15,7 +16,9 @@ export const Chatbot = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isOverFooter, setIsOverFooter] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const chatbotRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -23,6 +26,21 @@ export const Chatbot = () => {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  useEffect(() => {
+    const footer = document.querySelector('footer');
+    if (!footer || !chatbotRef.current) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsOverFooter(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(footer);
+    return () => observer.disconnect();
+  }, []);
 
   const streamChat = async (userMessages: Message[]) => {
     const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
@@ -130,23 +148,42 @@ export const Chatbot = () => {
   return (
     <>
       {!isOpen && (
-        <Button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg"
-          size="icon"
-        >
-          <MessageCircle className="h-6 w-6" />
-        </Button>
+        <div ref={chatbotRef} className="fixed bottom-6 right-6">
+          <Button
+            onClick={() => setIsOpen(true)}
+            className={cn(
+              "h-14 w-14 rounded-full shadow-lg transition-colors duration-300",
+              isOverFooter 
+                ? "bg-background text-foreground border-2 border-foreground hover:bg-foreground hover:text-background" 
+                : ""
+            )}
+            size="icon"
+          >
+            <MessageCircle className="h-6 w-6" />
+          </Button>
+        </div>
       )}
 
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-96 h-[500px] bg-background border rounded-lg shadow-xl flex flex-col">
-          <div className="flex items-center justify-between p-4 border-b">
+        <div 
+          ref={chatbotRef}
+          className={cn(
+            "fixed bottom-6 right-6 w-96 h-[500px] rounded-lg shadow-xl flex flex-col transition-colors duration-300",
+            isOverFooter
+              ? "bg-foreground text-background border-2 border-background"
+              : "bg-background text-foreground border"
+          )}
+        >
+          <div className={cn(
+            "flex items-center justify-between p-4 border-b transition-colors duration-300",
+            isOverFooter ? "border-background/20" : ""
+          )}>
             <h3 className="font-semibold">The Howdy Helper</h3>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setIsOpen(false)}
+              className={cn(isOverFooter && "hover:bg-background/20")}
             >
               <X className="h-4 w-4" />
             </Button>
@@ -155,7 +192,10 @@ export const Chatbot = () => {
           <ScrollArea className="flex-1 p-4" ref={scrollRef}>
             <div className="space-y-4">
               {messages.length === 0 && (
-                <div className="text-center text-muted-foreground text-sm py-8">
+                <div className={cn(
+                  "text-center text-sm py-8 transition-colors duration-300",
+                  isOverFooter ? "text-background/70" : "text-muted-foreground"
+                )}>
                   Hi! I'm here to help you navigate the CMIS portal. Ask me anything!
                 </div>
               )}
@@ -165,11 +205,16 @@ export const Chatbot = () => {
                   className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-[80%] rounded-lg px-4 py-2 ${
+                    className={cn(
+                      "max-w-[80%] rounded-lg px-4 py-2 transition-colors duration-300",
                       msg.role === "user"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted"
-                    }`}
+                        ? isOverFooter 
+                          ? "bg-background text-foreground"
+                          : "bg-primary text-primary-foreground"
+                        : isOverFooter
+                          ? "bg-background/20 text-background"
+                          : "bg-muted text-foreground"
+                    )}
                   >
                     <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
                   </div>
@@ -178,7 +223,10 @@ export const Chatbot = () => {
             </div>
           </ScrollArea>
 
-          <div className="p-4 border-t">
+          <div className={cn(
+            "p-4 border-t transition-colors duration-300",
+            isOverFooter ? "border-background/20" : ""
+          )}>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
