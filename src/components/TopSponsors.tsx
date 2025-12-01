@@ -1,13 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, Search } from "lucide-react";
+import { Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
 
 const TopSponsors = () => {
-  const [searchTerm, setSearchTerm] = useState("");
   // Static sponsor data for display
   const staticSponsors = [
     {
@@ -48,32 +45,15 @@ const TopSponsors = () => {
   });
 
   // Combine static sponsors with database sponsors
-  const allSponsors = [...staticSponsors, ...(dbSponsors || [])];
-  
-  // Filter sponsors based on search term
-  const sponsors = allSponsors.filter(sponsor =>
-    sponsor.company_name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const sponsors = [...staticSponsors, ...(dbSponsors || [])];
 
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between gap-4">
-          <CardTitle className="flex items-center gap-2">
-            <Building2 className="h-5 w-5" />
-            Our Top Sponsors
-          </CardTitle>
-          <div className="relative w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search sponsors..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-        </div>
+        <CardTitle className="flex items-center gap-2">
+          <Building2 className="h-5 w-5" />
+          Our Top Sponsors
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid md:grid-cols-3 gap-6">
