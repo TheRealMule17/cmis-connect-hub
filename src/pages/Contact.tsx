@@ -6,8 +6,77 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Mail, MapPin, Phone } from "lucide-react";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { z } from "zod";
+
+const contactSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
+  email: z.string().trim().email("Invalid email address").max(255, "Email must be less than 255 characters"),
+  subject: z.string().trim().min(1, "Subject is required").max(200, "Subject must be less than 200 characters"),
+  message: z.string().trim().min(1, "Message is required").max(2000, "Message must be less than 2000 characters"),
+});
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validate form
+    try {
+      contactSchema.parse(formData);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Validation Error",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke("send-contact-email", {
+        body: formData,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Message Sent!",
+        description: "Thank you for contacting us. We'll get back to you soon.",
+      });
+
+      // Reset form
+      setFormData({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+      });
+    } catch (error: any) {
+      console.error("Error sending message:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 flex flex-col">
       <Navigation />
@@ -24,24 +93,66 @@ const Contact = () => {
               <CardHeader>
                 <CardTitle>Get in Touch</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium mb-2">Name</label>
-                  <Input id="name" placeholder="Your name" />
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium mb-2">Email</label>
-                  <Input id="email" type="email" placeholder="your.email@example.com" />
-                </div>
-                <div>
-                  <label htmlFor="subject" className="block text-sm font-medium mb-2">Subject</label>
-                  <Input id="subject" placeholder="How can we help?" />
-                </div>
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium mb-2">Message</label>
-                  <Textarea id="message" placeholder="Your message..." rows={6} />
-                </div>
-                <Button className="w-full">Send Message</Button>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium mb-2">
+                      Name <span className="text-destructive">*</span>
+                    </label>
+                    <Input 
+                      id="name" 
+                      placeholder="Your name"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      required
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium mb-2">
+                      Email <span className="text-destructive">*</span>
+                    </label>
+                    <Input 
+                      id="email" 
+                      type="email" 
+                      placeholder="your.email@example.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      required
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="subject" className="block text-sm font-medium mb-2">
+                      Subject <span className="text-destructive">*</span>
+                    </label>
+                    <Input 
+                      id="subject" 
+                      placeholder="How can we help?"
+                      value={formData.subject}
+                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                      required
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="message" className="block text-sm font-medium mb-2">
+                      Message <span className="text-destructive">*</span>
+                    </label>
+                    <Textarea 
+                      id="message" 
+                      placeholder="Your message..." 
+                      rows={6}
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      required
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                  <Button type="submit" className="w-full" disabled={isSubmitting}>
+                    {isSubmitting ? "Sending..." : "Send Message"}
+                  </Button>
+                </form>
               </CardContent>
             </Card>
 
