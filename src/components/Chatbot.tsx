@@ -22,13 +22,26 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isOverFooter, setIsOverFooter] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(expanded);
   const scrollRef = useRef<HTMLDivElement>(null);
   const chatbotRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   useEffect(() => {
     setIsOpen(expanded);
+    setIsExpanded(expanded);
   }, [expanded]);
+
+  // Listen for custom event to open/expand chatbot
+  useEffect(() => {
+    const handleOpenChat = () => {
+      setIsOpen(true);
+      setIsExpanded(true);
+    };
+
+    window.addEventListener('openHowdyHelper', handleOpenChat);
+    return () => window.removeEventListener('openHowdyHelper', handleOpenChat);
+  }, []);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -156,12 +169,13 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
 
   const handleClose = () => {
     setIsOpen(false);
+    setIsExpanded(false);
     onClose?.();
   };
 
   return (
     <>
-      {!isOpen && !expanded && (
+      {!isOpen && !isExpanded && (
         <div ref={chatbotRef} className="fixed bottom-6 right-6 z-50">
           <Button
             onClick={() => setIsOpen(true)}
@@ -183,7 +197,7 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
           ref={chatbotRef}
           className={cn(
             "rounded-lg shadow-xl flex flex-col transition-all duration-300",
-            expanded
+            isExpanded
               ? "fixed inset-0 md:inset-4 z-50 w-auto h-auto bg-background border"
               : cn(
                   "fixed bottom-6 right-6 w-96 h-[500px] z-50",
@@ -195,16 +209,16 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
         >
           <div className={cn(
             "flex items-center justify-between p-4 border-b transition-colors duration-300",
-            isOverFooter && !expanded ? "border-background/20" : ""
+            isOverFooter && !isExpanded ? "border-background/20" : ""
           )}>
-            <h3 className={cn("font-semibold", expanded && "text-2xl")}>
-              {expanded ? "Ask Our AI Assistant" : "The Howdy Helper"}
+            <h3 className={cn("font-semibold", isExpanded && "text-2xl")}>
+              {isExpanded ? "Ask Our Howdy Helper" : "The Howdy Helper"}
             </h3>
             <Button
               variant="ghost"
               size="icon"
               onClick={handleClose}
-              className={cn(isOverFooter && !expanded && "hover:bg-background/20")}
+              className={cn(isOverFooter && !isExpanded && "hover:bg-background/20")}
             >
               <X className="h-4 w-4" />
             </Button>
@@ -215,9 +229,11 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
               {messages.length === 0 && (
                 <div className={cn(
                   "text-center text-sm py-8 transition-colors duration-300",
-                  isOverFooter ? "text-background/70" : "text-muted-foreground"
+                  isOverFooter && !isExpanded ? "text-background/70" : "text-muted-foreground"
                 )}>
-                  Hi! I'm here to help you navigate the CMIS portal. Ask me anything!
+                  {isExpanded 
+                    ? "Howdy! Ask me anything about CMIS programs, events, mentorship, and more!" 
+                    : "Hi! I'm here to help you navigate the CMIS portal. Ask me anything!"}
                 </div>
               )}
               {messages.map((msg, idx) => (
@@ -229,10 +245,10 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
                     className={cn(
                       "max-w-[80%] rounded-lg px-4 py-2 transition-colors duration-300",
                       msg.role === "user"
-                        ? isOverFooter 
+                        ? isOverFooter && !isExpanded
                           ? "bg-background text-foreground"
                           : "bg-primary text-primary-foreground"
-                        : isOverFooter
+                        : isOverFooter && !isExpanded
                           ? "bg-background/20 text-background"
                           : "bg-muted text-foreground"
                     )}
@@ -246,7 +262,7 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
 
           <div className={cn(
             "p-4 border-t transition-colors duration-300",
-            isOverFooter ? "border-background/20" : ""
+            isOverFooter && !isExpanded ? "border-background/20" : ""
           )}>
             <form
               onSubmit={(e) => {

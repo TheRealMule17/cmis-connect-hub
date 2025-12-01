@@ -10,7 +10,6 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
-import { Chatbot } from "@/components/Chatbot";
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
@@ -27,8 +26,11 @@ const Contact = () => {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showExpandedChat, setShowExpandedChat] = useState(false);
   const { toast } = useToast();
+
+  const handleOpenHowdyHelper = () => {
+    window.dispatchEvent(new Event('openHowdyHelper'));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,7 +105,7 @@ const Contact = () => {
                 Get instant answers about CMIS programs, events, mentorship, and more. Our AI assistant is here to help!
               </p>
               <Button 
-                onClick={() => setShowExpandedChat(true)}
+                onClick={handleOpenHowdyHelper}
                 size="lg"
                 className="w-full"
               >
@@ -230,14 +232,6 @@ const Contact = () => {
       </main>
       
       <Footer />
-
-      {/* Expanded Chatbot Overlay */}
-      {showExpandedChat && (
-        <Chatbot 
-          expanded={true} 
-          onClose={() => setShowExpandedChat(false)} 
-        />
-      )}
     </div>
   );
 };
