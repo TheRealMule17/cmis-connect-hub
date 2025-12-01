@@ -7,6 +7,7 @@ import WorkshopList from "@/components/WorkshopList";
 import ProfileSettings from "@/components/ProfileSettings";
 import JobTracking from "@/components/JobTracking";
 import StudentEventRegistration from "@/components/StudentEventRegistration";
+import StudentOrganization from "@/components/StudentOrganization";
 import { Button } from "@/components/ui/button";
 import { LogOut, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -99,6 +100,7 @@ const Student = () => {
 
         <div className="grid lg:grid-cols-2 gap-6">
           <div className="space-y-6">
+            <StudentOrganization />
             <ResumeUpload 
               userId={userId} 
               currentResumeUrl={resumeUrl}
