@@ -356,6 +356,57 @@ export type Database = {
         }
         Relationships: []
       }
+      generated_emails: {
+        Row: {
+          batch_id: string | null
+          body: string
+          created_at: string | null
+          created_by: string
+          email_type: string
+          id: string
+          notes: string | null
+          recipient_email: string
+          recipient_name: string
+          scheduled_at: string | null
+          sent_at: string | null
+          status: string | null
+          subject: string
+          updated_at: string | null
+        }
+        Insert: {
+          batch_id?: string | null
+          body: string
+          created_at?: string | null
+          created_by: string
+          email_type: string
+          id?: string
+          notes?: string | null
+          recipient_email: string
+          recipient_name: string
+          scheduled_at?: string | null
+          sent_at?: string | null
+          status?: string | null
+          subject: string
+          updated_at?: string | null
+        }
+        Update: {
+          batch_id?: string | null
+          body?: string
+          created_at?: string | null
+          created_by?: string
+          email_type?: string
+          id?: string
+          notes?: string | null
+          recipient_email?: string
+          recipient_name?: string
+          scheduled_at?: string | null
+          sent_at?: string | null
+          status?: string | null
+          subject?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       giving_opportunities: {
         Row: {
           category: string | null
