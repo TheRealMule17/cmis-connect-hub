@@ -29,20 +29,20 @@ const Gallery = () => {
       <Navigation />
       <BreadcrumbNav />
       
-      <main className="container mx-auto px-4 py-16 flex-1">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+      <main className="container mx-auto px-4 py-8 md:py-16 flex-1">
+        <div className="text-center mb-8 md:mb-12">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 md:mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             Gallery
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
             Explore our community through events, mentors, faculty, and students
           </p>
         </div>
 
         {/* Events Section */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-foreground">Our Events</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section className="mb-12 md:mb-16">
+          <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-foreground">Our Events</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {eventImages.map((event) => (
               <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <CardContent className="p-0">
@@ -65,8 +65,8 @@ const Gallery = () => {
 
         {/* People Section */}
         <section>
-          <h2 className="text-3xl font-bold mb-8 text-foreground">Our Community</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-foreground">Our Community</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {peopleImages.map((person) => (
               <Card key={person.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <CardContent className="p-0">

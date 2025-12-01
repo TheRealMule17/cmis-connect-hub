@@ -60,18 +60,18 @@ const SponsorShowcase = () => {
     }
 
     return (
-      <div className={`grid gap-6 ${
-        tierName === "Gold" ? "md:grid-cols-3" : 
-        tierName === "Silver" ? "md:grid-cols-4" : 
-        "md:grid-cols-5"
+      <div className={`grid gap-4 md:gap-6 ${
+        tierName === "Gold" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : 
+        tierName === "Silver" ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4" : 
+        "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
       }`}>
         {sponsors.map((sponsor) => (
           <div 
             key={sponsor.id} 
-            className="p-6 border border-border rounded-lg bg-card hover:shadow-lg transition-shadow duration-300 text-center space-y-3"
+            className="p-4 md:p-6 border border-border rounded-lg bg-card hover:shadow-lg transition-shadow duration-300 text-center space-y-2 md:space-y-3"
           >
             {sponsor.logo_url ? (
-              <div className="flex items-center justify-center h-24">
+              <div className="flex items-center justify-center h-16 md:h-24">
                 <img 
                   src={sponsor.logo_url} 
                   alt={sponsor.company_name} 
@@ -79,13 +79,13 @@ const SponsorShowcase = () => {
                 />
               </div>
             ) : (
-              <div className="flex items-center justify-center h-24">
-                <Building2 className="h-12 w-12 text-muted-foreground" />
+              <div className="flex items-center justify-center h-16 md:h-24">
+                <Building2 className="h-8 md:h-12 w-8 md:w-12 text-muted-foreground" />
               </div>
             )}
-            <h4 className="font-semibold text-foreground">{sponsor.company_name}</h4>
+            <h4 className="font-semibold text-sm md:text-base text-foreground">{sponsor.company_name}</h4>
             {sponsor.description && (
-              <p className="text-sm text-muted-foreground">{sponsor.description}</p>
+              <p className="text-xs md:text-sm text-muted-foreground">{sponsor.description}</p>
             )}
           </div>
         ))}
@@ -94,16 +94,16 @@ const SponsorShowcase = () => {
   };
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8 md:space-y-12">
       {/* Gold Tier */}
       <Card className="border-2 border-yellow-500/20 bg-gradient-to-br from-yellow-50/50 to-background dark:from-yellow-950/10">
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-2xl">
-              <Building2 className="h-6 w-6 text-yellow-600 dark:text-yellow-500" />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">
+              <Building2 className="h-5 w-5 md:h-6 md:w-6 text-yellow-600 dark:text-yellow-500" />
               Gold Sponsors
             </CardTitle>
-            <Badge className="bg-yellow-600 hover:bg-yellow-700 text-white">
+            <Badge className="bg-yellow-600 hover:bg-yellow-700 text-white text-xs md:text-sm">
               Premier Partners
             </Badge>
           </div>
@@ -116,12 +116,12 @@ const SponsorShowcase = () => {
       {/* Silver Tier */}
       <Card className="border-2 border-gray-400/20 bg-gradient-to-br from-gray-50/50 to-background dark:from-gray-900/10">
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-2xl">
-              <Building2 className="h-6 w-6 text-gray-500" />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">
+              <Building2 className="h-5 w-5 md:h-6 md:w-6 text-gray-500" />
               Silver Sponsors
             </CardTitle>
-            <Badge className="bg-gray-500 hover:bg-gray-600 text-white">
+            <Badge className="bg-gray-500 hover:bg-gray-600 text-white text-xs md:text-sm">
               Supporting Partners
             </Badge>
           </div>
@@ -134,12 +134,12 @@ const SponsorShowcase = () => {
       {/* Bronze Tier */}
       <Card className="border-2 border-orange-700/20 bg-gradient-to-br from-orange-50/50 to-background dark:from-orange-950/10">
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-2xl">
-              <Building2 className="h-6 w-6 text-orange-700 dark:text-orange-600" />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">
+              <Building2 className="h-5 w-5 md:h-6 md:w-6 text-orange-700 dark:text-orange-600" />
               Bronze Sponsors
             </CardTitle>
-            <Badge className="bg-orange-700 hover:bg-orange-800 text-white">
+            <Badge className="bg-orange-700 hover:bg-orange-800 text-white text-xs md:text-sm">
               Contributing Partners
             </Badge>
           </div>

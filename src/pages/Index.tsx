@@ -12,17 +12,17 @@ const Index = () => {
       <Navigation />
       <BreadcrumbNav />
       
-      <main className="container mx-auto px-4 py-16 flex-1">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+      <main className="container mx-auto px-4 py-8 md:py-16 flex-1">
+        <div className="text-center mb-8 md:mb-16">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent px-2">
             Council of Management Information Systems
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
             Connect, collaborate, and grow with our comprehensive portal system designed for students, alumni, and partners.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-8 md:mb-12">
           <LandingEventsList />
           <TopSponsors />
         </div>

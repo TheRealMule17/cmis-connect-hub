@@ -10,9 +10,9 @@ const About = () => {
       <Navigation />
       <BreadcrumbNav />
       
-      <main className="container mx-auto px-4 py-16 flex-1">
+      <main className="container mx-auto px-4 py-8 md:py-16 flex-1">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             About CMIS
           </h1>
           
@@ -55,11 +55,11 @@ const About = () => {
           </Card>
 
           {/* Sponsors Section */}
-          <div className="mt-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          <div className="mt-8 md:mt-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 md:mb-8 text-center bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
               Our Sponsors
             </h2>
-            <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base text-center text-muted-foreground mb-8 md:mb-12 max-w-2xl mx-auto px-4">
               We are grateful for the support of our sponsors who make our programs and initiatives possible.
             </p>
             <SponsorShowcase />
