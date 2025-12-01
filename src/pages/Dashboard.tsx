@@ -10,6 +10,7 @@ import FacultySpeakerCommunications from "@/components/FacultySpeakerCommunicati
 import FacultyMentorMatcher from "@/components/FacultyMentorMatcher";
 import ResearchCollaborationHub from "@/components/ResearchCollaborationHub";
 import AnalyticsCommunicationDashboard from "@/components/AnalyticsCommunicationDashboard";
+import EmailGenerator from "@/components/EmailGenerator";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -34,13 +35,14 @@ const Dashboard = () => {
         </div>
 
         <Tabs defaultValue="analytics" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 mb-8">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-7 mb-8">
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="events">Events</TabsTrigger>
             <TabsTrigger value="competitions">Competitions</TabsTrigger>
             <TabsTrigger value="speakers">Communications</TabsTrigger>
             <TabsTrigger value="mentors">Mentor Matcher</TabsTrigger>
             <TabsTrigger value="research">Research</TabsTrigger>
+            <TabsTrigger value="email">Email Generator</TabsTrigger>
           </TabsList>
 
           <TabsContent value="analytics">
@@ -65,6 +67,10 @@ const Dashboard = () => {
 
           <TabsContent value="research">
             <ResearchCollaborationHub />
+          </TabsContent>
+
+          <TabsContent value="email">
+            <EmailGenerator />
           </TabsContent>
         </Tabs>
       </main>
