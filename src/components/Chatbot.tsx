@@ -29,9 +29,8 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
   const { toast } = useToast();
   const location = useLocation();
 
-  // Determine if current route should have inverted colors
-  const shouldInvertColors = ['/about', '/contact', '/gallery'].includes(location.pathname);
-  const isInverted = shouldInvertColors || isOverFooter;
+  // Only invert when over footer
+  const isInverted = isOverFooter;
 
   useEffect(() => {
     setIsOpen(expanded);
