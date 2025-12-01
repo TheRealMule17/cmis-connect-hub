@@ -28,10 +28,10 @@ const Navigation = () => {
             {/* Right side navigation */}
             <div className="hidden lg:flex items-center gap-6">
               <Button variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 text-sm font-normal" asChild>
-                <Link to="/gallery">Gallery</Link>
+                <Link to="/about">About Us</Link>
               </Button>
               <Button variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 text-sm font-normal" asChild>
-                <Link to="/about">About Us</Link>
+                <Link to="/gallery">Gallery</Link>
               </Button>
               <Button variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 text-sm font-normal" asChild>
                 <Link to="/contact">Contact Us</Link>
@@ -86,36 +86,6 @@ const Navigation = () => {
             >
               <Link to="/alumni">
                 <span className="text-sm font-normal">Alumni</span>
-              </Link>
-            </Button>
-            
-            <Button
-              variant="ghost"
-              className={isActive("/gallery") ? "bg-accent" : "hover:bg-accent"}
-              asChild
-            >
-              <Link to="/gallery">
-                <span className="text-sm font-normal">Gallery</span>
-              </Link>
-            </Button>
-            
-            <Button
-              variant="ghost"
-              className={isActive("/about") ? "bg-accent" : "hover:bg-accent"}
-              asChild
-            >
-              <Link to="/about">
-                <span className="text-sm font-normal">About Us</span>
-              </Link>
-            </Button>
-            
-            <Button
-              variant="ghost"
-              className={isActive("/contact") ? "bg-accent" : "hover:bg-accent"}
-              asChild
-            >
-              <Link to="/contact">
-                <span className="text-sm font-normal">Contact Us</span>
               </Link>
             </Button>
           </div>
