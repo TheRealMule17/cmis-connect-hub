@@ -1,4 +1,5 @@
 import Navigation from "@/components/Navigation";
+import BreadcrumbNav from "@/components/BreadcrumbNav";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,7 @@ const Contact = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 flex flex-col">
       <Navigation />
+      <BreadcrumbNav />
       
       <main className="container mx-auto px-4 py-16 flex-1">
         <div className="max-w-4xl mx-auto">
