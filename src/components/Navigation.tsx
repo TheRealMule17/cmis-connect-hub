@@ -1,12 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Search, ChevronDown } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Search } from "lucide-react";
 
 const Navigation = () => {
   const location = useLocation();
@@ -55,109 +49,45 @@ const Navigation = () => {
       <div className="bg-background border-b">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-1 py-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className={`${isActive("/student") ? "bg-accent" : "hover:bg-accent"} flex items-center gap-1`}
-                >
-                  <span className="text-sm font-normal">Students</span>
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-background border shadow-lg z-50">
-                <DropdownMenuItem asChild>
-                  <Link to="/student" className="cursor-pointer">Student Portal</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/student#events" className="cursor-pointer">Events & Workshops</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/student#career" className="cursor-pointer">Career Resources</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/student#mentorship" className="cursor-pointer">Mentorship Program</Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button
+              variant="ghost"
+              className={isActive("/student") ? "bg-accent" : "hover:bg-accent"}
+              asChild
+            >
+              <Link to="/student">
+                <span className="text-sm font-normal">Students</span>
+              </Link>
+            </Button>
             
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className={`${isActive("/dashboard") ? "bg-accent" : "hover:bg-accent"} flex items-center gap-1`}
-                >
-                  <span className="text-sm font-normal">Faculty/Administrators</span>
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-background border shadow-lg z-50">
-                <DropdownMenuItem asChild>
-                  <Link to="/dashboard" className="cursor-pointer">Faculty Dashboard</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/dashboard#events" className="cursor-pointer">Event Management</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/dashboard#analytics" className="cursor-pointer">Student Analytics</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/dashboard#competitions" className="cursor-pointer">Case Competitions</Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button
+              variant="ghost"
+              className={isActive("/dashboard") ? "bg-accent" : "hover:bg-accent"}
+              asChild
+            >
+              <Link to="/dashboard">
+                <span className="text-sm font-normal">Faculty/Administrators</span>
+              </Link>
+            </Button>
             
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className={`${isActive("/sponsor") ? "bg-accent" : "hover:bg-accent"} flex items-center gap-1`}
-                >
-                  <span className="text-sm font-normal">Industry Sponsors</span>
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-background border shadow-lg z-50">
-                <DropdownMenuItem asChild>
-                  <Link to="/sponsor" className="cursor-pointer">Sponsor Portal</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/sponsor#speaking" className="cursor-pointer">Speaking Opportunities</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/sponsor#sponsorship" className="cursor-pointer">Event Sponsorship</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/sponsor#analytics" className="cursor-pointer">Analytics Dashboard</Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button
+              variant="ghost"
+              className={isActive("/sponsor") ? "bg-accent" : "hover:bg-accent"}
+              asChild
+            >
+              <Link to="/sponsor">
+                <span className="text-sm font-normal">Industry Sponsors</span>
+              </Link>
+            </Button>
             
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className={`${isActive("/alumni") ? "bg-accent" : "hover:bg-accent"} flex items-center gap-1`}
-                >
-                  <span className="text-sm font-normal">Alumni</span>
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-background border shadow-lg z-50">
-                <DropdownMenuItem asChild>
-                  <Link to="/alumni" className="cursor-pointer">Alumni Network</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/alumni#mentorship" className="cursor-pointer">Mentorship</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/alumni#career" className="cursor-pointer">Career History</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/alumni#stories" className="cursor-pointer">Success Stories</Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button
+              variant="ghost"
+              className={isActive("/alumni") ? "bg-accent" : "hover:bg-accent"}
+              asChild
+            >
+              <Link to="/alumni">
+                <span className="text-sm font-normal">Alumni</span>
+              </Link>
+            </Button>
             
             <Button
               variant="ghost"
