@@ -60,7 +60,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Send email using Resend API
     const resendApiKey = Deno.env.get("RESEND_API_KEY")!;
     
-    // Send email notification to CMIS
+    // Send email notification to CMIS (using verified email for testing)
     const emailResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -69,7 +69,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
       body: JSON.stringify({
         from: "CMIS Contact <onboarding@resend.dev>",
-        to: ["mitch@tamu.edu"],
+        to: ["chasecapron918@gmail.com"],
         reply_to: email,
         subject: `Contact Form: ${subject}`,
         html: `
