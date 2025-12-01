@@ -24,6 +24,7 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isOverFooter, setIsOverFooter] = useState(false);
   const [isExpanded, setIsExpanded] = useState(expanded);
+  const [sessionId, setSessionId] = useState<string>(() => crypto.randomUUID());
   const scrollRef = useRef<HTMLDivElement>(null);
   const chatbotRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -69,8 +70,8 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
     return () => observer.disconnect();
   }, []);
 
-  const streamChat = async (userMessages: Message[]) => {
-    const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
+  const callBedrockAgent = async (userMessage: string) => {
+    const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-bedrock`;
     
     const resp = await fetch(CHAT_URL, {
       method: "POST",
@@ -78,74 +79,28 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
       },
-      body: JSON.stringify({ messages: userMessages }),
+      body: JSON.stringify({ 
+        message: userMessage,
+        sessionId: sessionId 
+      }),
     });
 
     if (!resp.ok) {
-      if (resp.status === 429) {
-        toast({
-          title: "Rate limit exceeded",
-          description: "Please try again later.",
-          variant: "destructive",
-        });
-      } else if (resp.status === 402) {
-        toast({
-          title: "Service unavailable",
-          description: "Please contact support.",
-          variant: "destructive",
-        });
-      }
-      throw new Error("Failed to start stream");
+      const errorData = await resp.json().catch(() => ({}));
+      toast({
+        title: "Error",
+        description: errorData.error || "Failed to get response from AI agent.",
+        variant: "destructive",
+      });
+      throw new Error("Failed to call Bedrock agent");
     }
 
-    if (!resp.body) throw new Error("No response body");
-
-    const reader = resp.body.getReader();
-    const decoder = new TextDecoder();
-    let textBuffer = "";
-    let streamDone = false;
-    let assistantContent = "";
-
-    while (!streamDone) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      textBuffer += decoder.decode(value, { stream: true });
-
-      let newlineIndex: number;
-      while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
-        let line = textBuffer.slice(0, newlineIndex);
-        textBuffer = textBuffer.slice(newlineIndex + 1);
-
-        if (line.endsWith("\r")) line = line.slice(0, -1);
-        if (line.startsWith(":") || line.trim() === "") continue;
-        if (!line.startsWith("data: ")) continue;
-
-        const jsonStr = line.slice(6).trim();
-        if (jsonStr === "[DONE]") {
-          streamDone = true;
-          break;
-        }
-
-        try {
-          const parsed = JSON.parse(jsonStr);
-          const content = parsed.choices?.[0]?.delta?.content as string | undefined;
-          if (content) {
-            assistantContent += content;
-            setMessages((prev) => {
-              const last = prev[prev.length - 1];
-              if (last?.role === "assistant") {
-                return prev.map((m, i) =>
-                  i === prev.length - 1 ? { ...m, content: assistantContent } : m
-                );
-              }
-              return [...prev, { role: "assistant", content: assistantContent }];
-            });
-          }
-        } catch {
-          textBuffer = line + "\n" + textBuffer;
-          break;
-        }
-      }
+    const data = await resp.json();
+    
+    if (data.response) {
+      setMessages((prev) => [...prev, { role: "assistant", content: data.response }]);
+    } else {
+      throw new Error("No response from agent");
     }
   };
 
@@ -153,13 +108,13 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
     if (!input.trim() || isLoading) return;
 
     const userMessage: Message = { role: "user", content: input };
-    const newMessages = [...messages, userMessage];
-    setMessages(newMessages);
+    setMessages((prev) => [...prev, userMessage]);
+    const messageText = input;
     setInput("");
     setIsLoading(true);
 
     try {
-      await streamChat(newMessages);
+      await callBedrockAgent(messageText);
     } catch (error) {
       console.error("Chat error:", error);
       toast({
