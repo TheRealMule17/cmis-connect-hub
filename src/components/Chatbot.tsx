@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageCircle, X, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { useLocation } from "react-router-dom";
 
 interface Message {
   role: "user" | "assistant";
@@ -26,6 +27,11 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const chatbotRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const location = useLocation();
+
+  // Determine if current route should have inverted colors
+  const shouldInvertColors = ['/about', '/contact', '/gallery'].includes(location.pathname);
+  const isInverted = shouldInvertColors || isOverFooter;
 
   useEffect(() => {
     setIsOpen(expanded);
@@ -181,7 +187,7 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
             onClick={() => setIsOpen(true)}
             className={cn(
               "h-14 w-14 rounded-full shadow-lg transition-colors duration-300",
-              isOverFooter 
+              isInverted
                 ? "bg-background text-foreground border-2 border-foreground hover:bg-foreground hover:text-background" 
                 : ""
             )}
@@ -201,7 +207,7 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
               ? "fixed inset-0 md:inset-4 z-50 w-auto h-auto bg-background border"
               : cn(
                   "fixed bottom-6 right-6 w-96 h-[500px] z-50",
-                  isOverFooter
+                  isInverted
                     ? "bg-foreground text-background border-2 border-background"
                     : "bg-background text-foreground border"
                 )
@@ -209,7 +215,7 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
         >
           <div className={cn(
             "flex items-center justify-between p-4 border-b transition-colors duration-300",
-            isOverFooter && !isExpanded ? "border-background/20" : ""
+            isInverted && !isExpanded ? "border-background/20" : ""
           )}>
             <h3 className={cn("font-semibold", isExpanded && "text-2xl")}>
               {isExpanded ? "Ask Our Howdy Helper" : "The Howdy Helper"}
@@ -218,7 +224,7 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
               variant="ghost"
               size="icon"
               onClick={handleClose}
-              className={cn(isOverFooter && !isExpanded && "hover:bg-background/20")}
+              className={cn(isInverted && !isExpanded && "hover:bg-background/20")}
             >
               <X className="h-4 w-4" />
             </Button>
@@ -229,7 +235,7 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
               {messages.length === 0 && (
                 <div className={cn(
                   "text-center text-sm py-8 transition-colors duration-300",
-                  isOverFooter && !isExpanded ? "text-background/70" : "text-muted-foreground"
+                  isInverted && !isExpanded ? "text-background/70" : "text-muted-foreground"
                 )}>
                   {isExpanded 
                     ? "Howdy! Ask me anything about CMIS programs, events, mentorship, and more!" 
@@ -245,10 +251,10 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
                     className={cn(
                       "max-w-[80%] rounded-lg px-4 py-2 transition-colors duration-300",
                       msg.role === "user"
-                        ? isOverFooter && !isExpanded
+                        ? isInverted && !isExpanded
                           ? "bg-background text-foreground"
                           : "bg-primary text-primary-foreground"
-                        : isOverFooter && !isExpanded
+                        : isInverted && !isExpanded
                           ? "bg-background/20 text-background"
                           : "bg-muted text-foreground"
                     )}
@@ -262,7 +268,7 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
 
           <div className={cn(
             "p-4 border-t transition-colors duration-300",
-            isOverFooter && !isExpanded ? "border-background/20" : ""
+            isInverted && !isExpanded ? "border-background/20" : ""
           )}>
             <form
               onSubmit={(e) => {
