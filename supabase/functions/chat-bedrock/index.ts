@@ -136,24 +136,70 @@ serve(async (req) => {
       );
     }
 
-    const responseData = await response.json();
-    console.log("Agent response received successfully");
-
-    // Extract the completion text from the response
-    let fullResponse = '';
-    if (responseData.completion) {
-      fullResponse = responseData.completion;
-    } else if (responseData.output && responseData.output.text) {
-      fullResponse = responseData.output.text;
-    } else {
-      fullResponse = JSON.stringify(responseData);
+    // The response is an event stream, not JSON
+    // Read the stream and extract text from events
+    if (!response.body) {
+      throw new Error("No response body from Bedrock");
     }
+
+    console.log("Reading event stream from Bedrock...");
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullResponse = '';
+    let buffer = '';
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        
+        // Try to extract JSON events from the buffer
+        // Events are typically newline-delimited
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || ''; // Keep the last incomplete line in buffer
+
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          
+          try {
+            const event = JSON.parse(line);
+            console.log("Event received:", event);
+            
+            // Extract text from completion events
+            if (event.chunk && event.chunk.bytes) {
+              // Decode base64 bytes if present
+              const chunkText = new TextDecoder().decode(
+                Uint8Array.from(atob(event.chunk.bytes), c => c.charCodeAt(0))
+              );
+              fullResponse += chunkText;
+            } else if (event.output && event.output.text) {
+              fullResponse += event.output.text;
+            } else if (event.completion) {
+              fullResponse += event.completion;
+            } else if (typeof event === 'string') {
+              fullResponse += event;
+            }
+          } catch (parseError) {
+            console.log("Could not parse line as JSON:", line);
+            // If it's not JSON, it might be plain text
+            if (line.trim()) {
+              fullResponse += line;
+            }
+          }
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+
+    console.log("Agent response received successfully, length:", fullResponse.length);
 
     return new Response(
       JSON.stringify({ 
-        response: fullResponse,
-        sessionId: useSessionId,
-        rawResponse: responseData
+        response: fullResponse || "No response text received from agent",
+        sessionId: useSessionId
       }),
       { 
         status: 200, 
