@@ -95,7 +95,7 @@ const Contact = () => {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Bot className="h-6 w-6 text-primary" />
-                <CardTitle>Try Our AI Assistant First!</CardTitle>
+                <CardTitle>Ask our Howdy Helper First!</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
@@ -108,7 +108,7 @@ const Contact = () => {
                 className="w-full"
               >
                 <Bot className="h-5 w-5 mr-2" />
-                Ask the AI Assistant
+                Ask the Howdy Helper
               </Button>
               <p className="text-xs text-muted-foreground text-center mt-3">
                 Still need to contact us directly? Use the form below.
