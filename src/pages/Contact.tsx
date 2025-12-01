@@ -13,13 +13,13 @@ const Contact = () => {
       <Navigation />
       <BreadcrumbNav />
       
-      <main className="container mx-auto px-4 py-16 flex-1">
+      <main className="container mx-auto px-4 py-8 md:py-16 flex-1">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             Contact Us
           </h1>
           
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             <Card>
               <CardHeader>
                 <CardTitle>Get in Touch</CardTitle>
