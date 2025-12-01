@@ -11,8 +11,13 @@ interface Message {
   content: string;
 }
 
-export const Chatbot = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface ChatbotProps {
+  expanded?: boolean;
+  onClose?: () => void;
+}
+
+export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
+  const [isOpen, setIsOpen] = useState(expanded);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -20,6 +25,10 @@ export const Chatbot = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const chatbotRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    setIsOpen(expanded);
+  }, [expanded]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -145,10 +154,15 @@ export const Chatbot = () => {
     }
   };
 
+  const handleClose = () => {
+    setIsOpen(false);
+    onClose?.();
+  };
+
   return (
     <>
-      {!isOpen && (
-        <div ref={chatbotRef} className="fixed bottom-6 right-6">
+      {!isOpen && !expanded && (
+        <div ref={chatbotRef} className="fixed bottom-6 right-6 z-50">
           <Button
             onClick={() => setIsOpen(true)}
             className={cn(
@@ -168,22 +182,29 @@ export const Chatbot = () => {
         <div 
           ref={chatbotRef}
           className={cn(
-            "fixed bottom-6 right-6 w-96 h-[500px] rounded-lg shadow-xl flex flex-col transition-colors duration-300",
-            isOverFooter
-              ? "bg-foreground text-background border-2 border-background"
-              : "bg-background text-foreground border"
+            "rounded-lg shadow-xl flex flex-col transition-all duration-300",
+            expanded
+              ? "fixed inset-0 md:inset-4 z-50 w-auto h-auto bg-background border"
+              : cn(
+                  "fixed bottom-6 right-6 w-96 h-[500px] z-50",
+                  isOverFooter
+                    ? "bg-foreground text-background border-2 border-background"
+                    : "bg-background text-foreground border"
+                )
           )}
         >
           <div className={cn(
             "flex items-center justify-between p-4 border-b transition-colors duration-300",
-            isOverFooter ? "border-background/20" : ""
+            isOverFooter && !expanded ? "border-background/20" : ""
           )}>
-            <h3 className="font-semibold">The Howdy Helper</h3>
+            <h3 className={cn("font-semibold", expanded && "text-2xl")}>
+              {expanded ? "Ask Our AI Assistant" : "The Howdy Helper"}
+            </h3>
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setIsOpen(false)}
-              className={cn(isOverFooter && "hover:bg-background/20")}
+              onClick={handleClose}
+              className={cn(isOverFooter && !expanded && "hover:bg-background/20")}
             >
               <X className="h-4 w-4" />
             </Button>
