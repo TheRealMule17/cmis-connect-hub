@@ -1,6 +1,7 @@
 import Navigation from "@/components/Navigation";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import Footer from "@/components/Footer";
+import SponsorShowcase from "@/components/SponsorShowcase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const About = () => {
@@ -52,6 +53,17 @@ const About = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Sponsors Section */}
+          <div className="mt-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              Our Sponsors
+            </h2>
+            <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
+              We are grateful for the support of our sponsors who make our programs and initiatives possible.
+            </p>
+            <SponsorShowcase />
+          </div>
         </div>
       </main>
       
