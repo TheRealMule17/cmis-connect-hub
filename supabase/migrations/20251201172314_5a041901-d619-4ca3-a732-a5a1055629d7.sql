@@ -1,0 +1,1 @@
+CREATE INDEX idx_batch_id ON public.generated_emails(batch_id)
