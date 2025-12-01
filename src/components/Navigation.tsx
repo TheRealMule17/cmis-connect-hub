@@ -28,16 +28,13 @@ const Navigation = () => {
             {/* Right side navigation */}
             <div className="hidden lg:flex items-center gap-6">
               <Button variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 text-sm font-normal" asChild>
-                <Link to="/about">Directory</Link>
+                <Link to="/gallery">Gallery</Link>
               </Button>
               <Button variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 text-sm font-normal" asChild>
-                <Link to="/contact">Apply</Link>
+                <Link to="/about">About Us</Link>
               </Button>
               <Button variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 text-sm font-normal" asChild>
-                <Link to="/gallery">Events</Link>
-              </Button>
-              <Button variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 text-sm font-normal" asChild>
-                <Link to="/about">News</Link>
+                <Link to="/contact">Contact Us</Link>
               </Button>
               <div className="flex items-center gap-2 border border-primary-foreground/30 rounded px-3 py-1.5">
                 <Search className="h-4 w-4" />
