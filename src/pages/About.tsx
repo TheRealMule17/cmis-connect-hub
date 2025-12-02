@@ -60,10 +60,10 @@ const About = () => {
             </CardContent>
           </Card>
 
-          {/* Our Community Section */}
+          {/* Faculty Advisory Board Section */}
           <section className="mt-8 md:mt-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 md:mb-8 text-center bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              Our Community
+              Faculty Advisory Board
             </h2>
             <p className="text-sm sm:text-base text-center text-muted-foreground mb-8 md:mb-12 max-w-2xl mx-auto px-4">
               Meet the diverse community of mentors, faculty, students, and leaders who make CMIS thrive.
