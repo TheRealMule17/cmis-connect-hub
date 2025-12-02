@@ -1,16 +1,79 @@
+import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ExternalLink } from "lucide-react";
+import caseCompImage from "@/assets/gallery/UG_CMIS_CaseComp.jpg";
+import halloweenImage from "@/assets/gallery/HalloweenMIS.jpg";
+import grandStationImage from "@/assets/gallery/GrandStation_MSMIS.jpg";
+import networkingImage from "@/assets/gallery/NetworkingMSMIS.jpg";
+import tailgateImage from "@/assets/gallery/MS_MIS_ONLINE_TG.jpg";
+import welcomeImage from "@/assets/gallery/MS_MIS_WELCOME.jpg";
+import communityImage from "@/assets/gallery/CommunityService.jpg";
+import teamBuildingImage from "@/assets/gallery/MS_MIS_TeamBuilding_26.jpg";
 
 const Gallery = () => {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
   const eventImages = [
-    { id: 1, title: "Annual Tech Summit 2024", category: "Event" },
-    { id: 2, title: "Career Fair Spring", category: "Event" },
-    { id: 3, title: "Networking Mixer", category: "Event" },
-    { id: 4, title: "Workshop Series", category: "Event" },
-    { id: 5, title: "Industry Panel Discussion", category: "Event" },
-    { id: 6, title: "Case Competition Finals", category: "Event" },
+    { 
+      id: 1, 
+      title: "CMIS UG Case Competition", 
+      category: "Event",
+      image: caseCompImage,
+      linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_cmis-casecompetition-istm-activity-7399099638412242944-ql16?utm_source=share&utm_medium=member_desktop"
+    },
+    { 
+      id: 2, 
+      title: "Sarah Halloween", 
+      category: "Event",
+      image: halloweenImage,
+      linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_thank-you-sarah-warwick-for-manning-the-activity-7391137983581765632-s6JO?utm_source=share&utm_medium=member_desktop"
+    },
+    { 
+      id: 3, 
+      title: "Grand Station", 
+      category: "Event",
+      image: grandStationImage,
+      linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_tamu-maysbusinessschool-msmis-activity-7388982893651361793-sNwp?utm_source=share&utm_medium=member_desktop"
+    },
+    { 
+      id: 4, 
+      title: "Speed Networking", 
+      category: "Event",
+      image: networkingImage,
+      linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_aggienetwork-managementinformationsystems-activity-7382097539250139136-pLAH?utm_source=share&utm_medium=member_desktop"
+    },
+    { 
+      id: 5, 
+      title: "MS MIS Online Tailgate", 
+      category: "Event",
+      image: tailgateImage,
+      linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_tamu-aggienetwork-mismis-activity-7371995962547953664-M-1F?utm_source=share&utm_medium=member_desktop"
+    },
+    { 
+      id: 6, 
+      title: "MS MIS Welcome", 
+      category: "Event",
+      image: welcomeImage,
+      linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_howdy-msmis-maysbusiness-activity-7363578984581787648-g1wh?utm_source=share&utm_medium=member_desktop"
+    },
+    { 
+      id: 7, 
+      title: "Community Service", 
+      category: "Event",
+      image: communityImage,
+      linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_maysbusinessschool-mis-selflessservice-activity-7321261669983076352-rdHP?utm_source=share&utm_medium=member_desktop"
+    },
+    { 
+      id: 8, 
+      title: "MS MIS 2026 Team Building", 
+      category: "Event",
+      image: teamBuildingImage,
+      linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_managmenetinformationsystems-classof2026-activity-7304866283483734017-TmfL?utm_source=share&utm_medium=member_desktop"
+    },
   ];
 
   return (
@@ -35,15 +98,27 @@ const Gallery = () => {
             {eventImages.map((event) => (
               <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <CardContent className="p-0">
-                  <div className="aspect-video bg-muted flex items-center justify-center">
+                  <div 
+                    className="aspect-video bg-muted flex items-center justify-center cursor-pointer group relative overflow-hidden"
+                    onClick={() => setSelectedImage(event.image)}
+                  >
                     <img
-                      src={`https://images.unsplash.com/photo-${1540575467063 + event.id}-4bd08ddc8630?w=600&h=400&fit=crop`}
+                      src={event.image}
                       alt={event.title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-transform group-hover:scale-105"
                     />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold text-lg mb-1">{event.title}</h3>
+                    <a 
+                      href={event.linkedIn}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-lg mb-1 hover:text-primary transition-colors flex items-center gap-2 group"
+                    >
+                      {event.title}
+                      <ExternalLink className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </a>
                     <p className="text-sm text-muted-foreground">{event.category}</p>
                   </div>
                 </CardContent>
@@ -52,6 +127,19 @@ const Gallery = () => {
           </div>
         </section>
       </main>
+      
+      {/* Image Enlargement Dialog */}
+      <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
+        <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 overflow-hidden">
+          {selectedImage && (
+            <img
+              src={selectedImage}
+              alt="Enlarged view"
+              className="w-full h-full object-contain"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
       
       <Footer />
     </div>
