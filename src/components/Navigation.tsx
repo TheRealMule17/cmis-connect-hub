@@ -16,10 +16,8 @@ const Navigation = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Navigate to appropriate page based on search query or implement search logic
-      console.log("Searching for:", searchQuery);
-      // Example: navigate to a search results page
-      // navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      setSearchQuery("");
     }
   };
   
