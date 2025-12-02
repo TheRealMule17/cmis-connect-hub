@@ -94,6 +94,23 @@ const FacultyMentorMatcher = () => {
         if (error) throw error;
       }
 
+      // Trigger n8n workflow
+      try {
+        await fetch("https://mitchpeif.app.n8n.cloud/webhook-test/cf748cb3-bba2-4714-84be-25c078cb6104", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          mode: "no-cors",
+          body: JSON.stringify({
+            timestamp: new Date().toISOString(),
+            matchesCreated: newMatches.length,
+            mentorCount: mentors?.length || 0,
+            studentCount: students?.length || 0,
+          }),
+        });
+      } catch (webhookError) {
+        console.error("n8n webhook error:", webhookError);
+      }
+
       return newMatches.length;
     },
     onSuccess: (count) => {
