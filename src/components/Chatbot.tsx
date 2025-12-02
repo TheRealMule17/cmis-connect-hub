@@ -156,21 +156,14 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
         <div 
           ref={chatbotRef}
           className={cn(
-            "rounded-lg shadow-xl flex flex-col transition-all duration-300",
+            "rounded-lg shadow-xl flex flex-col transition-all duration-300 overflow-hidden",
             isExpanded
-              ? "fixed inset-0 md:inset-4 z-50 w-auto h-auto bg-background border"
-              : cn(
-                  "fixed bottom-6 right-6 w-96 h-[500px] z-50",
-                  isInverted
-                    ? "bg-foreground text-background border-2 border-background"
-                    : "bg-background text-foreground border"
-                )
+              ? "fixed inset-0 md:inset-4 z-50 w-auto h-auto bg-white border"
+              : "fixed bottom-6 right-6 w-96 h-[500px] z-50 bg-white border"
           )}
         >
-          <div className={cn(
-            "flex items-center justify-between p-4 border-b transition-colors duration-300",
-            isInverted && !isExpanded ? "border-background/20" : ""
-          )}>
+          {/* Maroon Header */}
+          <div className="flex items-center justify-between p-4 bg-primary text-white">
             <h3 className={cn("font-semibold", isExpanded && "text-2xl")}>
               {isExpanded ? "Ask Our Howdy Helper" : "The Howdy Helper"}
             </h3>
@@ -178,19 +171,17 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
               variant="ghost"
               size="icon"
               onClick={handleClose}
-              className={cn(isInverted && !isExpanded && "hover:bg-background/20")}
+              className="text-white hover:bg-white/20"
             >
               <X className="h-4 w-4" />
             </Button>
           </div>
 
-          <ScrollArea className="flex-1 p-4" ref={scrollRef}>
+          {/* White Body */}
+          <ScrollArea className="flex-1 p-4 bg-white" ref={scrollRef}>
             <div className="space-y-4">
               {messages.length === 0 && (
-                <div className={cn(
-                  "text-center text-sm py-8 transition-colors duration-300",
-                  isInverted && !isExpanded ? "text-background/70" : "text-muted-foreground"
-                )}>
+                <div className="text-center text-sm py-8 text-gray-500">
                   {isExpanded 
                     ? "Howdy! Ask me anything about CMIS programs, events, mentorship, and more!" 
                     : "Hi! I'm here to help you navigate the CMIS portal. Ask me anything!"}
@@ -203,27 +194,28 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
                 >
                   <div
                     className={cn(
-                      "max-w-[80%] rounded-lg px-4 py-2 transition-colors duration-300",
+                      "max-w-[80%] rounded-lg px-4 py-2",
                       msg.role === "user"
-                        ? isInverted && !isExpanded
-                          ? "bg-background text-foreground"
-                          : "bg-primary text-primary-foreground"
-                        : isInverted && !isExpanded
-                          ? "bg-background/20 text-background"
-                          : "bg-muted text-foreground"
+                        ? "bg-primary text-white"
+                        : "bg-gray-100 text-gray-900"
                     )}
                   >
                     <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
                   </div>
                 </div>
               ))}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="bg-gray-100 text-gray-600 rounded-lg px-4 py-2">
+                    <p className="text-sm italic">Thinking...</p>
+                  </div>
+                </div>
+              )}
             </div>
           </ScrollArea>
 
-          <div className={cn(
-            "p-4 border-t transition-colors duration-300",
-            isInverted && !isExpanded ? "border-background/20" : ""
-          )}>
+          {/* Input Area */}
+          <div className="p-4 border-t border-gray-200 bg-white">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -236,9 +228,10 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your message..."
                 disabled={isLoading}
+                className="bg-white text-gray-900 border-gray-300 placeholder:text-gray-400"
               />
-              <Button type="submit" size="icon" disabled={isLoading}>
-                <Send className="h-4 w-4" />
+              <Button type="submit" size="icon" disabled={isLoading} className="bg-primary hover:bg-primary/90">
+                <Send className="h-4 w-4 text-white" />
               </Button>
             </form>
           </div>
