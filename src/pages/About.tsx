@@ -4,6 +4,10 @@ import Footer from "@/components/Footer";
 import SponsorShowcase from "@/components/SponsorShowcase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import davidGomillionPhoto from "@/assets/faculty/david-gomillion.jpg";
+import aaronBeckerPhoto from "@/assets/faculty/aaron-becker.jpg";
+import gregHeimPhoto from "@/assets/faculty/greg-heim.jpg";
+import michaelScialdonePhoto from "@/assets/faculty/michael-scialdone.jpg";
+import dwayneWhittenPhoto from "@/assets/faculty/dwayne-whitten.jpg";
 
 const About = () => {
   return (
@@ -65,31 +69,23 @@ const About = () => {
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {[
-                { id: 1, name: "Dr. Aaron Becker", role: "Faculty Advisory Board", image: null },
-                { id: 2, name: "Dr. David Gomillion", role: "Faculty Advisory Board", image: davidGomillionPhoto },
-                { id: 3, name: "Dr. Greg Heim", role: "Faculty Advisory Board", image: null },
-                { id: 4, name: "Dr. Michael Scialdone", role: "Faculty Advisory Board", image: null },
-                { id: 5, name: "Dr. Dwayne Whitten", role: "Faculty Advisory Board", image: null },
-              ].map((person, index) => (
+                { id: 1, name: "Dr. Aaron Becker", role: "Faculty Advisory Board", image: aaronBeckerPhoto, gridClass: "" },
+                { id: 2, name: "Dr. David Gomillion", role: "Faculty Advisory Board", image: davidGomillionPhoto, gridClass: "" },
+                { id: 3, name: "Dr. Greg Heim", role: "Faculty Advisory Board", image: gregHeimPhoto, gridClass: "" },
+                { id: 4, name: "Dr. Michael Scialdone", role: "Faculty Advisory Board", image: michaelScialdonePhoto, gridClass: "lg:col-start-1" },
+                { id: 5, name: "Dr. Dwayne Whitten", role: "Faculty Advisory Board", image: dwayneWhittenPhoto, gridClass: "lg:col-start-3" },
+              ].map((person) => (
                 <Card 
                   key={person.id} 
-                  className={`overflow-hidden hover:shadow-lg transition-all duration-300 hover-scale ${index === 3 ? 'lg:col-start-2' : ''}`}
+                  className={`overflow-hidden hover:shadow-lg transition-all duration-300 hover-scale ${person.gridClass}`}
                 >
                   <CardContent className="p-0">
                     <div className="aspect-square bg-muted flex items-center justify-center">
-                      {person.image ? (
-                        <img
-                          src={person.image}
-                          alt={person.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <img
-                          src={`https://images.unsplash.com/photo-${1438761681033 + person.id * 1000}-6b808e8b0ccc?w=400&h=400&fit=crop&face`}
-                          alt={person.name}
-                          className="w-full h-full object-cover"
-                        />
-                      )}
+                      <img
+                        src={person.image}
+                        alt={person.name}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <div className="p-4 text-center">
                       <h3 className="font-semibold text-base mb-1">{person.name}</h3>
