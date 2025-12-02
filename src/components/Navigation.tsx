@@ -125,7 +125,7 @@ const Navigation = () => {
               <Button variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 text-sm font-normal" asChild>
                 <Link to="/contact">Contact Us</Link>
               </Button>
-              <Popover open={showSuggestions} onOpenChange={setShowSuggestions}>
+              <Popover open={showSuggestions && suggestions.length > 0} onOpenChange={setShowSuggestions}>
                 <PopoverTrigger asChild>
                   <form onSubmit={handleSearch} className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary-foreground/70 z-10" />
@@ -134,15 +134,12 @@ const Navigation = () => {
                       placeholder="Search..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      onFocus={() => {
-                        if (suggestions.length > 0) setShowSuggestions(true);
-                      }}
                       className="pl-9 pr-3 py-1.5 w-[200px] bg-primary-foreground/10 border-primary-foreground/30 text-primary-foreground placeholder:text-primary-foreground/70 focus-visible:ring-primary-foreground/50"
                     />
                   </form>
                 </PopoverTrigger>
                 <PopoverContent 
-                  className="w-[400px] p-0" 
+                  className="w-[400px] p-0 bg-background border shadow-lg" 
                   align="start"
                   onOpenAutoFocus={(e) => e.preventDefault()}
                 >
