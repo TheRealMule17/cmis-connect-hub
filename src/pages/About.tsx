@@ -72,8 +72,8 @@ const About = () => {
                 { id: 1, name: "Dr. Aaron Becker", role: "Faculty Advisory Board", image: aaronBeckerPhoto, gridClass: "" },
                 { id: 2, name: "Dr. David Gomillion", role: "Faculty Advisory Board", image: davidGomillionPhoto, gridClass: "" },
                 { id: 3, name: "Dr. Greg Heim", role: "Faculty Advisory Board", image: gregHeimPhoto, gridClass: "" },
-                { id: 4, name: "Dr. Michael Scialdone", role: "Faculty Advisory Board", image: michaelScialdonePhoto, gridClass: "lg:col-start-1" },
-                { id: 5, name: "Dr. Dwayne Whitten", role: "Faculty Advisory Board", image: dwayneWhittenPhoto, gridClass: "lg:col-start-3" },
+                { id: 4, name: "Dr. Michael Scialdone", role: "Faculty Advisory Board", image: michaelScialdonePhoto, gridClass: "" },
+                { id: 5, name: "Dr. Dwayne Whitten", role: "Faculty Advisory Board", image: dwayneWhittenPhoto, gridClass: "" },
               ].map((person) => (
                 <Card 
                   key={person.id} 
