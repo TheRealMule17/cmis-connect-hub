@@ -152,38 +152,65 @@ const FacultyMentorMatcher = () => {
     setN8nMatches([]);
     
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
-      
-      const response = await fetch(
+      // Step 1: POST to start the matching workflow
+      console.log('Starting matching workflow...');
+      const startResponse = await fetch(
         "https://mitchpeif.app.n8n.cloud/webhook/cf748cb3-bba2-4714-84be-25c078cb6104",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({}),
-          signal: controller.signal,
         }
       );
       
-      clearTimeout(timeoutId);
+      console.log('Start response status:', startResponse.status);
       
-      // Log the response status and check if there's content
-      console.log('Response status:', response.status);
-      const text = await response.text();
-      console.log('Response body:', text);
-      
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}: ${text}`);
+      if (!startResponse.ok) {
+        const text = await startResponse.text();
+        throw new Error(`Failed to start workflow: ${startResponse.status} - ${text}`);
       }
       
-      // Only parse if there's content
-      if (!text || text.trim() === '') {
-        console.error('Empty response from webhook');
-        throw new Error('Webhook returned an empty response. The workflow may not be configured to return data.');
-      }
+      // Step 2: Poll for results every 2-3 seconds
+      const maxAttempts = 30; // Max 90 seconds of polling (30 * 3s)
+      let attempts = 0;
       
-      const data: N8nMatch[] = JSON.parse(text);
-      console.log('Parsed data:', data);
+      const pollForResults = async (): Promise<N8nMatch[]> => {
+        while (attempts < maxAttempts) {
+          attempts++;
+          console.log(`Polling for results (attempt ${attempts}/${maxAttempts})...`);
+          
+          try {
+            const pollResponse = await fetch(
+              "https://mitchpeif.app.n8n.cloud/webhook/get-matches",
+              { method: "GET" }
+            );
+            
+            console.log('Poll response status:', pollResponse.status);
+            
+            if (pollResponse.ok) {
+              const text = await pollResponse.text();
+              console.log('Poll response body:', text);
+              
+              if (text && text.trim() !== '' && text.trim() !== '[]') {
+                const data = JSON.parse(text);
+                if (Array.isArray(data) && data.length > 0) {
+                  console.log('Matches found:', data);
+                  return data;
+                }
+              }
+            }
+          } catch (pollError) {
+            console.warn('Poll error (will retry):', pollError);
+          }
+          
+          // Wait 3 seconds before next poll
+          await new Promise(resolve => setTimeout(resolve, 3000));
+        }
+        
+        throw new Error('Timeout waiting for matching results. Please try again.');
+      };
+      
+      const data = await pollForResults();
       setN8nMatches(data);
       setLastRunTime(new Date().toLocaleString());
       
@@ -193,9 +220,7 @@ const FacultyMentorMatcher = () => {
       });
     } catch (error) {
       console.error("n8n workflow error:", error);
-      const message = error instanceof Error && error.name === "AbortError"
-        ? "Request timed out. The workflow may still be running."
-        : error instanceof Error ? error.message : "An unexpected error occurred";
+      const message = error instanceof Error ? error.message : "An unexpected error occurred";
       
       toast({
         title: "Matching failed",
