@@ -66,7 +66,7 @@ const About = () => {
               Faculty Advisory Board
             </h2>
             <p className="text-sm sm:text-base text-center text-muted-foreground mb-8 md:mb-12 max-w-2xl mx-auto px-4">
-              Meet the diverse community of mentors, faculty, students, and leaders who make CMIS thrive.
+              Our dedicated faculty advisors who provide guidance, mentorship, and leadership to the CMIS community.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {[
