@@ -1,47 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { BedrockAgentRuntimeClient, InvokeAgentCommand } from "https://esm.sh/@aws-sdk/client-bedrock-agent-runtime@3.744.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
-
-// AWS Signature V4 signing
-async function hmacSign(
-  key: ArrayBuffer,
-  message: string
-): Promise<ArrayBuffer> {
-  const encoder = new TextEncoder();
-  const cryptoKey = await crypto.subtle.importKey(
-    "raw",
-    key,
-    { name: "HMAC", hash: { name: "SHA-256" } },
-    false,
-    ["sign"]
-  );
-  return await crypto.subtle.sign("HMAC", cryptoKey, encoder.encode(message));
-}
-
-async function getSignatureKey(
-  key: string,
-  dateStamp: string,
-  regionName: string,
-  serviceName: string
-): Promise<ArrayBuffer> {
-  const encoder = new TextEncoder();
-  const kDate = await hmacSign(encoder.encode(`AWS4${key}`).buffer, dateStamp);
-  const kRegion = await hmacSign(kDate, regionName);
-  const kService = await hmacSign(kRegion, serviceName);
-  const kSigning = await hmacSign(kService, "aws4_request");
-  return kSigning;
-}
-
-async function sha256(data: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const hash = await crypto.subtle.digest("SHA-256", encoder.encode(data));
-  return Array.from(new Uint8Array(hash))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-}
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -78,127 +41,44 @@ serve(async (req) => {
     const useSessionId = sessionId || crypto.randomUUID();
     console.log(`Invoking Bedrock Agent: ${agentId} with sessionId: ${useSessionId}`);
 
-    // Prepare the request
-    const host = `bedrock-agent-runtime.${awsRegion}.amazonaws.com`;
-    const endpoint = `https://${host}/agents/${agentId}/agentAliases/${agentAliasId}/sessions/${useSessionId}/text`;
-    const service = 'bedrock';
-    const method = 'POST';
-
-    const requestBody = JSON.stringify({
-      inputText: message,
-      enableTrace: false,
-      endSession: false
-    });
-
-    // Create AWS Signature V4
-    const now = new Date();
-    const amzDate = now.toISOString().replace(/[:\-]|\.\d{3}/g, '');
-    const dateStamp = amzDate.substring(0, 8);
-
-    const payloadHash = await sha256(requestBody);
-    const canonicalHeaders = `host:${host}\nx-amz-date:${amzDate}\n`;
-    const signedHeaders = 'host;x-amz-date';
-    const canonicalRequest = `${method}\n${new URL(endpoint).pathname}\n\n${canonicalHeaders}\n${signedHeaders}\n${payloadHash}`;
-
-    const algorithm = 'AWS4-HMAC-SHA256';
-    const credentialScope = `${dateStamp}/${awsRegion}/${service}/aws4_request`;
-    const stringToSign = `${algorithm}\n${amzDate}\n${credentialScope}\n${await sha256(canonicalRequest)}`;
-
-    const signingKey = await getSignatureKey(awsSecretAccessKey, dateStamp, awsRegion, service);
-    const signatureBuffer = await hmacSign(signingKey, stringToSign);
-    const signature = Array.from(new Uint8Array(signatureBuffer))
-      .map((b: number) => b.toString(16).padStart(2, '0'))
-      .join('');
-
-    const authorizationHeader = `${algorithm} Credential=${awsAccessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
-
-    // Make the request to Bedrock
-    const response = await fetch(endpoint, {
-      method: method,
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Amz-Date': amzDate,
-        'Authorization': authorizationHeader,
-        'Host': host
+    // Create the Bedrock Agent Runtime client
+    const client = new BedrockAgentRuntimeClient({
+      region: awsRegion,
+      credentials: {
+        accessKeyId: awsAccessKeyId,
+        secretAccessKey: awsSecretAccessKey,
       },
-      body: requestBody
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`Bedrock API error (${response.status}):`, errorText);
-      return new Response(
-        JSON.stringify({ 
-          error: `Bedrock API error: ${response.status}`,
-          details: errorText
-        }),
-        { status: response.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    // Create and send the command
+    const command = new InvokeAgentCommand({
+      agentId: agentId,
+      agentAliasId: agentAliasId,
+      sessionId: useSessionId,
+      inputText: message,
+    });
+
+    const response = await client.send(command);
+
+    if (response.completion === undefined) {
+      throw new Error("No completion found in response");
     }
 
-    // The response is an event stream, not JSON
-    // Read the stream and extract text from events
-    if (!response.body) {
-      throw new Error("No response body from Bedrock");
-    }
+    let completion = "";
 
-    console.log("Reading event stream from Bedrock...");
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let fullResponse = '';
-    let buffer = '';
-
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        
-        // Try to extract JSON events from the buffer
-        // Events are typically newline-delimited
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || ''; // Keep the last incomplete line in buffer
-
-        for (const line of lines) {
-          if (!line.trim()) continue;
-          
-          try {
-            const event = JSON.parse(line);
-            console.log("Event received:", event);
-            
-            // Extract text from completion events
-            if (event.chunk && event.chunk.bytes) {
-              // Decode base64 bytes if present
-              const chunkText = new TextDecoder().decode(
-                Uint8Array.from(atob(event.chunk.bytes), c => c.charCodeAt(0))
-              );
-              fullResponse += chunkText;
-            } else if (event.output && event.output.text) {
-              fullResponse += event.output.text;
-            } else if (event.completion) {
-              fullResponse += event.completion;
-            } else if (typeof event === 'string') {
-              fullResponse += event;
-            }
-          } catch (parseError) {
-            console.log("Could not parse line as JSON:", line);
-            // If it's not JSON, it might be plain text
-            if (line.trim()) {
-              fullResponse += line;
-            }
-          }
-        }
+    // CRITICAL FIX: Correctly parsing the async iterable
+    for await (const event of response.completion) {
+      if (event.chunk && event.chunk.bytes) {
+        const chunk = new TextDecoder("utf-8").decode(event.chunk.bytes);
+        completion += chunk;
       }
-    } finally {
-      reader.releaseLock();
     }
 
-    console.log("Agent response received successfully, length:", fullResponse.length);
+    console.log("Final completion length:", completion.length);
 
     return new Response(
       JSON.stringify({ 
-        response: fullResponse || "No response text received from agent",
+        response: completion || "No response text received from agent",
         sessionId: useSessionId
       }),
       { 
