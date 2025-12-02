@@ -63,47 +63,41 @@ const About = () => {
             <p className="text-sm sm:text-base text-center text-muted-foreground mb-8 md:mb-12 max-w-2xl mx-auto px-4">
               Meet the diverse community of mentors, faculty, students, and leaders who make CMIS thrive.
             </p>
-            <div className="flex justify-center">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 max-w-5xl">
-                {[
-                  { id: 1, name: "Dr. Aaron Becker", role: "Faculty Advisory Board", image: null, linkedin: null },
-                  { id: 2, name: "Dr. David Gomillion", role: "Faculty Advisory Board", image: davidGomillionPhoto, linkedin: "https://www.linkedin.com/in/davidgomillion/" },
-                  { id: 3, name: "Dr. Greg Heim", role: "Faculty Advisory Board", image: null, linkedin: null },
-                  { id: 4, name: "Dr. Michael Scialdone", role: "Faculty Advisory Board", image: null, linkedin: null },
-                  { id: 5, name: "Dr. Dwayne Whitten", role: "Faculty Advisory Board", image: null, linkedin: null },
-                ].map((person) => {
-                  const CardWrapper = person.linkedin ? 'a' : 'div';
-                  const cardProps = person.linkedin ? { href: person.linkedin, target: "_blank", rel: "noopener noreferrer", className: "block" } : {};
-                  
-                  return (
-                    <CardWrapper key={person.id} {...cardProps}>
-                      <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 hover-scale">
-                        <CardContent className="p-0">
-                          <div className="aspect-square bg-muted flex items-center justify-center">
-                            {person.image ? (
-                              <img
-                                src={person.image}
-                                alt={person.name}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <img
-                                src={`https://images.unsplash.com/photo-${1438761681033 + person.id * 1000}-6b808e8b0ccc?w=400&h=400&fit=crop&face`}
-                                alt={person.name}
-                                className="w-full h-full object-cover"
-                              />
-                            )}
-                          </div>
-                          <div className="p-4 text-center">
-                            <h3 className="font-semibold text-base mb-1">{person.name}</h3>
-                            <p className="text-sm text-muted-foreground">{person.role}</p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </CardWrapper>
-                  );
-                })}
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              {[
+                { id: 1, name: "Dr. Aaron Becker", role: "Faculty Advisory Board", image: null },
+                { id: 2, name: "Dr. David Gomillion", role: "Faculty Advisory Board", image: davidGomillionPhoto },
+                { id: 3, name: "Dr. Greg Heim", role: "Faculty Advisory Board", image: null },
+                { id: 4, name: "Dr. Michael Scialdone", role: "Faculty Advisory Board", image: null },
+                { id: 5, name: "Dr. Dwayne Whitten", role: "Faculty Advisory Board", image: null },
+              ].map((person, index) => (
+                <Card 
+                  key={person.id} 
+                  className={`overflow-hidden hover:shadow-lg transition-all duration-300 hover-scale ${index === 3 ? 'lg:col-start-2' : ''}`}
+                >
+                  <CardContent className="p-0">
+                    <div className="aspect-square bg-muted flex items-center justify-center">
+                      {person.image ? (
+                        <img
+                          src={person.image}
+                          alt={person.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <img
+                          src={`https://images.unsplash.com/photo-${1438761681033 + person.id * 1000}-6b808e8b0ccc?w=400&h=400&fit=crop&face`}
+                          alt={person.name}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                    </div>
+                    <div className="p-4 text-center">
+                      <h3 className="font-semibold text-base mb-1">{person.name}</h3>
+                      <p className="text-sm text-muted-foreground">{person.role}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </section>
 
