@@ -1,14 +1,27 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Input } from "@/components/ui/input";
 import { Menu, Search } from "lucide-react";
 import { useState } from "react";
 
 const Navigation = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   
   const isActive = (path: string) => location.pathname === path;
+  
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // Navigate to appropriate page based on search query or implement search logic
+      console.log("Searching for:", searchQuery);
+      // Example: navigate to a search results page
+      // navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+    }
+  };
   
   return (
     <nav className="sticky top-0 z-50 bg-background">
@@ -42,10 +55,16 @@ const Navigation = () => {
               <Button variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 text-sm font-normal" asChild>
                 <Link to="/contact">Contact Us</Link>
               </Button>
-              <div className="flex items-center gap-2 border border-primary-foreground/30 rounded px-3 py-1.5">
-                <Search className="h-4 w-4" />
-                <span className="text-sm">Search...</span>
-              </div>
+              <form onSubmit={handleSearch} className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary-foreground/70" />
+                <Input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9 pr-3 py-1.5 w-[200px] bg-primary-foreground/10 border-primary-foreground/30 text-primary-foreground placeholder:text-primary-foreground/70 focus-visible:ring-primary-foreground/50"
+                />
+              </form>
             </div>
 
             {/* Mobile menu button */}
