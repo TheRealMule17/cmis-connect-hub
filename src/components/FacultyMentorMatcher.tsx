@@ -149,82 +149,30 @@ const FacultyMentorMatcher = () => {
 
   const runN8nWorkflow = async () => {
     setN8nLoading(true);
-    setN8nMatches([]);
     
     try {
-      // Step 1: POST to start the matching workflow
-      console.log('Starting matching workflow...');
-      const startResponse = await fetch(
+      const response = await fetch(
         "https://mitchpeif.app.n8n.cloud/webhook/cf748cb3-bba2-4714-84be-25c078cb6104",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({}),
         }
       );
       
-      console.log('Start response status:', startResponse.status);
-      
-      if (!startResponse.ok) {
-        const text = await startResponse.text();
-        throw new Error(`Failed to start workflow: ${startResponse.status} - ${text}`);
+      if (response.ok) {
+        setLastRunTime(new Date().toLocaleString());
+        toast({
+          title: "Matching Started!",
+          description: "Student-mentor matching is in progress. Results will be saved to Google Sheets and participants will receive email notifications.",
+        });
+      } else {
+        throw new Error("Failed to start matching");
       }
-      
-      // Step 2: Poll for results every 2-3 seconds
-      const maxAttempts = 30; // Max 90 seconds of polling (30 * 3s)
-      let attempts = 0;
-      
-      const pollForResults = async (): Promise<N8nMatch[]> => {
-        while (attempts < maxAttempts) {
-          attempts++;
-          console.log(`Polling for results (attempt ${attempts}/${maxAttempts})...`);
-          
-          try {
-            const pollResponse = await fetch(
-              "https://mitchpeif.app.n8n.cloud/webhook/get-matches",
-              { method: "GET" }
-            );
-            
-            console.log('Poll response status:', pollResponse.status);
-            
-            if (pollResponse.ok) {
-              const text = await pollResponse.text();
-              console.log('Poll response body:', text);
-              
-              if (text && text.trim() !== '' && text.trim() !== '[]') {
-                const data = JSON.parse(text);
-                if (Array.isArray(data) && data.length > 0) {
-                  console.log('Matches found:', data);
-                  return data;
-                }
-              }
-            }
-          } catch (pollError) {
-            console.warn('Poll error (will retry):', pollError);
-          }
-          
-          // Wait 3 seconds before next poll
-          await new Promise(resolve => setTimeout(resolve, 3000));
-        }
-        
-        throw new Error('Timeout waiting for matching results. Please try again.');
-      };
-      
-      const data = await pollForResults();
-      setN8nMatches(data);
-      setLastRunTime(new Date().toLocaleString());
-      
-      toast({
-        title: "Matching complete!",
-        description: `${data.length} students matched with mentors.`,
-      });
     } catch (error) {
       console.error("n8n workflow error:", error);
-      const message = error instanceof Error ? error.message : "An unexpected error occurred";
-      
       toast({
-        title: "Matching failed",
-        description: `${message}. Check the n8n workflow logs for details.`,
+        title: "Error",
+        description: "Failed to start the matching process. Please try again.",
         variant: "destructive",
       });
     } finally {
