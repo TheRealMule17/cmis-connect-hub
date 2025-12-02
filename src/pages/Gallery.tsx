@@ -20,56 +20,56 @@ const Gallery = () => {
   const eventImages = [
     { 
       id: 1, 
-      title: "CMIS UG Case Competition", 
+      title: "Undergraduate Case Competition", 
       category: "Event",
       image: caseCompImage,
       linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_cmis-casecompetition-istm-activity-7399099638412242944-ql16?utm_source=share&utm_medium=member_desktop"
     },
     { 
       id: 2, 
-      title: "Sarah Halloween", 
+      title: "Halloween Booth", 
       category: "Event",
       image: halloweenImage,
       linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_thank-you-sarah-warwick-for-manning-the-activity-7391137983581765632-s6JO?utm_source=share&utm_medium=member_desktop"
     },
     { 
       id: 3, 
-      title: "Grand Station", 
+      title: "MS-MIS Grand Station Social", 
       category: "Event",
       image: grandStationImage,
       linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_tamu-maysbusinessschool-msmis-activity-7388982893651361793-sNwp?utm_source=share&utm_medium=member_desktop"
     },
     { 
       id: 4, 
-      title: "Speed Networking", 
+      title: "MS-MIS Speed Networking", 
       category: "Event",
       image: networkingImage,
       linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_aggienetwork-managementinformationsystems-activity-7382097539250139136-pLAH?utm_source=share&utm_medium=member_desktop"
     },
     { 
       id: 5, 
-      title: "MS MIS Online Tailgate", 
+      title: "Flex Online MS-MIS Tailgate", 
       category: "Event",
       image: tailgateImage,
       linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_tamu-aggienetwork-mismis-activity-7371995962547953664-M-1F?utm_source=share&utm_medium=member_desktop"
     },
     { 
       id: 6, 
-      title: "MS MIS Welcome", 
+      title: "Welcome MS-MIS Class of 2027!", 
       category: "Event",
       image: welcomeImage,
       linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_howdy-msmis-maysbusiness-activity-7363578984581787648-g1wh?utm_source=share&utm_medium=member_desktop"
     },
     { 
       id: 7, 
-      title: "Community Service", 
+      title: "Selfless Service Spotlight", 
       category: "Event",
       image: communityImage,
       linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_maysbusinessschool-mis-selflessservice-activity-7321261669983076352-rdHP?utm_source=share&utm_medium=member_desktop"
     },
     { 
       id: 8, 
-      title: "MS MIS 2026 Team Building", 
+      title: "MS-MIS Team Building", 
       category: "Event",
       image: teamBuildingImage,
       linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_managmenetinformationsystems-classof2026-activity-7304866283483734017-TmfL?utm_source=share&utm_medium=member_desktop"
@@ -105,7 +105,7 @@ const Gallery = () => {
                     <img
                       src={event.image}
                       alt={event.title}
-                      className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                      className="w-full h-full object-contain transition-transform group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                   </div>
