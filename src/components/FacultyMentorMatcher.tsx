@@ -167,11 +167,23 @@ const FacultyMentorMatcher = () => {
       
       clearTimeout(timeoutId);
       
+      // Log the response status and check if there's content
+      console.log('Response status:', response.status);
+      const text = await response.text();
+      console.log('Response body:', text);
+      
       if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
+        throw new Error(`Request failed with status ${response.status}: ${text}`);
       }
       
-      const data: N8nMatch[] = await response.json();
+      // Only parse if there's content
+      if (!text || text.trim() === '') {
+        console.error('Empty response from webhook');
+        throw new Error('Webhook returned an empty response. The workflow may not be configured to return data.');
+      }
+      
+      const data: N8nMatch[] = JSON.parse(text);
+      console.log('Parsed data:', data);
       setN8nMatches(data);
       setLastRunTime(new Date().toLocaleString());
       
