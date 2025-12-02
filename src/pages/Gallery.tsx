@@ -7,6 +7,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ExternalLink } from "lucide-react";
 import caseCompImage from "@/assets/gallery/UG_CMIS_CaseComp.jpg";
 import halloweenImage from "@/assets/gallery/HalloweenMIS.jpg";
+import iceCreamImage from "@/assets/gallery/IceCreamSocial.jpg";
 import grandStationImage from "@/assets/gallery/GrandStation_MSMIS.jpg";
 import networkingImage from "@/assets/gallery/NetworkingMSMIS.jpg";
 import tailgateImage from "@/assets/gallery/MS_MIS_ONLINE_TG.jpg";
@@ -34,41 +35,48 @@ const Gallery = () => {
     },
     { 
       id: 3, 
+      title: "Ice Cream Social", 
+      category: "Event",
+      image: iceCreamImage,
+      linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_tamu-maysbusinessschool-info-activity-7389707674977751041-59K-?utm_source=share&utm_medium=member_desktop"
+    },
+    { 
+      id: 4, 
       title: "MS-MIS Grand Station Social", 
       category: "Event",
       image: grandStationImage,
       linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_tamu-maysbusinessschool-msmis-activity-7388982893651361793-sNwp?utm_source=share&utm_medium=member_desktop"
     },
     { 
-      id: 4, 
+      id: 5, 
       title: "MS-MIS Speed Networking", 
       category: "Event",
       image: networkingImage,
       linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_aggienetwork-managementinformationsystems-activity-7382097539250139136-pLAH?utm_source=share&utm_medium=member_desktop"
     },
     { 
-      id: 5, 
+      id: 6, 
       title: "Flex Online MS-MIS Tailgate", 
       category: "Event",
       image: tailgateImage,
       linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_tamu-aggienetwork-mismis-activity-7371995962547953664-M-1F?utm_source=share&utm_medium=member_desktop"
     },
     { 
-      id: 6, 
+      id: 7, 
       title: "Welcome MS-MIS Class of 2027!", 
       category: "Event",
       image: welcomeImage,
       linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_howdy-msmis-maysbusiness-activity-7363578984581787648-g1wh?utm_source=share&utm_medium=member_desktop"
     },
     { 
-      id: 7, 
+      id: 8, 
       title: "Selfless Service Spotlight", 
       category: "Event",
       image: communityImage,
       linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_maysbusinessschool-mis-selflessservice-activity-7321261669983076352-rdHP?utm_source=share&utm_medium=member_desktop"
     },
     { 
-      id: 8, 
+      id: 9, 
       title: "MS-MIS Team Building", 
       category: "Event",
       image: teamBuildingImage,
