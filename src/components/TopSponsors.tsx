@@ -55,20 +55,20 @@ const TopSponsors = () => {
           Our Top Sponsors
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6">
         <div className="grid md:grid-cols-3 gap-6">
           {sponsors?.map((sponsor) => (
             <div 
               key={sponsor.id} 
-              className="p-8 border-2 border-yellow-500/30 rounded-lg text-center space-y-4 bg-gradient-to-br from-yellow-50/50 to-amber-50/30 dark:from-yellow-950/20 dark:to-amber-950/10 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-yellow-500/50"
+              className="p-10 border-2 border-yellow-500/30 rounded-lg text-center space-y-6 bg-gradient-to-br from-yellow-50/50 to-amber-50/30 dark:from-yellow-950/20 dark:to-amber-950/10 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-yellow-500/50 flex flex-col justify-center min-h-[280px]"
             >
               {sponsor.logo_url && (
-                <div className="flex items-center justify-center h-32">
+                <div className="flex items-center justify-center h-40 flex-1">
                   <img src={sponsor.logo_url} alt={sponsor.company_name} className="max-h-full max-w-full object-contain" />
                 </div>
               )}
-              <h4 className="font-semibold text-lg">{sponsor.company_name}</h4>
-              <Badge className="bg-yellow-600 hover:bg-yellow-700 text-white">
+              <h4 className="font-semibold text-xl">{sponsor.company_name}</h4>
+              <Badge className="bg-yellow-600 hover:bg-yellow-700 text-white text-sm py-1.5">
                 {sponsor.company_name === "ConocoPhillips" ? "FOUNDING MEMBER" : sponsor.tier?.toUpperCase()}
               </Badge>
             </div>
