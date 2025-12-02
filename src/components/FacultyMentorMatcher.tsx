@@ -251,62 +251,21 @@ const FacultyMentorMatcher = () => {
         </Card>
       </div>
 
-      {/* n8n Workflow Section */}
+      {/* Current Matches - populated by n8n workflow */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Automated Matching Workflow</CardTitle>
+              <CardTitle>Current Matches</CardTitle>
               <CardDescription>
-                Run the n8n workflow to match students with mentors and send notification emails
+                {lastRunTime 
+                  ? `Last updated: ${lastRunTime}` 
+                  : "Run the matching workflow to see student-mentor pairings"}
               </CardDescription>
             </div>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button disabled={n8nLoading}>
-                  {n8nLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Running...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="mr-2 h-4 w-4" />
-                      Run Matching Workflow
-                    </>
-                  )}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Run Matching Workflow?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This will match students with mentors and send notification emails to all participants.
-                    This action may take 10-30 seconds to complete.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={runN8nWorkflow}>
-                    Run Workflow
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {lastRunTime && (
-            <p className="text-sm text-muted-foreground mb-4">
-              Last run: {lastRunTime}
-            </p>
-          )}
-          
-          {n8nMatches.length > 0 && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Badge variant="secondary">{n8nMatches.length} matches found</Badge>
-                <div className="flex gap-2">
+            <div className="flex gap-2">
+              {n8nMatches.length > 0 && (
+                <>
                   <Button variant="outline" size="sm" onClick={downloadCSV}>
                     <Download className="mr-2 h-4 w-4" />
                     Download CSV
@@ -315,10 +274,58 @@ const FacultyMentorMatcher = () => {
                     <RefreshCw className="mr-2 h-4 w-4" />
                     Clear
                   </Button>
-                </div>
-              </div>
+                </>
+              )}
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button disabled={n8nLoading}>
+                    {n8nLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Running...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="mr-2 h-4 w-4" />
+                        Run Matching
+                      </>
+                    )}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Run Matching Workflow?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will match students with mentors and send notification emails to all participants.
+                      This action may take 10-30 seconds to complete.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={runN8nWorkflow}>
+                      Run Workflow
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {n8nLoading && (
+            <div className="flex flex-col items-center justify-center py-8 gap-2">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="text-sm text-muted-foreground">
+                Running workflow... This may take up to 30 seconds.
+              </p>
+            </div>
+          )}
+          
+          {!n8nLoading && n8nMatches.length > 0 && (
+            <div className="space-y-4">
+              <Badge variant="secondary">{n8nMatches.length} matches found</Badge>
               
-              <ScrollArea className="h-[300px] rounded-md border">
+              <ScrollArea className="h-[400px] rounded-md border">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -339,56 +346,11 @@ const FacultyMentorMatcher = () => {
             </div>
           )}
           
-          {n8nMatches.length === 0 && !n8nLoading && (
+          {!n8nLoading && n8nMatches.length === 0 && (
             <p className="text-center text-muted-foreground py-8">
-              Click "Run Matching Workflow" to generate matches
+              Click "Run Matching" to generate and view student-mentor matches
             </p>
           )}
-          
-          {n8nLoading && (
-            <div className="flex flex-col items-center justify-center py-8 gap-2">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="text-sm text-muted-foreground">
-                Running workflow... This may take up to 30 seconds.
-              </p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Current Matches</CardTitle>
-          <CardDescription>Overview of mentor-student pairings</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {mentors?.map((mentor) => {
-              const mentorMatches = matches?.filter(m => m.mentor_id === mentor.user_id) || [];
-              
-              return (
-                <div key={mentor.id} className="p-4 border rounded-lg">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <h4 className="font-semibold">{mentor.name}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {mentor.current_position} at {mentor.current_company}
-                      </p>
-                    </div>
-                    <Badge>{mentorMatches.length} Student{mentorMatches.length !== 1 ? 's' : ''}</Badge>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {mentor.mentor_expertise?.map((exp: string, idx: number) => (
-                      <Badge key={idx} variant="outline">{exp}</Badge>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-            {!mentors?.length && (
-              <p className="text-center text-muted-foreground py-8">No mentors enrolled yet</p>
-            )}
-          </div>
         </CardContent>
       </Card>
     </div>
