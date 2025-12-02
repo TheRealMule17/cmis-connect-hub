@@ -12,9 +12,10 @@ import { format } from "date-fns";
 interface SearchResult {
   id: string;
   title: string;
-  type: "event" | "sponsor" | "gallery";
+  type: "event" | "sponsor" | "gallery" | "page";
   subtitle?: string;
   date?: string;
+  path?: string;
 }
 
 const Navigation = () => {
@@ -39,6 +40,32 @@ const Navigation = () => {
 
       setIsSearching(true);
       const searchTerm = `%${searchQuery.toLowerCase()}%`;
+      const query = searchQuery.toLowerCase();
+
+      // Static page suggestions
+      const pages = [
+        { path: "/", title: "Home", keywords: ["home", "main", "index"] },
+        { path: "/about", title: "About Us", keywords: ["about", "info", "information"] },
+        { path: "/gallery", title: "Gallery", keywords: ["gallery", "photos", "images", "pictures"] },
+        { path: "/contact", title: "Contact Us", keywords: ["contact", "reach", "email", "message"] },
+        { path: "/student", title: "Student Portal", keywords: ["student", "students"] },
+        { path: "/alumni", title: "Alumni Portal", keywords: ["alumni", "graduates"] },
+        { path: "/sponsor", title: "Sponsor Portal", keywords: ["sponsor", "sponsors", "industry"] },
+        { path: "/dashboard", title: "Faculty Dashboard", keywords: ["faculty", "admin", "dashboard"] },
+      ];
+
+      const pageResults = pages
+        .filter(page => 
+          page.title.toLowerCase().includes(query) || 
+          page.keywords.some(keyword => keyword.includes(query))
+        )
+        .map(page => ({
+          id: page.path,
+          title: page.title,
+          type: "page" as const,
+          subtitle: "Navigate to page",
+          path: page.path,
+        }));
 
       try {
         const [eventsData, sponsorsData, galleryData] = await Promise.all([
@@ -63,6 +90,7 @@ const Navigation = () => {
         ]);
 
         const results: SearchResult[] = [
+          ...pageResults,
           ...(eventsData.data?.map((event) => ({
             id: event.id,
             title: event.title,
@@ -120,6 +148,9 @@ const Navigation = () => {
     setSearchQuery("");
     
     switch (result.type) {
+      case "page":
+        navigate(result.path || "/");
+        break;
       case "event":
         navigate(`/search?q=${encodeURIComponent(result.title)}`);
         break;
@@ -199,6 +230,9 @@ const Navigation = () => {
                             className="w-full px-4 py-3 text-left hover:bg-accent transition-colors flex items-start gap-3"
                           >
                             <div className="flex-shrink-0 mt-1">
+                              {result.type === "page" && (
+                                <Search className="h-4 w-4 text-muted-foreground" />
+                              )}
                               {result.type === "event" && (
                                 <Calendar className="h-4 w-4 text-muted-foreground" />
                               )}
