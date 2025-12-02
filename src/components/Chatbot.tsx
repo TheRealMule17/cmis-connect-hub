@@ -97,8 +97,8 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
 
     const data = await resp.json();
     
-    if (data.response) {
-      setMessages((prev) => [...prev, { role: "assistant", content: data.response }]);
+    if (data.reply) {
+      setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
     } else {
       throw new Error("No response from agent");
     }
