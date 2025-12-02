@@ -180,13 +180,14 @@ const FacultyMentorMatcher = () => {
         description: `${data.length} students matched with mentors.`,
       });
     } catch (error) {
+      console.error("n8n workflow error:", error);
       const message = error instanceof Error && error.name === "AbortError"
         ? "Request timed out. The workflow may still be running."
         : error instanceof Error ? error.message : "An unexpected error occurred";
       
       toast({
         title: "Matching failed",
-        description: message,
+        description: `${message}. Check the n8n workflow logs for details.`,
         variant: "destructive",
       });
     } finally {
