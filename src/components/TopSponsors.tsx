@@ -58,13 +58,18 @@ const TopSponsors = () => {
       <CardContent>
         <div className="grid md:grid-cols-3 gap-6">
           {sponsors?.map((sponsor) => (
-            <div key={sponsor.id} className="p-6 border rounded-lg text-center space-y-3">
+            <div 
+              key={sponsor.id} 
+              className="p-8 border-2 border-yellow-500/30 rounded-lg text-center space-y-4 bg-gradient-to-br from-yellow-50/50 to-amber-50/30 dark:from-yellow-950/20 dark:to-amber-950/10 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-yellow-500/50"
+            >
               {sponsor.logo_url && (
-                <img src={sponsor.logo_url} alt={sponsor.company_name} className="h-20 mx-auto object-contain" />
+                <div className="flex items-center justify-center h-32">
+                  <img src={sponsor.logo_url} alt={sponsor.company_name} className="max-h-full max-w-full object-contain" />
+                </div>
               )}
-              <h4 className="font-semibold">{sponsor.company_name}</h4>
-              <Badge variant={sponsor.tier === "gold" ? "default" : "secondary"}>
-                {sponsor.tier?.toUpperCase()}
+              <h4 className="font-semibold text-lg">{sponsor.company_name}</h4>
+              <Badge className="bg-yellow-600 hover:bg-yellow-700 text-white">
+                {sponsor.company_name === "ConocoPhillips" ? "FOUNDING MEMBER" : sponsor.tier?.toUpperCase()}
               </Badge>
             </div>
           ))}
