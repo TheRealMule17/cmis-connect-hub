@@ -1,9 +1,7 @@
-import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ExternalLink } from "lucide-react";
 import caseCompImage from "@/assets/gallery/UG_CMIS_CaseComp.jpg";
 import halloweenImage from "@/assets/gallery/HalloweenMIS.jpg";
@@ -16,8 +14,6 @@ import communityImage from "@/assets/gallery/CommunityService.jpg";
 import teamBuildingImage from "@/assets/gallery/MS_MIS_TeamBuilding_26.jpg";
 
 const Gallery = () => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
   const eventImages = [
     { 
       id: 1, 
@@ -28,7 +24,7 @@ const Gallery = () => {
     },
     { 
       id: 2, 
-      title: "Halloween Booth", 
+      title: "Trick or Treat Station", 
       category: "Event",
       image: halloweenImage,
       linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_thank-you-sarah-warwick-for-manning-the-activity-7391137983581765632-s6JO?utm_source=share&utm_medium=member_desktop"
@@ -106,16 +102,12 @@ const Gallery = () => {
             {eventImages.map((event) => (
               <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <CardContent className="p-0">
-                  <div 
-                    className="aspect-video bg-muted flex items-center justify-center cursor-pointer group relative overflow-hidden"
-                    onClick={() => setSelectedImage(event.image)}
-                  >
+                  <div className="aspect-video bg-muted flex items-center justify-center overflow-hidden">
                     <img
                       src={event.image}
                       alt={event.title}
-                      className="w-full h-full object-contain transition-transform group-hover:scale-105"
+                      className="w-full h-full object-contain"
                     />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                   </div>
                   <div className="p-4">
                     <a 
@@ -135,19 +127,6 @@ const Gallery = () => {
           </div>
         </section>
       </main>
-      
-      {/* Image Enlargement Dialog */}
-      <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
-        <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 overflow-hidden">
-          {selectedImage && (
-            <img
-              src={selectedImage}
-              alt="Enlarged view"
-              className="w-full h-full object-contain"
-            />
-          )}
-        </DialogContent>
-      </Dialog>
       
       <Footer />
     </div>
