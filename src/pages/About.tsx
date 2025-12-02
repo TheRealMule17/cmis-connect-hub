@@ -64,14 +64,11 @@ const About = () => {
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
               {[
-                { id: 1, name: "Dr. Sarah Johnson", role: "Faculty Advisor" },
-                { id: 2, name: "Michael Chen", role: "Student Leader" },
-                { id: 3, name: "Emily Rodriguez", role: "Industry Mentor" },
-                { id: 4, name: "James Williams", role: "Faculty Member" },
-                { id: 5, name: "Aisha Patel", role: "Student Representative" },
-                { id: 6, name: "David Lee", role: "Alumni Mentor" },
-                { id: 7, name: "Prof. Robert Brown", role: "Faculty Director" },
-                { id: 8, name: "Maria Garcia", role: "Student Officer" },
+                { id: 1, name: "Dr. Aaron Becker", role: "Faculty Advisory Board" },
+                { id: 2, name: "Dr. David Gomillion", role: "Faculty Advisory Board" },
+                { id: 3, name: "Dr. Greg Heim", role: "Faculty Advisory Board" },
+                { id: 4, name: "Dr. Michael Scialdone", role: "Faculty Advisory Board" },
+                { id: 5, name: "Dr. Dwayne Whitten", role: "Faculty Advisory Board" },
               ].map((person) => (
                 <Card key={person.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                   <CardContent className="p-0">
