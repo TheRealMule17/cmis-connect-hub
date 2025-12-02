@@ -1,15 +1,36 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, UserCheck, Sparkles } from "lucide-react";
+import { Users, UserCheck, Sparkles, Loader2, Download, RefreshCw } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+interface N8nMatch {
+  "Student Name": string;
+  "Mentor Name": string;
+}
 
 const FacultyMentorMatcher = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-
+  const [n8nMatches, setN8nMatches] = useState<N8nMatch[]>([]);
+  const [n8nLoading, setN8nLoading] = useState(false);
+  const [lastRunTime, setLastRunTime] = useState<string | null>(null);
   const { data: mentors } = useQuery({
     queryKey: ["mentors_list"],
     queryFn: async () => {
@@ -126,6 +147,70 @@ const FacultyMentorMatcher = () => {
     s => !matches?.some(m => m.student_id === s.user_id)
   ).length || 0;
 
+  const runN8nWorkflow = async () => {
+    setN8nLoading(true);
+    setN8nMatches([]);
+    
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
+      
+      const response = await fetch(
+        "https://mitchpeif.app.n8n.cloud/webhook/cf748cb3-bba2-4714-84be-25c078cb6104",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({}),
+          signal: controller.signal,
+        }
+      );
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+      
+      const data: N8nMatch[] = await response.json();
+      setN8nMatches(data);
+      setLastRunTime(new Date().toLocaleString());
+      
+      toast({
+        title: "Matching complete!",
+        description: `${data.length} students matched with mentors.`,
+      });
+    } catch (error) {
+      const message = error instanceof Error && error.name === "AbortError"
+        ? "Request timed out. The workflow may still be running."
+        : error instanceof Error ? error.message : "An unexpected error occurred";
+      
+      toast({
+        title: "Matching failed",
+        description: message,
+        variant: "destructive",
+      });
+    } finally {
+      setN8nLoading(false);
+    }
+  };
+
+  const downloadCSV = () => {
+    if (n8nMatches.length === 0) return;
+    
+    const csv = [
+      "Student Name,Mentor Name",
+      ...n8nMatches.map(m => `"${m["Student Name"]}","${m["Mentor Name"]}"`)
+    ].join("\n");
+    
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `mentor-matches-${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -165,6 +250,111 @@ const FacultyMentorMatcher = () => {
           </CardHeader>
         </Card>
       </div>
+
+      {/* n8n Workflow Section */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Automated Matching Workflow</CardTitle>
+              <CardDescription>
+                Run the n8n workflow to match students with mentors and send notification emails
+              </CardDescription>
+            </div>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button disabled={n8nLoading}>
+                  {n8nLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Running...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      Run Matching Workflow
+                    </>
+                  )}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Run Matching Workflow?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will match students with mentors and send notification emails to all participants.
+                    This action may take 10-30 seconds to complete.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={runN8nWorkflow}>
+                    Run Workflow
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {lastRunTime && (
+            <p className="text-sm text-muted-foreground mb-4">
+              Last run: {lastRunTime}
+            </p>
+          )}
+          
+          {n8nMatches.length > 0 && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Badge variant="secondary">{n8nMatches.length} matches found</Badge>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={downloadCSV}>
+                    <Download className="mr-2 h-4 w-4" />
+                    Download CSV
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => setN8nMatches([])}>
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    Clear
+                  </Button>
+                </div>
+              </div>
+              
+              <ScrollArea className="h-[300px] rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Student Name</TableHead>
+                      <TableHead>Mentor Name</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {n8nMatches.map((match, idx) => (
+                      <TableRow key={idx}>
+                        <TableCell className="font-medium">{match["Student Name"]}</TableCell>
+                        <TableCell>{match["Mentor Name"]}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </ScrollArea>
+            </div>
+          )}
+          
+          {n8nMatches.length === 0 && !n8nLoading && (
+            <p className="text-center text-muted-foreground py-8">
+              Click "Run Matching Workflow" to generate matches
+            </p>
+          )}
+          
+          {n8nLoading && (
+            <div className="flex flex-col items-center justify-center py-8 gap-2">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="text-sm text-muted-foreground">
+                Running workflow... This may take up to 30 seconds.
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
