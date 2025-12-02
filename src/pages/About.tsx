@@ -62,7 +62,7 @@ const About = () => {
             <p className="text-sm sm:text-base text-center text-muted-foreground mb-8 md:mb-12 max-w-2xl mx-auto px-4">
               Meet the diverse community of mentors, faculty, students, and leaders who make CMIS thrive.
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {[
                 { id: 1, name: "Dr. Aaron Becker", role: "Faculty Advisory Board" },
                 { id: 2, name: "Dr. David Gomillion", role: "Faculty Advisory Board" },
