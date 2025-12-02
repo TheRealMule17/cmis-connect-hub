@@ -27,6 +27,69 @@ const SponsorShowcase = () => {
       tier: "gold",
       logo_url: "/logos/valero.png",
       description: "Gold Sponsor"
+    },
+    {
+      id: "4",
+      company_name: "Booz Allen Hamilton",
+      tier: "bronze",
+      logo_url: "/logos/booz-allen-hamilton.png",
+      description: "Bronze Sponsor"
+    },
+    {
+      id: "5",
+      company_name: "Chevron",
+      tier: "bronze",
+      logo_url: "/logos/chevron.png",
+      description: "Bronze Sponsor"
+    },
+    {
+      id: "6",
+      company_name: "General Motors",
+      tier: "bronze",
+      logo_url: "/logos/gm.png",
+      description: "Bronze Sponsor"
+    },
+    {
+      id: "7",
+      company_name: "Grant Thornton",
+      tier: "bronze",
+      logo_url: "/logos/grant-thornton.png",
+      description: "Bronze Sponsor"
+    },
+    {
+      id: "8",
+      company_name: "HBK Capital Management",
+      tier: "bronze",
+      logo_url: "/logos/hbk-capital.png",
+      description: "Bronze Sponsor"
+    },
+    {
+      id: "9",
+      company_name: "Palo Alto Networks",
+      tier: "bronze",
+      logo_url: "/logos/palo-alto.webp",
+      description: "Bronze Sponsor"
+    },
+    {
+      id: "10",
+      company_name: "PepsiCo",
+      tier: "bronze",
+      logo_url: "/logos/pepsico.svg",
+      description: "Bronze Sponsor"
+    },
+    {
+      id: "11",
+      company_name: "ShoWorks",
+      tier: "bronze",
+      logo_url: "/logos/showorks.png",
+      description: "Bronze Sponsor"
+    },
+    {
+      id: "12",
+      company_name: "Umbrage",
+      tier: "bronze",
+      logo_url: "/logos/umbrage.png",
+      description: "Bronze Sponsor"
     }
   ];
 
