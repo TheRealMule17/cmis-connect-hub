@@ -3,6 +3,7 @@ import BreadcrumbNav from "@/components/BreadcrumbNav";
 import Footer from "@/components/Footer";
 import SponsorShowcase from "@/components/SponsorShowcase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import davidGomillionPhoto from "@/assets/faculty/david-gomillion.jpg";
 import aaronBeckerPhoto from "@/assets/faculty/aaron-becker.jpg";
 import gregHeimPhoto from "@/assets/faculty/greg-heim.jpg";
@@ -95,6 +96,39 @@ const About = () => {
                 </Card>
               ))}
             </div>
+          </section>
+
+          {/* Student Advisory Board Section */}
+          <section className="mt-8 md:mt-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 md:mb-8 text-center bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              Student Advisory Board
+            </h2>
+            <p className="text-sm sm:text-base text-center text-muted-foreground mb-8 md:mb-12 max-w-2xl mx-auto px-4">
+              Our dedicated student leaders who help shape the future of CMIS and bridge the gap between students and faculty.
+            </p>
+            <Card className="max-w-4xl mx-auto">
+              <CardContent className="p-6 md:p-8">
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {[
+                    "Colleen Anderson", "Garrison Hoyt", "Jermyle Jones", "Lauren Kriendler", 
+                    "Shashwat Varshney", "Anbankris Prakasam", "Priyanka Verma", "Varshitha Ravikumar", 
+                    "Ramaraju Muppalla", "Andrew Jiang", "Ana Spratte", "Lindsey Moore", 
+                    "Grant Saleme", "Zach Walsh", "Kim Mensinger", "Sam Franklin", 
+                    "Blake Dolenski", "Joanie O'Donnell", "Timothy Lee", "Josh Bittlestone", 
+                    "Star Wei", "James Londrigan", "Aaron Grow", "Mikylie Wing", 
+                    "Caden Reichmuth", "Mitchell Peiffer", "Anjali Batlanki"
+                  ].map((name, index) => (
+                    <Badge 
+                      key={index} 
+                      variant="secondary" 
+                      className="text-sm px-4 py-2 hover:bg-primary hover:text-primary-foreground transition-colors cursor-default"
+                    >
+                      {name}
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </section>
 
           {/* Sponsors Section */}
