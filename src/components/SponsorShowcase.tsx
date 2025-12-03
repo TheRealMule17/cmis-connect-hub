@@ -10,86 +10,86 @@ const SponsorShowcase = () => {
     {
       id: "1",
       company_name: "ConocoPhillips",
-      tier: "gold",
+      tier: "exabyte",
       logo_url: "/logos/conocophillips.png",
       description: "Founding Member"
     },
     {
       id: "2",
       company_name: "Exabeam",
-      tier: "gold",
+      tier: "exabyte",
       logo_url: "/logos/exabeam.png",
-      description: "Gold Sponsor"
+      description: "Exabyte Sponsor"
     },
     {
       id: "3",
       company_name: "Valero",
-      tier: "gold",
+      tier: "exabyte",
       logo_url: "/logos/valero.png",
-      description: "Gold Sponsor"
+      description: "Exabyte Sponsor"
     },
     {
       id: "4",
       company_name: "Booz Allen Hamilton",
-      tier: "bronze",
+      tier: "terabyte",
       logo_url: "/logos/booz-allen-hamilton.png",
-      description: "Bronze Sponsor"
+      description: "Terabyte Sponsor"
     },
     {
       id: "5",
       company_name: "Chevron",
-      tier: "bronze",
+      tier: "terabyte",
       logo_url: "/logos/chevron.png",
-      description: "Bronze Sponsor"
+      description: "Terabyte Sponsor"
     },
     {
       id: "6",
       company_name: "General Motors",
-      tier: "bronze",
+      tier: "terabyte",
       logo_url: "/logos/gm.png",
-      description: "Bronze Sponsor"
+      description: "Terabyte Sponsor"
     },
     {
       id: "7",
       company_name: "Grant Thornton",
-      tier: "bronze",
+      tier: "terabyte",
       logo_url: "/logos/grant-thornton.png",
-      description: "Bronze Sponsor"
+      description: "Terabyte Sponsor"
     },
     {
       id: "8",
       company_name: "HBK Capital Management",
-      tier: "bronze",
+      tier: "terabyte",
       logo_url: "/logos/hbk-capital.png",
-      description: "Bronze Sponsor"
+      description: "Terabyte Sponsor"
     },
     {
       id: "9",
       company_name: "Palo Alto Networks",
-      tier: "bronze",
+      tier: "terabyte",
       logo_url: "/logos/palo-alto.webp",
-      description: "Bronze Sponsor"
+      description: "Terabyte Sponsor"
     },
     {
       id: "10",
       company_name: "PepsiCo",
-      tier: "bronze",
+      tier: "terabyte",
       logo_url: "/logos/pepsico.svg",
-      description: "Bronze Sponsor"
+      description: "Terabyte Sponsor"
     },
     {
       id: "11",
       company_name: "ShoWorks",
-      tier: "bronze",
+      tier: "terabyte",
       logo_url: "/logos/showorks.png",
-      description: "Bronze Sponsor"
+      description: "Terabyte Sponsor"
     },
     {
       id: "12",
       company_name: "Umbrage",
-      tier: "bronze",
+      tier: "terabyte",
       logo_url: "/logos/umbrage.png",
-      description: "Bronze Sponsor"
+      description: "Terabyte Sponsor"
     }
   ];
 
@@ -109,9 +109,9 @@ const SponsorShowcase = () => {
   const allSponsors = [...staticSponsors, ...(dbSponsors || [])];
   
   // Group sponsors by tier
-  const goldSponsors = allSponsors.filter(s => s.tier === "gold");
-  const silverSponsors = allSponsors.filter(s => s.tier === "silver");
-  const bronzeSponsors = allSponsors.filter(s => s.tier === "bronze");
+  const exabyteSponsors = allSponsors.filter(s => s.tier === "exabyte" || s.tier === "gold");
+  const petabyteSponsors = allSponsors.filter(s => s.tier === "petabyte" || s.tier === "silver");
+  const terabyteSponsors = allSponsors.filter(s => s.tier === "terabyte" || s.tier === "bronze");
 
   const renderSponsorGrid = (sponsors: typeof allSponsors, tierName: string) => {
     if (sponsors.length === 0) {
@@ -124,8 +124,8 @@ const SponsorShowcase = () => {
 
     return (
       <div className={`grid gap-4 md:gap-6 ${
-        tierName === "Gold" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : 
-        tierName === "Silver" ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4" : 
+        tierName === "Exabyte" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : 
+        tierName === "Petabyte" ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4" : 
         "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
       }`}>
         {sponsors.map((sponsor) => (
@@ -158,57 +158,57 @@ const SponsorShowcase = () => {
 
   return (
     <div className="space-y-8 md:space-y-12">
-      {/* Gold Tier */}
-      <Card className="border-2 border-yellow-500/20 bg-gradient-to-br from-yellow-50/50 to-background dark:from-yellow-950/10">
+      {/* Exabyte Tier */}
+      <Card className="border-2 border-purple-500/20 bg-gradient-to-br from-purple-50/50 to-background dark:from-purple-950/10">
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">
-              <Building2 className="h-5 w-5 md:h-6 md:w-6 text-yellow-600 dark:text-yellow-500" />
-              Gold Sponsors
+              <Building2 className="h-5 w-5 md:h-6 md:w-6 text-purple-600 dark:text-purple-500" />
+              Exabyte Sponsors
             </CardTitle>
-            <Badge className="bg-yellow-600 hover:bg-yellow-700 text-white text-xs md:text-sm">
+            <Badge className="bg-purple-600 hover:bg-purple-700 text-white text-xs md:text-sm">
               Premier Partners
             </Badge>
           </div>
         </CardHeader>
         <CardContent>
-          {renderSponsorGrid(goldSponsors, "Gold")}
+          {renderSponsorGrid(exabyteSponsors, "Exabyte")}
         </CardContent>
       </Card>
 
-      {/* Silver Tier */}
-      <Card className="border-2 border-gray-400/20 bg-gradient-to-br from-gray-50/50 to-background dark:from-gray-900/10">
+      {/* Petabyte Tier */}
+      <Card className="border-2 border-blue-400/20 bg-gradient-to-br from-blue-50/50 to-background dark:from-blue-900/10">
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">
-              <Building2 className="h-5 w-5 md:h-6 md:w-6 text-gray-500" />
-              Silver Sponsors
+              <Building2 className="h-5 w-5 md:h-6 md:w-6 text-blue-500" />
+              Petabyte Sponsors
             </CardTitle>
-            <Badge className="bg-gray-500 hover:bg-gray-600 text-white text-xs md:text-sm">
+            <Badge className="bg-blue-500 hover:bg-blue-600 text-white text-xs md:text-sm">
               Supporting Partners
             </Badge>
           </div>
         </CardHeader>
         <CardContent>
-          {renderSponsorGrid(silverSponsors, "Silver")}
+          {renderSponsorGrid(petabyteSponsors, "Petabyte")}
         </CardContent>
       </Card>
 
-      {/* Bronze Tier */}
-      <Card className="border-2 border-orange-700/20 bg-gradient-to-br from-orange-50/50 to-background dark:from-orange-950/10">
+      {/* Terabyte Tier */}
+      <Card className="border-2 border-cyan-700/20 bg-gradient-to-br from-cyan-50/50 to-background dark:from-cyan-950/10">
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">
-              <Building2 className="h-5 w-5 md:h-6 md:w-6 text-orange-700 dark:text-orange-600" />
-              Bronze Sponsors
+              <Building2 className="h-5 w-5 md:h-6 md:w-6 text-cyan-700 dark:text-cyan-600" />
+              Terabyte Sponsors
             </CardTitle>
-            <Badge className="bg-orange-700 hover:bg-orange-800 text-white text-xs md:text-sm">
+            <Badge className="bg-cyan-700 hover:bg-cyan-800 text-white text-xs md:text-sm">
               Contributing Partners
             </Badge>
           </div>
         </CardHeader>
         <CardContent>
-          {renderSponsorGrid(bronzeSponsors, "Bronze")}
+          {renderSponsorGrid(terabyteSponsors, "Terabyte")}
         </CardContent>
       </Card>
     </div>
