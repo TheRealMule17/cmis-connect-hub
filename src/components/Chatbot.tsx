@@ -38,11 +38,11 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
     setIsExpanded(expanded);
   }, [expanded]);
 
-  // Listen for custom event to open/expand chatbot
+  // Listen for custom event to open chatbot (regular size, not expanded)
   useEffect(() => {
     const handleOpenChat = () => {
       setIsOpen(true);
-      setIsExpanded(true);
+      // Don't expand - just open the regular chat widget
     };
 
     window.addEventListener('openHowdyHelper', handleOpenChat);
