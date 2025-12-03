@@ -41,6 +41,7 @@ const Navigation = () => {
       const pages = [
         { path: "/", title: "Home", keywords: ["home", "main", "index"] },
         { path: "/about", title: "About Us", keywords: ["about", "info", "information"] },
+        { path: "/cmis", title: "CMIS", keywords: ["cmis", "council", "advisory", "board", "sponsors"] },
         { path: "/gallery", title: "Gallery", keywords: ["gallery", "photos", "images", "pictures"] },
         { path: "/contact", title: "Contact Us", keywords: ["contact", "reach", "email", "message"] },
         { path: "/student", title: "Student Portal", keywords: ["student", "students"] },
@@ -120,6 +121,9 @@ const Navigation = () => {
                 <Link to="/about">About Us</Link>
               </Button>
               <Button variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 text-sm font-normal" asChild>
+                <Link to="/cmis">CMIS</Link>
+              </Button>
+              <Button variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 text-sm font-normal" asChild>
                 <Link to="/gallery">Gallery</Link>
               </Button>
               <Button variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 text-sm font-normal" asChild>
@@ -191,6 +195,9 @@ const Navigation = () => {
                   <h3 className="font-semibold text-lg mb-2">Navigation</h3>
                   <Button variant="ghost" className="justify-start" asChild onClick={() => setOpen(false)}>
                     <Link to="/about">About Us</Link>
+                  </Button>
+                  <Button variant="ghost" className="justify-start" asChild onClick={() => setOpen(false)}>
+                    <Link to="/cmis">CMIS</Link>
                   </Button>
                   <Button variant="ghost" className="justify-start" asChild onClick={() => setOpen(false)}>
                     <Link to="/gallery">Gallery</Link>
