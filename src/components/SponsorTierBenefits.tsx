@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 
 const tiers = [
   {
-    name: "Bronze",
-    price: "$5,000",
+    name: "Terabyte",
+    price: "$8,000",
     benefits: [
       "Logo on website",
       "2 event sponsorships per year",
@@ -14,10 +14,10 @@ const tiers = [
     ],
   },
   {
-    name: "Silver",
-    price: "$10,000",
+    name: "Petabyte",
+    price: "$12,000",
     benefits: [
-      "All Bronze benefits",
+      "All Terabyte benefits",
       "4 event sponsorships per year",
       "Exclusive networking events",
       "Early access to talent",
@@ -25,10 +25,10 @@ const tiers = [
     ],
   },
   {
-    name: "Gold",
-    price: "$25,000",
+    name: "Exabyte",
+    price: "$16,000",
     benefits: [
-      "All Silver benefits",
+      "All Petabyte benefits",
       "Unlimited event sponsorships",
       "Research collaboration opportunities",
       "Dedicated account manager",

@@ -96,9 +96,9 @@ const FacultySpeakerCommunications = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Sponsors</SelectItem>
-                      <SelectItem value="gold">Gold Tier Only</SelectItem>
-                      <SelectItem value="silver">Silver Tier Only</SelectItem>
-                      <SelectItem value="bronze">Bronze Tier Only</SelectItem>
+                      <SelectItem value="exabyte">Exabyte Tier Only</SelectItem>
+                      <SelectItem value="petabyte">Petabyte Tier Only</SelectItem>
+                      <SelectItem value="terabyte">Terabyte Tier Only</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
