@@ -29,7 +29,7 @@ Deno.serve(async (req) => {
     }
 
     // Amazon Lex Runtime V2 API endpoint
-    const endpoint = `https://runtime-lex-v2.${region}.amazonaws.com/bots/${botId}/botAliases/${botAliasId}/botLocales/en_US/sessions/${useSessionId}/text`;
+    const endpoint = `https://runtime-v2-lex.${region}.amazonaws.com/bots/${botId}/botAliases/${botAliasId}/botLocales/en_US/sessions/${useSessionId}/text`;
     
     const body = JSON.stringify({
       text: message,
