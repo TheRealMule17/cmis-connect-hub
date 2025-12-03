@@ -10,6 +10,7 @@ import Student from "./pages/Student";
 import Alumni from "./pages/Alumni";
 import Sponsor from "./pages/Sponsor";
 import Dashboard from "./pages/Dashboard";
+import FacultyAuth from "./pages/FacultyAuth";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Gallery from "./pages/Gallery";
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/alumni" element={<Alumni />} />
           <Route path="/sponsor" element={<Sponsor />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/faculty-auth" element={<FacultyAuth />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/search" element={<SearchResults />} />
