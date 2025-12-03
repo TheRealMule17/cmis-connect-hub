@@ -29,6 +29,13 @@ const SponsorShowcase = () => {
       description: "Exabyte Sponsor"
     },
     {
+      id: "13",
+      company_name: "Phillips 66",
+      tier: "petabyte",
+      logo_url: "/logos/phillips66.png",
+      description: "Petabyte Sponsor"
+    },
+    {
       id: "4",
       company_name: "Booz Allen Hamilton",
       tier: "terabyte",
@@ -158,15 +165,15 @@ const SponsorShowcase = () => {
 
   return (
     <div className="space-y-8 md:space-y-12">
-      {/* Exabyte Tier */}
-      <Card className="border-2 border-purple-500/20 bg-gradient-to-br from-purple-50/50 to-background dark:from-purple-950/10">
+      {/* Exabyte Tier - Gold */}
+      <Card className="border-2 border-yellow-500/20 bg-gradient-to-br from-yellow-50/50 to-background dark:from-yellow-950/10">
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">
-              <Building2 className="h-5 w-5 md:h-6 md:w-6 text-purple-600 dark:text-purple-500" />
+              <Building2 className="h-5 w-5 md:h-6 md:w-6 text-yellow-600 dark:text-yellow-500" />
               Exabyte Sponsors
             </CardTitle>
-            <Badge className="bg-purple-600 hover:bg-purple-700 text-white text-xs md:text-sm">
+            <Badge className="bg-yellow-600 hover:bg-yellow-700 text-white text-xs md:text-sm">
               Premier Partners
             </Badge>
           </div>
@@ -176,15 +183,15 @@ const SponsorShowcase = () => {
         </CardContent>
       </Card>
 
-      {/* Petabyte Tier */}
-      <Card className="border-2 border-blue-400/20 bg-gradient-to-br from-blue-50/50 to-background dark:from-blue-900/10">
+      {/* Petabyte Tier - Silver */}
+      <Card className="border-2 border-gray-400/20 bg-gradient-to-br from-gray-50/50 to-background dark:from-gray-900/10">
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">
-              <Building2 className="h-5 w-5 md:h-6 md:w-6 text-blue-500" />
+              <Building2 className="h-5 w-5 md:h-6 md:w-6 text-gray-500" />
               Petabyte Sponsors
             </CardTitle>
-            <Badge className="bg-blue-500 hover:bg-blue-600 text-white text-xs md:text-sm">
+            <Badge className="bg-gray-500 hover:bg-gray-600 text-white text-xs md:text-sm">
               Supporting Partners
             </Badge>
           </div>
@@ -194,15 +201,15 @@ const SponsorShowcase = () => {
         </CardContent>
       </Card>
 
-      {/* Terabyte Tier */}
-      <Card className="border-2 border-cyan-700/20 bg-gradient-to-br from-cyan-50/50 to-background dark:from-cyan-950/10">
+      {/* Terabyte Tier - Bronze */}
+      <Card className="border-2 border-orange-700/20 bg-gradient-to-br from-orange-50/50 to-background dark:from-orange-950/10">
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">
-              <Building2 className="h-5 w-5 md:h-6 md:w-6 text-cyan-700 dark:text-cyan-600" />
+              <Building2 className="h-5 w-5 md:h-6 md:w-6 text-orange-700 dark:text-orange-600" />
               Terabyte Sponsors
             </CardTitle>
-            <Badge className="bg-cyan-700 hover:bg-cyan-800 text-white text-xs md:text-sm">
+            <Badge className="bg-orange-700 hover:bg-orange-800 text-white text-xs md:text-sm">
               Contributing Partners
             </Badge>
           </div>
