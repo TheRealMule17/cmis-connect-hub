@@ -5,53 +5,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Helper function to parse the event stream response from Bedrock Agent
-function parseBedrockResponse(responseText: string): string {
-  try {
-    // The response contains event stream data with JSON embedded
-    // Look for the text in the attribution.citations or decode from bytes
-    
-    // Try to find JSON objects in the response
-    const jsonMatches = responseText.match(/\{[^{}]*"text"[^{}]*\}/g);
-    if (jsonMatches) {
-      for (const match of jsonMatches) {
-        try {
-          const parsed = JSON.parse(match);
-          if (parsed.text) {
-            return parsed.text;
-          }
-        } catch {
-          // Continue to next match
-        }
-      }
-    }
-    
-    // Try to find and extract text from the full response
-    const textMatch = responseText.match(/"text":"([^"]+)"/);
-    if (textMatch && textMatch[1]) {
-      return textMatch[1];
-    }
-    
-    // Try to find bytes and decode base64
-    const bytesMatch = responseText.match(/"bytes":"([A-Za-z0-9+/=]+)"/);
-    if (bytesMatch && bytesMatch[1]) {
-      try {
-        const decoded = atob(bytesMatch[1]);
-        // Clean up the decoded text (remove control characters)
-        return decoded.replace(/[\x00-\x1F\x7F]/g, '').trim();
-      } catch {
-        // Base64 decode failed
-      }
-    }
-    
-    // If nothing worked, return cleaned version of raw response
-    return responseText.replace(/[\x00-\x1F\x7F]/g, '').trim();
-  } catch (error) {
-    console.error("Error parsing Bedrock response:", error);
-    return responseText;
-  }
-}
-
 Deno.serve(async (req) => {
   // Handle CORS preflight request
   if (req.method === 'OPTIONS') {
@@ -62,20 +15,24 @@ Deno.serve(async (req) => {
     const { message, sessionId } = await req.json();
     
     const region = Deno.env.get("AWS_REGION") ?? "us-east-1";
-    const agentId = Deno.env.get("AGENT_ID");
-    const agentAliasId = Deno.env.get("AGENT_ALIAS_ID") ?? "TSTALIASID";
+    const botId = Deno.env.get("LEX_BOT_ID");
+    const botAliasId = Deno.env.get("LEX_BOT_ALIAS_ID") ?? "TSTALIASID";
     const accessKeyId = Deno.env.get("AWS_ACCESS_KEY_ID") ?? "";
     const secretAccessKey = Deno.env.get("AWS_SECRET_ACCESS_KEY") ?? "";
     
     const useSessionId = sessionId || crypto.randomUUID();
     
-    console.log(`Invoking Bedrock Agent: ${agentId} with sessionId: ${useSessionId}`);
+    console.log(`Invoking Lex Bot: ${botId} with sessionId: ${useSessionId}`);
 
-    // Bedrock Agent Runtime API endpoint
-    const endpoint = `https://bedrock-agent-runtime.${region}.amazonaws.com/agents/${agentId}/agentAliases/${agentAliasId}/sessions/${useSessionId}/text`;
+    if (!botId) {
+      throw new Error("LEX_BOT_ID is not configured");
+    }
+
+    // Amazon Lex Runtime V2 API endpoint
+    const endpoint = `https://runtime-v2-lex.${region}.amazonaws.com/bots/${botId}/botAliases/${botAliasId}/botLocales/en_US/sessions/${useSessionId}/text`;
     
     const body = JSON.stringify({
-      inputText: message,
+      text: message,
     });
 
     // Create AWS Signature V4 signer
@@ -85,7 +42,7 @@ Deno.serve(async (req) => {
     });
 
     // Sign the request
-    const signedRequest = await signer.sign("bedrock", new Request(endpoint, {
+    const signedRequest = await signer.sign("lex", new Request(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -93,23 +50,32 @@ Deno.serve(async (req) => {
       body: body,
     }));
 
-    // Make the request to Bedrock
+    // Make the request to Lex
     const response = await fetch(signedRequest);
     
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("Bedrock API error:", response.status, errorText);
-      throw new Error(`Bedrock API error: ${response.status} - ${errorText}`);
+      console.error("Lex API error:", response.status, errorText);
+      throw new Error(`Lex API error: ${response.status} - ${errorText}`);
     }
 
     // Parse the response
-    const responseBody = await response.text();
-    console.log("Raw response length:", responseBody.length);
+    const responseBody = await response.json();
+    console.log("Lex response:", JSON.stringify(responseBody));
     
-    // Parse the event stream response to extract the text
-    const completion = parseBedrockResponse(responseBody);
+    // Extract the message from Lex response
+    let completion = "";
     
-    console.log("Parsed completion:", completion.substring(0, 200));
+    if (responseBody.messages && responseBody.messages.length > 0) {
+      // Concatenate all messages from Lex
+      completion = responseBody.messages
+        .map((msg: { content?: string }) => msg.content || "")
+        .join("\n");
+    } else {
+      completion = "I'm sorry, I didn't understand that. Could you please rephrase?";
+    }
+    
+    console.log("Parsed completion:", completion);
 
     return new Response(JSON.stringify({ reply: completion, sessionId: useSessionId }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
