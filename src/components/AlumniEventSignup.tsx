@@ -3,9 +3,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Clock, Users } from "lucide-react";
+import { Calendar, MapPin, Clock, Users, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format, subDays, isBefore } from "date-fns";
+
+const ALUMNI_MENTORSHIP_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScXGgb_8UkJVOabZzcZgJr0hRWhDSNDWyg9drqPm-TfAP2bbg/viewform?usp=header";
+
+const isMentorshipEvent = (event: { title: string }) => {
+  return event.title?.toLowerCase().includes("mentorship");
+};
 
 interface Event {
   id: string;
@@ -195,7 +201,14 @@ const AlumniEventSignup = ({ userId }: AlumniEventSignupProps) => {
                 </div>
 
                 <div className="pt-2">
-                  {isRegistered ? (
+                  {isMentorshipEvent(event) ? (
+                    <Button
+                      size="sm"
+                      onClick={() => window.open(ALUMNI_MENTORSHIP_FORM_URL, '_blank')}
+                    >
+                      Sign Up <ExternalLink className="h-3 w-3 ml-1" />
+                    </Button>
+                  ) : isRegistered ? (
                     <Button
                       variant="outline"
                       size="sm"
