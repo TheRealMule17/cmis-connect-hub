@@ -360,9 +360,13 @@ export type Database = {
         Row: {
           created_at: string
           created_by: string
+          event_id: string | null
+          event_name: string | null
           id: string
           message: string
           message_type: string
+          recipient_id: string | null
+          recipient_name: string | null
           subject: string
           target_tier: string | null
           updated_at: string
@@ -370,9 +374,13 @@ export type Database = {
         Insert: {
           created_at?: string
           created_by: string
+          event_id?: string | null
+          event_name?: string | null
           id?: string
           message: string
           message_type: string
+          recipient_id?: string | null
+          recipient_name?: string | null
           subject: string
           target_tier?: string | null
           updated_at?: string
@@ -380,14 +388,26 @@ export type Database = {
         Update: {
           created_at?: string
           created_by?: string
+          event_id?: string | null
+          event_name?: string | null
           id?: string
           message?: string
           message_type?: string
+          recipient_id?: string | null
+          recipient_name?: string | null
           subject?: string
           target_tier?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "faculty_communications_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       generated_emails: {
         Row: {
