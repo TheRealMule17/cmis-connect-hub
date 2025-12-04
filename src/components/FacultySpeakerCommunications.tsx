@@ -336,19 +336,36 @@ const FacultySpeakerCommunications = () => {
             <MessageSquare className="h-5 w-5" />
             Communication History
           </CardTitle>
-          <CardDescription>Repository of past communications with sponsors</CardDescription>
+          <CardDescription>Repository of past communications</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {communications?.map((comm) => (
-              <div key={comm.id} className="p-4 border rounded-lg space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h4 className="font-semibold">
+          <div className="space-y-3">
+            {communications?.map((comm) => {
+              const messageTypeLabel = {
+                thank_you: "Thank You",
+                sponsor_request: "Sponsor Request",
+                event_invitation: "Event Invitation",
+                update: "General Update",
+              }[comm.message_type] || comm.message_type?.replace("_", " ");
+
+              const targetLabel = {
+                all: "All Sponsors",
+                individual: "Individual",
+                event_attendees: "Event Attendees",
+                exabyte: "Exabyte Tier",
+                petabyte: "Petabyte Tier",
+                terabyte: "Terabyte Tier",
+              }[comm.target_tier] || comm.target_tier;
+
+              const title = `${messageTypeLabel} to ${targetLabel}`;
+
+              return (
+                <div key={comm.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className="space-y-1">
+                    <h4 className="font-medium">{title}</h4>
+                    <p className="text-sm text-muted-foreground">
                       {new Date(comm.created_at).toLocaleDateString()} at {new Date(comm.created_at).toLocaleTimeString()}
-                    </h4>
-                    <Badge variant="outline">{comm.message_type?.replace("_", " ")}</Badge>
-                    <Badge variant="secondary">{comm.target_tier}</Badge>
+                    </p>
                   </div>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
@@ -390,8 +407,8 @@ const FacultySpeakerCommunications = () => {
                     </AlertDialogContent>
                   </AlertDialog>
                 </div>
-              </div>
-            ))}
+              );
+            })}
             {!communications?.length && (
               <p className="text-center text-muted-foreground py-8">No communications yet</p>
             )}
