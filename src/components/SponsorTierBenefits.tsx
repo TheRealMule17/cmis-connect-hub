@@ -65,7 +65,11 @@ const SponsorTierBenefits = () => {
                   </li>
                 ))}
               </ul>
-              <Button className="w-full">Select {tier.name}</Button>
+              <Button className="w-full" asChild>
+                <a href={`mailto:cmis@tamu.edu?subject=Sponsorship Inquiry - ${tier.name} Tier&body=I am interested in the ${tier.name} sponsorship tier (${tier.price}/year). Please provide more information about becoming a sponsor.`}>
+                  Select {tier.name}
+                </a>
+              </Button>
             </div>
           ))}
         </div>

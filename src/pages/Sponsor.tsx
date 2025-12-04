@@ -144,26 +144,6 @@ const Sponsor = () => {
           </div>
         )}
 
-        <div className="grid md:grid-cols-3 gap-6 mt-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-3xl font-bold text-primary">50+</CardTitle>
-              <CardDescription>Corporate Partners</CardDescription>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-3xl font-bold text-primary">2,000+</CardTitle>
-              <CardDescription>Student Placements Annually</CardDescription>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-3xl font-bold text-primary">95%</CardTitle>
-              <CardDescription>Graduate Employment Rate</CardDescription>
-            </CardHeader>
-          </Card>
-        </div>
       </main>
 
       <Footer />
