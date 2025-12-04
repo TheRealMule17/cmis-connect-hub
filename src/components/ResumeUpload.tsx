@@ -148,31 +148,35 @@ const ResumeUpload = ({ userId, currentResumeUrl, onResumeUpdate }: ResumeUpload
         {currentResumeUrl ? (
           <>
             {/* Live Preview */}
-            <a 
-              href={currentResumeUrl} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="block border rounded-lg overflow-hidden hover:ring-2 hover:ring-primary transition-all cursor-pointer"
-            >
-              {isPdf ? (
-                <object
-                  data={currentResumeUrl}
-                  type="application/pdf"
-                  className="w-full h-[400px] pointer-events-none"
+            {isPdf ? (
+              <div className="border rounded-lg overflow-hidden">
+                <iframe
+                  src={`https://docs.google.com/viewer?url=${encodeURIComponent(currentResumeUrl)}&embedded=true`}
+                  className="w-full h-[400px]"
+                  title="Resume Preview"
+                />
+                <a 
+                  href={currentResumeUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="block p-2 text-center text-sm text-primary hover:underline bg-muted"
                 >
-                  <div className="w-full h-[400px] bg-secondary flex flex-col items-center justify-center gap-2">
-                    <FileText className="h-12 w-12 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">PDF Preview unavailable</span>
-                    <span className="text-xs text-muted-foreground">Click to open in new tab</span>
-                  </div>
-                </object>
-              ) : (
+                  Open PDF in new tab
+                </a>
+              </div>
+            ) : (
+              <a 
+                href={currentResumeUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="block border rounded-lg overflow-hidden hover:ring-2 hover:ring-primary transition-all cursor-pointer"
+              >
                 <div className="w-full h-[200px] bg-secondary flex flex-col items-center justify-center gap-2">
                   <FileText className="h-12 w-12 text-muted-foreground" />
                   <span className="text-sm text-muted-foreground">Word document - Click to open</span>
                 </div>
-              )}
-            </a>
+              </a>
+            )}
             
             {/* Actions */}
             <div className="flex gap-2">
