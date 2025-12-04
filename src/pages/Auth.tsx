@@ -141,7 +141,7 @@ const Auth = () => {
             <GraduationCap className="h-12 w-12 text-primary" />
           </div>
           <CardTitle className="text-2xl">Welcome to CMIS</CardTitle>
-          <CardDescription>Council of Management Information Systems</CardDescription>
+          <CardDescription>Council for the Management of Information Systems</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">
