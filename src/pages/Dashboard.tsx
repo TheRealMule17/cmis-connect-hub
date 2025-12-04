@@ -6,7 +6,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2, LogOut } from "lucide-react";
 import EventManager from "@/components/EventManager";
-import FacultyCaseCompetitionDirector from "@/components/FacultyCaseCompetitionDirector";
 import FacultySpeakerCommunications from "@/components/FacultySpeakerCommunications";
 import FacultyMentorMatcher from "@/components/FacultyMentorMatcher";
 import ResearchCollaborationHub from "@/components/ResearchCollaborationHub";
@@ -112,10 +111,9 @@ const Dashboard = () => {
         </div>
 
         <Tabs defaultValue={defaultTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 mb-8">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-5 mb-8">
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="events">Events</TabsTrigger>
-            <TabsTrigger value="competitions">Competitions</TabsTrigger>
             <TabsTrigger value="speakers">Communications</TabsTrigger>
             <TabsTrigger value="mentors">Mentor Matcher</TabsTrigger>
             <TabsTrigger value="research">Research</TabsTrigger>
@@ -127,10 +125,6 @@ const Dashboard = () => {
 
           <TabsContent value="events">
             <EventManager />
-          </TabsContent>
-
-          <TabsContent value="competitions">
-            <FacultyCaseCompetitionDirector />
           </TabsContent>
 
           <TabsContent value="speakers">
