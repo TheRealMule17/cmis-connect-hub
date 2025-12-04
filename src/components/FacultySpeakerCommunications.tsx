@@ -100,19 +100,16 @@ const FacultySpeakerCommunications = () => {
 
   const [isTriggeringWorkflow, setIsTriggeringWorkflow] = useState(false);
 
-  const triggerN8nThankYouWorkflow = async (alumniIds: string[], eventId: string | null) => {
+  const triggerN8nThankYouWorkflow = async (alumniId: string[], eventId: string | null) => {
     try {
       await fetch(N8N_THANK_YOU_WORKFLOW_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        mode: "no-cors",
         body: JSON.stringify({
-          alumni_ids: alumniIds,
+          alumni_id: alumniId,
           event_id: eventId,
-          timestamp: new Date().toISOString(),
-          triggered_from: window.location.origin,
         }),
       });
       return true;
@@ -158,20 +155,20 @@ const FacultySpeakerCommunications = () => {
         setIsTriggeringWorkflow(true);
         
         // Collect alumni IDs based on target tier
-        let alumniIds: string[] = [];
+        let alumniId: string[] = [];
         if (newComm.target_tier === "event_attendees" && eventId) {
           // Get attendees for the specific event
           const { data: registrations } = await supabase
             .from("event_registrations")
             .select("user_id")
             .eq("event_id", eventId);
-          alumniIds = registrations?.map(r => r.user_id) || [];
+          alumniId = registrations?.map(r => r.user_id) || [];
         } else {
           // Send all alumni IDs
-          alumniIds = alumni?.map(a => a.id) || [];
+          alumniId = alumni?.map(a => a.id) || [];
         }
         
-        await triggerN8nThankYouWorkflow(alumniIds, eventId);
+        await triggerN8nThankYouWorkflow(alumniId, eventId);
         setIsTriggeringWorkflow(false);
       }
     },
