@@ -50,10 +50,16 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
   }, []);
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
+    // Use setTimeout to ensure DOM has updated
+    setTimeout(() => {
+      if (scrollRef.current) {
+        const scrollElement = scrollRef.current.querySelector('[data-radix-scroll-area-viewport]');
+        if (scrollElement) {
+          scrollElement.scrollTop = scrollElement.scrollHeight;
+        }
+      }
+    }, 0);
+  }, [messages, isLoading]);
 
   useEffect(() => {
     const footer = document.querySelector('footer');
@@ -194,7 +200,7 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
                 >
                   <div
                     className={cn(
-                      "max-w-[80%] rounded-lg px-4 py-2",
+                      "max-w-[80%] rounded-lg px-3 py-1.5",
                       msg.role === "user"
                         ? "bg-primary text-white"
                         : "bg-gray-100 text-gray-900"
@@ -206,7 +212,7 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
               ))}
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-gray-100 text-gray-600 rounded-lg px-4 py-2">
+                  <div className="bg-gray-100 text-gray-600 rounded-lg px-3 py-1.5">
                     <p className="text-sm italic">Thinking...</p>
                   </div>
                 </div>
