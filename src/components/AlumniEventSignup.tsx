@@ -44,6 +44,7 @@ const AlumniEventSignup = ({ userId }: AlumniEventSignupProps) => {
       .select("*")
       .gte("event_date", new Date().toISOString())
       .eq("status", "upcoming")
+      .neq("event_type", "Student Information")
       .order("event_date", { ascending: true });
 
     if (error) {
