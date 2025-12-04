@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, MapPin, Users, Edit2, Save, X, GraduationCap, UserCheck } from "lucide-react";
+import { Calendar, MapPin, Users, Edit2, Save, X, GraduationCap, UserCheck, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -113,12 +114,16 @@ const EventDetailDialog = ({ event, open, onOpenChange }: EventDetailDialogProps
   const updateEvent = useMutation({
     mutationFn: async () => {
       if (!event?.id) return;
+      // Convert local datetime to ISO string with timezone
+      const localDate = new Date(editData.event_date);
+      const isoDateString = localDate.toISOString();
+      
       const { error } = await supabase
         .from("events")
         .update({
           title: editData.title,
           description: editData.description || null,
-          event_date: editData.event_date,
+          event_date: isoDateString,
           location: editData.location || null,
           building: editData.building || null,
           room_number: editData.room_number || null,
@@ -135,6 +140,33 @@ const EventDetailDialog = ({ event, open, onOpenChange }: EventDetailDialogProps
     },
     onError: () => {
       toast({ title: "Failed to update event", variant: "destructive" });
+    },
+  });
+
+  const deleteEvent = useMutation({
+    mutationFn: async () => {
+      if (!event?.id) return;
+      // First delete all registrations for this event
+      const { error: regError } = await supabase
+        .from("event_registrations")
+        .delete()
+        .eq("event_id", event.id);
+      if (regError) throw regError;
+      
+      // Then delete the event
+      const { error } = await supabase
+        .from("events")
+        .delete()
+        .eq("id", event.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["events_with_data"] });
+      toast({ title: "Event deleted successfully" });
+      onOpenChange(false);
+    },
+    onError: () => {
+      toast({ title: "Failed to delete event", variant: "destructive" });
     },
   });
 
@@ -168,10 +200,34 @@ const EventDetailDialog = ({ event, open, onOpenChange }: EventDetailDialogProps
               </DialogDescription>
             </div>
             {!isEditing && (
-              <Button variant="outline" size="sm" onClick={startEditing}>
-                <Edit2 className="h-4 w-4 mr-2" />
-                Edit
-              </Button>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={startEditing}>
+                  <Edit2 className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" size="sm">
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Event</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete "{event.title}"? This will also remove all registrations for this event. This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => deleteEvent.mutate()} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             )}
           </div>
         </DialogHeader>
