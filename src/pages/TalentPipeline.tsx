@@ -307,7 +307,7 @@ const TalentPipeline = () => {
           </DialogHeader>
           <div className="flex-1 h-full min-h-0">
             <iframe
-              src={resumeModal.url}
+              src={`https://docs.google.com/viewer?url=${encodeURIComponent(resumeModal.url)}&embedded=true`}
               className="w-full h-full min-h-[60vh] border rounded-lg"
               title={`${resumeModal.name}'s Resume`}
             />
