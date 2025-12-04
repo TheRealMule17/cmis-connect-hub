@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Users } from "lucide-react";
+import { Calendar, MapPin, Bell, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,6 +20,33 @@ interface Event {
 interface StudentEventRegistrationProps {
   userId: string;
 }
+
+// Event types that are notifications only (not registerable)
+const NOTIFICATION_TYPES = ["announcement", "notification", "deadline", "break", "holiday"];
+
+// Map certain event types to display names
+const getDisplayEventType = (eventType: string) => {
+  const typeMap: Record<string, string> = {
+    "mentor matching": "networking",
+    "mentorship": "networking",
+    "mentor": "networking",
+  };
+  return typeMap[eventType?.toLowerCase()] || eventType;
+};
+
+const isNotificationEvent = (event: Event) => {
+  const type = event.event_type?.toLowerCase() || "";
+  const title = event.title?.toLowerCase() || "";
+  
+  // Check if it's a notification type
+  if (NOTIFICATION_TYPES.some(t => type.includes(t))) return true;
+  
+  // Check for semester breaks/transitions in title
+  if (title.includes("fall end") || title.includes("spring begin") || 
+      title.includes("semester") || title.includes("break")) return true;
+  
+  return false;
+};
 
 const StudentEventRegistration = ({ userId }: StudentEventRegistrationProps) => {
   const { toast } = useToast();
@@ -103,57 +130,80 @@ const StudentEventRegistration = ({ userId }: StudentEventRegistrationProps) => 
   };
 
   if (loading) {
-    return <div>Loading events...</div>;
+    return <div className="text-sm text-muted-foreground">Loading events...</div>;
   }
+
+  const notifications = events.filter(isNotificationEvent);
+  const registerableEvents = events.filter(e => !isNotificationEvent(e));
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center gap-2 text-lg">
           <Calendar className="h-5 w-5" />
           Upcoming Events
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {events.map((event) => {
-          const isRegistered = registrations.includes(event.id);
-          return (
-            <div key={event.id} className="p-4 border rounded-lg space-y-3">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h4 className="font-semibold">{event.title}</h4>
-                  <p className="text-sm text-muted-foreground">{event.description}</p>
-                </div>
-                <Badge>{event.event_type}</Badge>
-              </div>
-              <div className="flex gap-4 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
+        {/* Notifications - compact inline display */}
+        {notifications.length > 0 && (
+          <div className="space-y-2">
+            {notifications.map((event) => (
+              <div key={event.id} className="flex items-center gap-3 p-2 bg-muted/50 rounded-md text-sm">
+                <Bell className="h-4 w-4 text-muted-foreground shrink-0" />
+                <span className="font-medium">{event.title}</span>
+                <span className="text-muted-foreground">•</span>
+                <span className="text-muted-foreground">
                   {new Date(event.event_date).toLocaleDateString()}
                 </span>
-                <span className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4" />
-                  {event.location}
-                </span>
-                {event.capacity && (
-                  <span className="flex items-center gap-1">
-                    <Users className="h-4 w-4" />
-                    Capacity: {event.capacity}
-                  </span>
-                )}
               </div>
-              <Button
-                onClick={() => isRegistered ? handleUnregister(event.id) : handleRegister(event.id)}
-                variant={isRegistered ? "outline" : "default"}
-                className="w-full"
-              >
-                {isRegistered ? "Unregister" : "Register"}
-              </Button>
-            </div>
-          );
-        })}
+            ))}
+          </div>
+        )}
+
+        {/* Registerable Events - compact cards */}
+        {registerableEvents.length > 0 && (
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {registerableEvents.map((event) => {
+              const isRegistered = registrations.includes(event.id);
+              const displayType = getDisplayEventType(event.event_type);
+              
+              return (
+                <div key={event.id} className="p-3 border rounded-lg space-y-2">
+                  <div className="flex items-start justify-between gap-2">
+                    <h4 className="font-medium text-sm line-clamp-1">{event.title}</h4>
+                    <Badge variant="secondary" className="text-xs shrink-0">
+                      {displayType}
+                    </Badge>
+                  </div>
+                  <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      {new Date(event.event_date).toLocaleDateString()}
+                    </span>
+                    {event.location && (
+                      <span className="flex items-center gap-1">
+                        <MapPin className="h-3 w-3" />
+                        {event.location}
+                      </span>
+                    )}
+                  </div>
+                  <Button
+                    onClick={() => isRegistered ? handleUnregister(event.id) : handleRegister(event.id)}
+                    variant={isRegistered ? "outline" : "default"}
+                    size="sm"
+                    className="w-full h-7 text-xs"
+                  >
+                    {isRegistered ? "Unregister" : "Register"}
+                  </Button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
         {!events.length && (
-          <p className="text-center text-muted-foreground py-8">No upcoming events available</p>
+          <p className="text-center text-muted-foreground py-4 text-sm">No upcoming events</p>
         )}
       </CardContent>
     </Card>
