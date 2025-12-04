@@ -206,8 +206,9 @@ const SponsorShowcase = () => {
       <Card className="border-2 border-yellow-500/20 bg-gradient-to-br from-yellow-50/50 to-background dark:from-yellow-950/10">
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">Exabyte Sponsors<Building2 className="h-5 w-5 md:h-6 md:w-6 text-yellow-600 dark:text-yellow-500" />
-              Exabyte Sponsors — $16,000
+            <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">Exabyte Sponsors
+            <Building2 className="h-5 w-5 md:h-6 md:w-6 text-yellow-600 dark:text-yellow-500" />
+              ​
             </CardTitle>
             <Badge className="bg-yellow-600 hover:bg-yellow-700 text-white text-xs md:text-sm">
               Premier Partners
@@ -224,7 +225,7 @@ const SponsorShowcase = () => {
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">Petabyte Sponsors<Building2 className="h-5 w-5 md:h-6 md:w-6 text-gray-500" />
-              Petabyte Sponsors — $12,000
+              ​
             </CardTitle>
             <Badge className="bg-gray-500 hover:bg-gray-600 text-white text-xs md:text-sm">
               Supporting Partners
@@ -241,7 +242,7 @@ const SponsorShowcase = () => {
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">Terabyte Sponsors<Building2 className="h-5 w-5 md:h-6 md:w-6 text-orange-700 dark:text-orange-600" />
-              Terabyte Sponsors — $8,000
+              ​
             </CardTitle>
             <Badge className="bg-orange-700 hover:bg-orange-800 text-white text-xs md:text-sm">
               Contributing Partners
