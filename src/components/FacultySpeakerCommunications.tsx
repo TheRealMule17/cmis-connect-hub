@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MessageSquare, Plus, Users, Calendar } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { MessageSquare, Plus, Users, Calendar, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -341,19 +342,54 @@ const FacultySpeakerCommunications = () => {
           <div className="space-y-4">
             {communications?.map((comm) => (
               <div key={comm.id} className="p-4 border rounded-lg space-y-2">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h4 className="font-semibold">{comm.subject}</h4>
-                    <p className="text-sm text-muted-foreground">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h4 className="font-semibold">
                       {new Date(comm.created_at).toLocaleDateString()} at {new Date(comm.created_at).toLocaleTimeString()}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
+                    </h4>
                     <Badge variant="outline">{comm.message_type?.replace("_", " ")}</Badge>
                     <Badge variant="secondary">{comm.target_tier}</Badge>
                   </div>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently delete this communication from the history.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={async () => {
+                            const { error } = await supabase
+                              .from("faculty_communications")
+                              .delete()
+                              .eq("id", comm.id);
+                            if (error) {
+                              toast({
+                                title: "Error",
+                                description: "Failed to delete communication",
+                                variant: "destructive",
+                              });
+                            } else {
+                              queryClient.invalidateQueries({ queryKey: ["faculty_communications"] });
+                              toast({ title: "Communication deleted" });
+                            }
+                          }}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
-                <p className="text-sm">{comm.message}</p>
               </div>
             ))}
             {!communications?.length && (
