@@ -2,11 +2,62 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Users, Briefcase, GraduationCap, Target, CheckCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Users, Search, Download, Mail, X, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const TalentPipeline = () => {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+
+  // Fetch all students
+  const { data: students } = useQuery({
+    queryKey: ["students_for_sponsors"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("student_profiles")
+        .select("id, name, email, skills, resume_url")
+        .order("name");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Get all unique skills from students
+  const allSkills = Array.from(
+    new Set(students?.flatMap(s => s.skills || []).filter(Boolean) || [])
+  ).sort();
+
+  // Filter students based on search and skills
+  const filteredStudents = students?.filter(student => {
+    const matchesSearch = !searchQuery || 
+      student.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      student.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      student.skills?.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    const matchesSkills = selectedSkills.length === 0 ||
+      selectedSkills.every(skill => student.skills?.includes(skill));
+    
+    return matchesSearch && matchesSkills;
+  }) || [];
+
+  const toggleSkill = (skill: string) => {
+    setSelectedSkills(prev => 
+      prev.includes(skill) 
+        ? prev.filter(s => s !== skill)
+        : [...prev, skill]
+    );
+  };
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setSelectedSkills([]);
+  };
 
   const programs = [
     {
@@ -119,6 +170,108 @@ const TalentPipeline = () => {
             </Card>
           ))}
         </div>
+
+        {/* Student Search Section */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Search className="h-5 w-5" />
+              Find Talent
+            </CardTitle>
+            <CardDescription>Search and filter students by name, email, or skills</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search by name, email, or skill..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              {(searchQuery || selectedSkills.length > 0) && (
+                <Button variant="outline" onClick={clearFilters}>
+                  <X className="h-4 w-4 mr-2" />
+                  Clear
+                </Button>
+              )}
+            </div>
+
+            {allSkills.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Filter by Skills:</p>
+                <div className="flex flex-wrap gap-2">
+                  {allSkills.map((skill) => (
+                    <Badge
+                      key={skill}
+                      variant={selectedSkills.includes(skill) ? "default" : "outline"}
+                      className="cursor-pointer hover:bg-primary/80"
+                      onClick={() => toggleSkill(skill)}
+                    >
+                      {skill}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="border-t pt-4">
+              <p className="text-sm text-muted-foreground mb-4">
+                {filteredStudents.length} student{filteredStudents.length !== 1 ? 's' : ''} found
+              </p>
+              
+              {filteredStudents.length > 0 ? (
+                <div className="space-y-3">
+                  {filteredStudents.map((student) => (
+                    <div
+                      key={student.id}
+                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="space-y-1">
+                        <p className="font-medium">{student.name || "Unknown Student"}</p>
+                        {student.email && (
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Mail className="h-4 w-4" />
+                            <a href={`mailto:${student.email}`} className="hover:underline">
+                              {student.email}
+                            </a>
+                          </div>
+                        )}
+                        {student.skills && student.skills.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {student.skills.map((skill: string) => (
+                              <Badge key={skill} variant="secondary" className="text-xs">
+                                {skill}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      {student.resume_url && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          asChild
+                        >
+                          <a href={student.resume_url} target="_blank" rel="noopener noreferrer">
+                            <Download className="h-4 w-4 mr-2" />
+                            Resume
+                          </a>
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-center text-muted-foreground py-8">
+                  No students match your search criteria. Try adjusting your filters.
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>
