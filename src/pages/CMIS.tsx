@@ -1,128 +1,16 @@
 import Navigation from "@/components/Navigation";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import Footer from "@/components/Footer";
+import SponsorShowcase from "@/components/SponsorShowcase";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Mail } from "lucide-react";
-
-const advisoryBoard = {
-  exabyte: [
-    {
-      company: "ConocoPhillips",
-      logo: "/logos/conocophillips.png",
-      memberSince: 1990,
-      foundingMember: true,
-      representative: "Sayra Torres, IT Business Analyst",
-      url: "http://careers.conocophillips.com/"
-    },
-    {
-      company: "Exabeam",
-      logo: "/logos/exabeam.png",
-      memberSince: 2022,
-      representative: "Luke Voigt",
-      url: "https://www.exabeam.com/"
-    },
-    {
-      company: "Valero",
-      logo: "/logos/valero.png",
-      memberSince: 2019,
-      representative: "Paul Mazeika, Application Development & Integration Services",
-      url: "https://www.valero.com/en-us/Careers/UniversityRecruiting"
-    }
-  ],
-  petabyte: [
-    {
-      company: "Phillips 66",
-      logo: "/logos/phillips66.png",
-      memberSince: 2024,
-      representative: "Board Representative",
-      url: "https://www.phillips66.com/careers"
-    }
-  ],
-  terabyte: [
-    {
-      company: "Booz Allen Hamilton",
-      logo: "/logos/booz-allen-hamilton.png",
-      memberSince: 2024,
-      representative: "Mark McAllister",
-      url: "https://careers.boozallen.com/"
-    },
-    {
-      company: "Chevron",
-      logo: "/logos/chevron.png",
-      memberSince: 2012,
-      representative: "Kevin Jensen",
-      url: "https://careers.chevron.com/"
-    },
-    {
-      company: "GM",
-      logo: "/logos/gm.png",
-      memberSince: 2009,
-      representative: "Gabe Wilson",
-      url: "https://search-careers.gm.com/en/jobs/"
-    },
-    {
-      company: "Grant Thornton",
-      logo: "/logos/grant-thornton.png",
-      memberSince: 2024,
-      representative: "Juan Manuel Ortiz",
-      url: "https://www.grantthornton.com/careers"
-    },
-    {
-      company: "HBK Capital Management",
-      logo: "/logos/hbk-capital.png",
-      memberSince: 2023,
-      representative: "Abby Vanikiotis",
-      url: "https://www.hbk.com/careers"
-    },
-    {
-      company: "Palo Alto Networks",
-      logo: "/logos/palo-alto.webp",
-      memberSince: 2024,
-      representative: "Rick Linnabery",
-      url: "https://jobs.paloaltonetworks.com/en/"
-    },
-    {
-      company: "PepsiCo",
-      logo: "/logos/pepsico.svg",
-      memberSince: 2012,
-      representative: "David Plasek",
-      url: "https://www.pepsicojobs.com/main/"
-    },
-    {
-      company: "ShoWorks",
-      logo: "/logos/showorks.png",
-      memberSince: 2023,
-      representative: "Michael Hnatt",
-      url: "http://www.fairsoftware.com/"
-    },
-    {
-      company: "Umbrage",
-      logo: "/logos/umbrage.png",
-      memberSince: 2024,
-      representative: "Sohum Dogra",
-      url: "https://umbrage.com/home"
-    }
-  ]
-};
-
-const facultyAdvisors = [
-  "Dr. Aaron Becker",
-  "Dr. David Gomillion",
-  "Dr. Greg Heim",
-  "Dr. Michael Scialdone",
-  "Dr. Dwayne Whitten"
-];
-
-const studentAdvisors = [
-  "Colleen Anderson", "Garrison Hoyt", "Jermyle Jones", "Lauren Kriendler",
-  "Shashwat Varshney", "Anbankris Prakasam", "Priyanka Verma", "Varshitha Ravikumar",
-  "Ramaraju Muppalla", "Andrew Jiang", "Ana Spratte", "Lindsey Moore",
-  "Grant Saleme", "Zach Walsh", "Kim Mensinger", "Sam Franklin",
-  "Blake Dolenski", "Joanie O'Donnell", "Timothy Lee", "Josh Bittlestone",
-  "Star Wei", "James Londrigan", "Aaron Grow", "Mikylie Wing",
-  "Caden Reichmuth", "Anjali Batlanki"
-];
+import davidGomillionPhoto from "@/assets/faculty/david-gomillion.jpg";
+import aaronBeckerPhoto from "@/assets/faculty/aaron-becker.jpg";
+import gregHeimPhoto from "@/assets/faculty/greg-heim.jpg";
+import michaelScialdonePhoto from "@/assets/faculty/michael-scialdone.jpg";
+import dwayneWhittenPhoto from "@/assets/faculty/dwayne-whitten.jpg";
 
 const events = [
   "CMIS Summer Workshop",
@@ -234,7 +122,7 @@ const CMIS = () => {
         {/* Meet Our Team */}
         <section id="team" className="py-16">
           <div className="container mx-auto px-4">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
               <div>
                 <h2 className="text-2xl md:text-3xl font-bold mb-6">Meet Our Team</h2>
                 <p className="text-muted-foreground mb-6">
@@ -255,164 +143,81 @@ const CMIS = () => {
                 />
               </div>
             </div>
+
+            {/* Faculty Advisory Board */}
+            <div className="mb-16">
+              <h3 className="text-xl md:text-2xl font-bold mb-6 text-center">Faculty Advisory Board</h3>
+              <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
+                Our dedicated faculty advisors who provide guidance, mentorship, and leadership to the CMIS community.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto">
+                {[
+                  { id: 1, name: "Dr. Aaron Becker", role: "Faculty Advisory Board", image: aaronBeckerPhoto },
+                  { id: 2, name: "Dr. David Gomillion", role: "Co-Director of CMIS", image: davidGomillionPhoto },
+                  { id: 3, name: "Dr. Greg Heim", role: "Faculty Advisory Board", image: gregHeimPhoto },
+                  { id: 4, name: "Dr. Michael Scialdone", role: "Faculty Advisory Board", image: michaelScialdonePhoto },
+                  { id: 5, name: "Dr. Dwayne Whitten", role: "Co-Director of CMIS", image: dwayneWhittenPhoto },
+                ].map((person) => (
+                  <Card key={person.id} className="overflow-hidden hover:shadow-lg transition-all duration-300">
+                    <CardContent className="p-0">
+                      <div className="aspect-square bg-muted flex items-center justify-center">
+                        <img src={person.image} alt={person.name} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="p-4 text-center">
+                        <h4 className="font-semibold text-base mb-1">{person.name}</h4>
+                        <p className="text-sm text-muted-foreground">{person.role}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            {/* Student Advisory Board */}
+            <div>
+              <h3 className="text-xl md:text-2xl font-bold mb-6 text-center">Student Advisory Board</h3>
+              <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
+                Our dedicated student leaders who help shape the future of CMIS and bridge the gap between students and faculty.
+              </p>
+              <Card className="max-w-4xl mx-auto">
+                <CardContent className="p-6 md:p-8">
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {[
+                      "Mitchell Peiffer", "Poorav Desai", "Khushi Gupta", "Josh Bittlestone",
+                      "Benjamin McCaulley", "Lazzia Ellankil", "Emioritse Abraham", "Michael Hudgins",
+                      "Sanketh Marampally", "Taj Singh", "Anoushka Pai", "Raahim Shahzad",
+                      "Shragvi Pendyam", "Traci Lu"
+                    ].map((name, index) => (
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="text-sm px-4 py-2 hover:bg-primary hover:text-primary-foreground transition-colors cursor-default"
+                      >
+                        {name}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </section>
 
         {/* Corporate Advisory Board */}
         <section id="board" className="py-16 bg-muted/30">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-10 text-center">Corporate Advisory Board</h2>
-
-            {/* Exabyte Members */}
-            <div className="mb-12">
-              <h3 className="text-xl font-bold mb-6 text-amber-600 dark:text-amber-400 flex items-center gap-2">
-                <span className="w-3 h-3 bg-amber-500 rounded-full" />
-                Exabyte Members — $16,000
-              </h3>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {advisoryBoard.exabyte.map((member) => (
-                  <Card key={member.company} className="border-amber-200 dark:border-amber-800">
-                    <CardContent className="p-6">
-                      <a href={member.url} target="_blank" rel="noopener noreferrer" className="block">
-                        <div className="h-16 flex items-center justify-center mb-4">
-                          <img
-                            src={member.logo}
-                            alt={member.company}
-                            className="max-h-full max-w-full object-contain"
-                          />
-                        </div>
-                        <h4 className="font-semibold text-lg text-primary hover:underline">{member.company}</h4>
-                      </a>
-                      <p className="text-sm text-muted-foreground mt-2">
-                        Member Since: {member.memberSince}
-                        {member.foundingMember && " (founding member)"}
-                      </p>
-                      <p className="text-sm mt-2">
-                        <span className="font-medium">Board Representative:</span><br />
-                        {member.representative}
-                      </p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-
-            {/* Petabyte Members */}
-            <div className="mb-12">
-              <h3 className="text-xl font-bold mb-6 text-gray-500 dark:text-gray-400 flex items-center gap-2">
-                <span className="w-3 h-3 bg-gray-400 rounded-full" />
-                Petabyte Members — $12,000
-              </h3>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {advisoryBoard.petabyte.map((member) => (
-                  <Card key={member.company} className="border-gray-200 dark:border-gray-700">
-                    <CardContent className="p-6">
-                      <a href={member.url} target="_blank" rel="noopener noreferrer" className="block">
-                        <div className="h-16 flex items-center justify-center mb-4">
-                          <img
-                            src={member.logo}
-                            alt={member.company}
-                            className="max-h-full max-w-full object-contain"
-                          />
-                        </div>
-                        <h4 className="font-semibold text-lg text-primary hover:underline">{member.company}</h4>
-                      </a>
-                      <p className="text-sm text-muted-foreground mt-2">
-                        Member Since: {member.memberSince}
-                      </p>
-                      <p className="text-sm mt-2">
-                        <span className="font-medium">Board Representative:</span><br />
-                        {member.representative}
-                      </p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-
-            {/* Terabyte Members */}
-            <div className="mb-8">
-              <h3 className="text-xl font-bold mb-6 text-orange-600 dark:text-orange-400 flex items-center gap-2">
-                <span className="w-3 h-3 bg-orange-500 rounded-full" />
-                Terabyte Members — $8,000
-              </h3>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {advisoryBoard.terabyte.map((member) => (
-                  <Card key={member.company} className="border-orange-200 dark:border-orange-800">
-                    <CardContent className="p-6">
-                      <a href={member.url} target="_blank" rel="noopener noreferrer" className="block">
-                        <div className="h-16 flex items-center justify-center mb-4">
-                          <img
-                            src={member.logo}
-                            alt={member.company}
-                            className="max-h-full max-w-full object-contain"
-                          />
-                        </div>
-                        <h4 className="font-semibold text-lg text-primary hover:underline">{member.company}</h4>
-                      </a>
-                      <p className="text-sm text-muted-foreground mt-2">
-                        Member Since: {member.memberSince}
-                      </p>
-                      <p className="text-sm mt-2">
-                        <span className="font-medium">Board Representative:</span><br />
-                        {member.representative}
-                      </p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-
-            <div className="text-center">
+            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-center">Corporate Advisory Board</h2>
+            <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
+              We are grateful for the support of our sponsors who make our programs and initiatives possible.
+            </p>
+            <SponsorShowcase />
+            <div className="text-center mt-8">
               <Button variant="outline" asChild>
                 <a href="mailto:cmis@mays.tamu.edu">
                   <Mail className="mr-2 h-4 w-4" />
                   Learn More About Membership
                 </a>
               </Button>
-            </div>
-          </div>
-        </section>
-
-        {/* Faculty and Student Partners */}
-        <section id="partners" className="py-16">
-          <div className="container mx-auto px-4">
-            <h2 className="text-2xl md:text-3xl font-bold mb-10 text-center">Faculty and Student Partners</h2>
-
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Faculty Advisory Board */}
-              <Card>
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-bold mb-4">Faculty Advisory Board</h3>
-                  <div className="space-y-2">
-                    {facultyAdvisors.map((faculty) => (
-                      <p key={faculty} className="text-muted-foreground">{faculty}</p>
-                    ))}
-                  </div>
-                  <Button variant="outline" className="mt-4" asChild>
-                    <a href="mailto:cmis@mays.tamu.edu">
-                      <Mail className="mr-2 h-4 w-4" />
-                      Contact Faculty
-                    </a>
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Student Advisory Board */}
-              <Card>
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-bold mb-4">Student Advisory Board</h3>
-                  <p className="text-muted-foreground text-sm">
-                    {studentAdvisors.join(", ")}
-                  </p>
-                  <Button variant="outline" className="mt-4" asChild>
-                    <a href="mailto:cmis@mays.tamu.edu">
-                      <Mail className="mr-2 h-4 w-4" />
-                      Contact Students
-                    </a>
-                  </Button>
-                </CardContent>
-              </Card>
             </div>
           </div>
         </section>
