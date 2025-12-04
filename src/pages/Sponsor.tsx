@@ -6,7 +6,6 @@ import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Building2, Handshake, TrendingUp, Award, LogOut, ArrowLeft } from "lucide-react";
-import SponsorEventList from "@/components/SponsorEventList";
 import SponsorTierBenefits from "@/components/SponsorTierBenefits";
 import SpeakerProposalForm from "@/components/SpeakerProposalForm";
 import { useToast } from "@/hooks/use-toast";
@@ -139,10 +138,11 @@ const Sponsor = () => {
 
         <SponsorTierBenefits />
 
-        <div className="mt-8 grid lg:grid-cols-2 gap-6">
-          <SponsorEventList />
-          {sponsorId && <SpeakerProposalForm sponsorId={sponsorId} />}
-        </div>
+        {sponsorId && (
+          <div className="mt-8">
+            <SpeakerProposalForm sponsorId={sponsorId} />
+          </div>
+        )}
 
         <div className="grid md:grid-cols-3 gap-6 mt-8">
           <Card>
