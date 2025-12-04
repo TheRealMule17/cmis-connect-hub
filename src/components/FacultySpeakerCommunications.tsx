@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MessageSquare, Plus } from "lucide-react";
+import { MessageSquare, Plus, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,6 +21,8 @@ const FacultySpeakerCommunications = () => {
     message: "",
     target_tier: "individual",
   });
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedRecipient, setSelectedRecipient] = useState<string>("");
 
   const { data: communications } = useQuery({
     queryKey: ["faculty_communications"],
@@ -32,6 +34,48 @@ const FacultySpeakerCommunications = () => {
       if (error) throw error;
       return data;
     },
+  });
+
+  // Fetch students
+  const { data: students } = useQuery({
+    queryKey: ["students_list"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("student_profiles")
+        .select("id, user_id, name, email")
+        .order("name");
+      if (error) throw error;
+      return data;
+    },
+    enabled: selectedCategory === "students",
+  });
+
+  // Fetch sponsors
+  const { data: sponsors } = useQuery({
+    queryKey: ["sponsors_list"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("sponsor_profiles")
+        .select("id, user_id, company_name, contact_email")
+        .order("company_name");
+      if (error) throw error;
+      return data;
+    },
+    enabled: selectedCategory === "sponsors",
+  });
+
+  // Fetch alumni
+  const { data: alumni } = useQuery({
+    queryKey: ["alumni_list"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("alumni_profiles")
+        .select("id, user_id, name, email")
+        .order("name");
+      if (error) throw error;
+      return data;
+    },
+    enabled: selectedCategory === "alumni",
   });
 
   const createCommunication = useMutation({
@@ -49,9 +93,43 @@ const FacultySpeakerCommunications = () => {
       queryClient.invalidateQueries({ queryKey: ["faculty_communications"] });
       toast({ title: "Message posted successfully" });
       setIsCreating(false);
-      setFormData({ message_type: "thank_you", subject: "", message: "", target_tier: "all" });
+      setFormData({ message_type: "thank_you", subject: "", message: "", target_tier: "individual" });
+      setSelectedCategory("");
+      setSelectedRecipient("");
     },
   });
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    setSelectedRecipient("");
+  };
+
+  const getRecipientsList = () => {
+    switch (selectedCategory) {
+      case "students":
+        return students?.map((s) => ({
+          id: s.user_id,
+          label: s.name || s.email || "Unknown Student",
+          sublabel: s.email,
+        })) || [];
+      case "sponsors":
+        return sponsors?.map((s) => ({
+          id: s.user_id,
+          label: s.company_name,
+          sublabel: s.contact_email,
+        })) || [];
+      case "alumni":
+        return alumni?.map((a) => ({
+          id: a.user_id,
+          label: a.name || a.email || "Unknown Alumni",
+          sublabel: a.email,
+        })) || [];
+      default:
+        return [];
+    }
+  };
+
+  const recipientsList = getRecipientsList();
 
   return (
     <div className="space-y-6">
@@ -80,7 +158,7 @@ const FacultySpeakerCommunications = () => {
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background">
                       <SelectItem value="thank_you">Thank You Note</SelectItem>
                       <SelectItem value="sponsor_request">Sponsor Request</SelectItem>
                       <SelectItem value="event_invitation">Event Invitation</SelectItem>
@@ -90,14 +168,23 @@ const FacultySpeakerCommunications = () => {
                 </div>
                 <div>
                   <Label htmlFor="target_tier">Recipient</Label>
-                  <Select value={formData.target_tier} onValueChange={(val) => setFormData({ ...formData, target_tier: val })}>
+                  <Select 
+                    value={formData.target_tier} 
+                    onValueChange={(val) => {
+                      setFormData({ ...formData, target_tier: val });
+                      if (val !== "individual") {
+                        setSelectedCategory("");
+                        setSelectedRecipient("");
+                      }
+                    }}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-background">
-                      <SelectItem value="all">All Sponsors</SelectItem>
                       <SelectItem value="individual">Individual Message</SelectItem>
                       <SelectItem value="event_attendees">Event Attendees</SelectItem>
+                      <SelectItem value="all">All Sponsors</SelectItem>
                       <SelectItem value="exabyte">Exabyte Tier Only</SelectItem>
                       <SelectItem value="petabyte">Petabyte Tier Only</SelectItem>
                       <SelectItem value="terabyte">Terabyte Tier Only</SelectItem>
@@ -105,6 +192,70 @@ const FacultySpeakerCommunications = () => {
                   </Select>
                 </div>
               </div>
+
+              {/* Individual recipient selection */}
+              {formData.target_tier === "individual" && (
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="category">Select Category</Label>
+                    <Select value={selectedCategory} onValueChange={handleCategoryChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Choose a category..." />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background">
+                        <SelectItem value="students">
+                          <div className="flex items-center gap-2">
+                            <Users className="h-4 w-4" />
+                            Students
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="sponsors">
+                          <div className="flex items-center gap-2">
+                            <Users className="h-4 w-4" />
+                            Sponsors
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="alumni">
+                          <div className="flex items-center gap-2">
+                            <Users className="h-4 w-4" />
+                            Alumni
+                          </div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  {selectedCategory && (
+                    <div>
+                      <Label htmlFor="recipient">Select Recipient</Label>
+                      <Select value={selectedRecipient} onValueChange={setSelectedRecipient}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choose a recipient..." />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background max-h-60">
+                          {recipientsList.length > 0 ? (
+                            recipientsList.map((recipient) => (
+                              <SelectItem key={recipient.id} value={recipient.id}>
+                                <div className="flex flex-col">
+                                  <span>{recipient.label}</span>
+                                  {recipient.sublabel && (
+                                    <span className="text-xs text-muted-foreground">{recipient.sublabel}</span>
+                                  )}
+                                </div>
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <div className="p-2 text-sm text-muted-foreground text-center">
+                              No {selectedCategory} found
+                            </div>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                </div>
+              )}
+
               <div>
                 <Label htmlFor="subject">Subject</Label>
                 <Input
