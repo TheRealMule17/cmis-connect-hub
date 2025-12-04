@@ -7,8 +7,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, UserPlus, X, RefreshCw } from "lucide-react";
+import { Sparkles, UserPlus, X, RefreshCw, Workflow } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
+const N8N_THANK_YOU_WORKFLOW_URL = "https://mule17.app.n8n.cloud/webhook/93302a7a-7929-4ab4-84bf-1f536e8bb856";
 
 interface Recipient {
   name: string;
@@ -23,6 +25,38 @@ const BatchEmailGenerator = () => {
   const [details, setDetails] = useState("");
   const [recipients, setRecipients] = useState<Recipient[]>([{ name: "", email: "" }]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isTriggering, setIsTriggering] = useState(false);
+
+  const triggerN8nThankYouWorkflow = async () => {
+    setIsTriggering(true);
+    try {
+      const response = await fetch(N8N_THANK_YOU_WORKFLOW_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "no-cors",
+        body: JSON.stringify({
+          timestamp: new Date().toISOString(),
+          triggered_from: window.location.origin,
+        }),
+      });
+
+      toast({
+        title: "Workflow Triggered",
+        description: "Thank you email generation workflow has been started. Check your Airtable for results.",
+      });
+    } catch (error: any) {
+      console.error("Error triggering n8n workflow:", error);
+      toast({
+        title: "Error",
+        description: "Failed to trigger the workflow. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsTriggering(false);
+    }
+  };
 
   const addRecipient = () => {
     setRecipients([...recipients, { name: "", email: "" }]);
@@ -131,6 +165,43 @@ const BatchEmailGenerator = () => {
       </CardHeader>
       <CardContent>
         <div className="grid gap-6">
+          {/* n8n Thank You Email Generation */}
+          <div className="p-4 border rounded-lg bg-muted/30 space-y-3">
+            <div className="flex items-center gap-2">
+              <Workflow className="h-5 w-5 text-primary" />
+              <span className="font-medium">Quick Thank You Emails</span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Generate thank you emails for all alumni from your connected Google Sheets database using the n8n workflow.
+            </p>
+            <Button
+              onClick={triggerN8nThankYouWorkflow}
+              disabled={isTriggering}
+              variant="secondary"
+            >
+              {isTriggering ? (
+                <>
+                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                  Triggering Workflow...
+                </>
+              ) : (
+                <>
+                  <Workflow className="mr-2 h-4 w-4" />
+                  Generate Thank You Emails (n8n)
+                </>
+              )}
+            </Button>
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">Or create custom batch</span>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="emailType">Email Type</Label>
