@@ -45,10 +45,13 @@ const CMIS = () => {
                     Meet Our Team
                   </button>
                   <button onClick={() => scrollToSection("board")} className="text-primary hover:text-primary/80 text-left font-medium">
-                    Advisory Board
+                    Corporate Advisory Board
                   </button>
-                  <button onClick={() => scrollToSection("partners")} className="text-primary hover:text-primary/80 text-left font-medium">
+                  <button onClick={() => scrollToSection("faculty-partners")} className="text-primary hover:text-primary/80 text-left font-medium">
                     Faculty Partners
+                  </button>
+                  <button onClick={() => scrollToSection("student-leaders")} className="text-primary hover:text-primary/80 text-left font-medium">
+                    Student Leaders
                   </button>
                 </div>
               </div>
@@ -105,8 +108,8 @@ const CMIS = () => {
             </div>
 
             {/* Faculty Advisory Board */}
-            <div className="mb-16">
-              <h3 className="text-xl md:text-2xl font-bold mb-6 text-center">Faculty Advisory Board</h3>
+            <div id="faculty-partners" className="mb-16">
+              <h3 className="text-xl md:text-2xl font-bold mb-6 text-center">Faculty Partners</h3>
               <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
                 Our dedicated faculty advisors who provide guidance, mentorship, and leadership to the CMIS community.
               </p>
@@ -151,8 +154,8 @@ const CMIS = () => {
             </div>
 
             {/* Student Advisory Board */}
-            <div>
-              <h3 className="text-xl md:text-2xl font-bold mb-6 text-center">Student Advisory Board</h3>
+            <div id="student-leaders">
+              <h3 className="text-xl md:text-2xl font-bold mb-6 text-center">Student Leaders</h3>
               <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
                 Our dedicated student leaders who help shape the future of CMIS and bridge the gap between students and faculty.
               </p>
