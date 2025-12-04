@@ -28,7 +28,7 @@ const About = () => {
             </CardHeader>
             <CardContent className="space-y-4 text-muted-foreground">
               <p>
-                The Council of Management Information Systems (CMIS) is dedicated to connecting students, alumni,
+                The Council for the Management of Information Systems (CMIS) is dedicated to connecting students, alumni,
                 faculty, and industry partners in the field of management information systems.
               </p>
               <p>
