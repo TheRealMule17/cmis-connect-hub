@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MessageSquare, Plus, Users } from "lucide-react";
+import { MessageSquare, Plus, Users, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,6 +23,7 @@ const FacultySpeakerCommunications = () => {
   });
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedRecipient, setSelectedRecipient] = useState<string>("");
+  const [selectedEvent, setSelectedEvent] = useState<string>("");
 
   const { data: communications } = useQuery({
     queryKey: ["faculty_communications"],
@@ -34,6 +35,22 @@ const FacultySpeakerCommunications = () => {
       if (error) throw error;
       return data;
     },
+  });
+
+  // Fetch recent/upcoming events
+  const { data: events } = useQuery({
+    queryKey: ["events_for_communications"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("events")
+        .select("id, title, event_date, location")
+        .gte("event_date", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()) // Past 30 days and future
+        .order("event_date", { ascending: false })
+        .limit(20);
+      if (error) throw error;
+      return data;
+    },
+    enabled: formData.target_tier === "event_attendees",
   });
 
   // Fetch students
@@ -96,6 +113,7 @@ const FacultySpeakerCommunications = () => {
       setFormData({ message_type: "thank_you", subject: "", message: "", target_tier: "individual" });
       setSelectedCategory("");
       setSelectedRecipient("");
+      setSelectedEvent("");
     },
   });
 
@@ -130,6 +148,16 @@ const FacultySpeakerCommunications = () => {
   };
 
   const recipientsList = getRecipientsList();
+
+  const formatEventDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const isPast = date < now;
+    return {
+      formatted: date.toLocaleDateString(),
+      isPast,
+    };
+  };
 
   return (
     <div className="space-y-6">
@@ -176,6 +204,9 @@ const FacultySpeakerCommunications = () => {
                         setSelectedCategory("");
                         setSelectedRecipient("");
                       }
+                      if (val !== "event_attendees") {
+                        setSelectedEvent("");
+                      }
                     }}
                   >
                     <SelectTrigger>
@@ -192,6 +223,42 @@ const FacultySpeakerCommunications = () => {
                   </Select>
                 </div>
               </div>
+
+              {/* Event Attendees selection */}
+              {formData.target_tier === "event_attendees" && (
+                <div>
+                  <Label htmlFor="event">Select Event</Label>
+                  <Select value={selectedEvent} onValueChange={setSelectedEvent}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose an event..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background max-h-60">
+                      {events && events.length > 0 ? (
+                        events.map((event) => {
+                          const { formatted, isPast } = formatEventDate(event.event_date);
+                          return (
+                            <SelectItem key={event.id} value={event.id}>
+                              <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4 text-muted-foreground" />
+                                <div className="flex flex-col">
+                                  <span>{event.title}</span>
+                                  <span className="text-xs text-muted-foreground">
+                                    {formatted} {isPast ? "(Past)" : "(Upcoming)"} • {event.location || "TBD"}
+                                  </span>
+                                </div>
+                              </div>
+                            </SelectItem>
+                          );
+                        })
+                      ) : (
+                        <div className="p-2 text-sm text-muted-foreground text-center">
+                          No events found
+                        </div>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
               {/* Individual recipient selection */}
               {formData.target_tier === "individual" && (
