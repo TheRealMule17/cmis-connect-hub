@@ -4,14 +4,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Chatbot } from "@/components/Chatbot";
-import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Student from "./pages/Student";
 import Alumni from "./pages/Alumni";
 import Sponsor from "./pages/Sponsor";
 import Dashboard from "./pages/Dashboard";
 import FacultyAuth from "./pages/FacultyAuth";
-import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Gallery from "./pages/Gallery";
 import SearchResults from "./pages/SearchResults";
@@ -31,9 +29,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<CMIS />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/about" element={<About />} />
           <Route path="/student" element={<Student />} />
           <Route path="/alumni" element={<Alumni />} />
           <Route path="/sponsor" element={<Sponsor />} />
@@ -42,7 +39,6 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/search" element={<SearchResults />} />
-          <Route path="/cmis" element={<CMIS />} />
           <Route path="/talent-pipeline" element={<TalentPipeline />} />
           <Route path="/research-partnerships" element={<ResearchPartnerships />} />
           <Route path="/brand-recognition" element={<BrandRecognition />} />
