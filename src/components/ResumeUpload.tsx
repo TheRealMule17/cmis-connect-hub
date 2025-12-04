@@ -133,6 +133,8 @@ const ResumeUpload = ({ userId, currentResumeUrl, onResumeUpdate }: ResumeUpload
     }
   };
 
+  const isPdf = currentResumeUrl?.toLowerCase().includes('.pdf');
+
   return (
     <Card>
       <CardHeader>
@@ -144,22 +146,48 @@ const ResumeUpload = ({ userId, currentResumeUrl, onResumeUpdate }: ResumeUpload
       </CardHeader>
       <CardContent className="space-y-4">
         {currentResumeUrl ? (
-          <div className="flex items-center justify-between p-4 bg-secondary rounded-lg">
-            <div className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-primary" />
-              <span className="text-sm font-medium">Resume uploaded</span>
-            </div>
+          <>
+            {/* Live Preview */}
+            <a 
+              href={currentResumeUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="block border rounded-lg overflow-hidden hover:ring-2 hover:ring-primary transition-all cursor-pointer"
+            >
+              {isPdf ? (
+                <iframe
+                  src={`${currentResumeUrl}#toolbar=0&navpanes=0`}
+                  className="w-full h-[400px] pointer-events-none"
+                  title="Resume Preview"
+                />
+              ) : (
+                <div className="w-full h-[200px] bg-secondary flex flex-col items-center justify-center gap-2">
+                  <FileText className="h-12 w-12 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Word document - Click to open</span>
+                </div>
+              )}
+            </a>
+            
+            {/* Actions */}
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" asChild>
-                <a href={currentResumeUrl} target="_blank" rel="noopener noreferrer">
-                  View
-                </a>
-              </Button>
-              <Button variant="destructive" size="sm" onClick={handleDelete} disabled={uploading}>
+              <label htmlFor="resume-update" className="flex-1">
+                <Button variant="outline" className="w-full" disabled={uploading} asChild>
+                  <span>{uploading ? "Uploading..." : "Replace Resume"}</span>
+                </Button>
+                <input
+                  id="resume-update"
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  onChange={handleFileUpload}
+                  disabled={uploading}
+                  className="hidden"
+                />
+              </label>
+              <Button variant="destructive" onClick={handleDelete} disabled={uploading}>
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>
-          </div>
+          </>
         ) : (
           <div className="border-2 border-dashed rounded-lg p-6 text-center">
             <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
@@ -178,22 +206,6 @@ const ResumeUpload = ({ userId, currentResumeUrl, onResumeUpdate }: ResumeUpload
               />
             </label>
           </div>
-        )}
-        
-        {currentResumeUrl && (
-          <label htmlFor="resume-update" className="block">
-            <Button variant="outline" className="w-full" disabled={uploading} asChild>
-              <span>{uploading ? "Uploading..." : "Replace Resume"}</span>
-            </Button>
-            <input
-              id="resume-update"
-              type="file"
-              accept=".pdf,.doc,.docx"
-              onChange={handleFileUpload}
-              disabled={uploading}
-              className="hidden"
-            />
-          </label>
         )}
       </CardContent>
     </Card>
