@@ -217,59 +217,61 @@ const TalentPipeline = () => {
               </div>
             )}
 
-            <div className="border-t pt-4">
-              <p className="text-sm text-muted-foreground mb-4">
-                {filteredStudents.length} student{filteredStudents.length !== 1 ? 's' : ''} found
-              </p>
-              
-              {filteredStudents.length > 0 ? (
-                <div className="space-y-3">
-                  {filteredStudents.map((student) => (
-                    <div
-                      key={student.id}
-                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-                    >
-                      <div className="space-y-1">
-                        <p className="font-medium">{student.name || "Unknown Student"}</p>
-                        {student.email && (
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Mail className="h-4 w-4" />
-                            <a href={`mailto:${student.email}`} className="hover:underline">
-                              {student.email}
+            {(searchQuery || selectedSkills.length > 0) && (
+              <div className="border-t pt-4">
+                <p className="text-sm text-muted-foreground mb-4">
+                  {filteredStudents.length} student{filteredStudents.length !== 1 ? 's' : ''} found
+                </p>
+                
+                {filteredStudents.length > 0 ? (
+                  <div className="space-y-3">
+                    {filteredStudents.map((student) => (
+                      <div
+                        key={student.id}
+                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                      >
+                        <div className="space-y-1">
+                          <p className="font-medium">{student.name || "Unknown Student"}</p>
+                          {student.email && (
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <Mail className="h-4 w-4" />
+                              <a href={`mailto:${student.email}`} className="hover:underline">
+                                {student.email}
+                              </a>
+                            </div>
+                          )}
+                          {student.skills && student.skills.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {student.skills.map((skill: string) => (
+                                <Badge key={skill} variant="secondary" className="text-xs">
+                                  {skill}
+                                </Badge>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        {student.resume_url && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            asChild
+                          >
+                            <a href={student.resume_url} target="_blank" rel="noopener noreferrer">
+                              <Download className="h-4 w-4 mr-2" />
+                              Resume
                             </a>
-                          </div>
-                        )}
-                        {student.skills && student.skills.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {student.skills.map((skill: string) => (
-                              <Badge key={skill} variant="secondary" className="text-xs">
-                                {skill}
-                              </Badge>
-                            ))}
-                          </div>
+                          </Button>
                         )}
                       </div>
-                      {student.resume_url && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          asChild
-                        >
-                          <a href={student.resume_url} target="_blank" rel="noopener noreferrer">
-                            <Download className="h-4 w-4 mr-2" />
-                            Resume
-                          </a>
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-center text-muted-foreground py-8">
-                  No students match your search criteria. Try adjusting your filters.
-                </p>
-              )}
-            </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-center text-muted-foreground py-8">
+                    No students match your search criteria. Try adjusting your filters.
+                  </p>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
 
