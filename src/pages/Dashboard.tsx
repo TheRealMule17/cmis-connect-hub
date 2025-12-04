@@ -11,9 +11,6 @@ import FacultySpeakerCommunications from "@/components/FacultySpeakerCommunicati
 import FacultyMentorMatcher from "@/components/FacultyMentorMatcher";
 import ResearchCollaborationHub from "@/components/ResearchCollaborationHub";
 import AnalyticsCommunicationDashboard from "@/components/AnalyticsCommunicationDashboard";
-import EmailGenerator from "@/components/EmailGenerator";
-import BatchEmailGenerator from "@/components/BatchEmailGenerator";
-import EmailReview from "@/components/EmailReview";
 import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
@@ -21,7 +18,6 @@ const Dashboard = () => {
   const { toast } = useToast();
   const [searchParams] = useState(() => new URLSearchParams(window.location.search));
   const defaultTab = searchParams.get("tab") || "analytics";
-  const batchId = searchParams.get("batch") || undefined;
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
 
@@ -116,16 +112,13 @@ const Dashboard = () => {
         </div>
 
         <Tabs defaultValue={defaultTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-9 mb-8">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 mb-8">
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="events">Events</TabsTrigger>
             <TabsTrigger value="competitions">Competitions</TabsTrigger>
             <TabsTrigger value="speakers">Communications</TabsTrigger>
             <TabsTrigger value="mentors">Mentor Matcher</TabsTrigger>
             <TabsTrigger value="research">Research</TabsTrigger>
-            <TabsTrigger value="email">Single Email</TabsTrigger>
-            <TabsTrigger value="batch-email">Batch Emails</TabsTrigger>
-            <TabsTrigger value="email-review">Review Emails</TabsTrigger>
           </TabsList>
 
           <TabsContent value="analytics">
@@ -150,18 +143,6 @@ const Dashboard = () => {
 
           <TabsContent value="research">
             <ResearchCollaborationHub />
-          </TabsContent>
-
-          <TabsContent value="email">
-            <EmailGenerator />
-          </TabsContent>
-
-          <TabsContent value="batch-email">
-            <BatchEmailGenerator />
-          </TabsContent>
-
-          <TabsContent value="email-review">
-            <EmailReview batchId={batchId} />
           </TabsContent>
         </Tabs>
       </main>
