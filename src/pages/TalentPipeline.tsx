@@ -254,12 +254,10 @@ const TalentPipeline = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            asChild
+                            onClick={() => window.open(student.resume_url, '_blank', 'noopener,noreferrer')}
                           >
-                            <a href={student.resume_url} target="_blank" rel="noopener noreferrer">
                             <ExternalLink className="h-4 w-4 mr-2" />
                             View Resume
-                            </a>
                           </Button>
                         )}
                       </div>
