@@ -2,11 +2,29 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, TrendingUp, Lightbulb, FlaskConical, FileText, CheckCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, TrendingUp, Lightbulb, FlaskConical, FileText, CheckCircle, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 
 const ResearchPartnerships = () => {
   const navigate = useNavigate();
+  const [showProjects, setShowProjects] = useState(false);
+
+  const { data: researchProjects } = useQuery({
+    queryKey: ["research_collaborations"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("research_collaborations")
+        .select("*")
+        .eq("status", "open")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const researchAreas = [
     {
@@ -135,7 +153,7 @@ const ResearchPartnerships = () => {
           ))}
         </div>
 
-        <Card>
+        <Card className="mb-8">
           <CardHeader>
             <CardTitle>Start a Research Collaboration</CardTitle>
             <CardDescription>Connect with our research office to explore partnership opportunities</CardDescription>
@@ -143,10 +161,69 @@ const ResearchPartnerships = () => {
           <CardContent>
             <div className="flex gap-4">
               <Button size="lg" onClick={() => navigate("/contact")}>Contact Research Office</Button>
-              <Button size="lg" variant="outline">View Current Projects</Button>
+              <Button 
+                size="lg" 
+                variant={showProjects ? "secondary" : "outline"}
+                onClick={() => setShowProjects(!showProjects)}
+              >
+                {showProjects ? "Hide Projects" : "View Current Projects"}
+              </Button>
             </div>
           </CardContent>
         </Card>
+
+        {showProjects && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold mb-4">Current Research Opportunities</h2>
+            {researchProjects && researchProjects.length > 0 ? (
+              <div className="grid md:grid-cols-2 gap-6">
+                {researchProjects.map((project) => (
+                  <Card key={project.id} className="hover:shadow-md transition-shadow">
+                    <CardHeader>
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <CardTitle className="text-lg">{project.title}</CardTitle>
+                          {project.research_area && (
+                            <Badge variant="secondary" className="mt-2">{project.research_area}</Badge>
+                          )}
+                        </div>
+                        {project.collaboration_type && (
+                          <Badge variant="outline">{project.collaboration_type}</Badge>
+                        )}
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {project.description && (
+                        <p className="text-sm text-muted-foreground">{project.description}</p>
+                      )}
+                      {project.requirements && (
+                        <div>
+                          <p className="text-sm font-medium">Requirements:</p>
+                          <p className="text-sm text-muted-foreground">{project.requirements}</p>
+                        </div>
+                      )}
+                      {project.seeking_roles && project.seeking_roles.length > 0 && (
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Users className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm text-muted-foreground">Seeking:</span>
+                          {project.seeking_roles.map((role: string) => (
+                            <Badge key={role} variant="outline" className="text-xs">{role}</Badge>
+                          ))}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <Card>
+                <CardContent className="py-8 text-center text-muted-foreground">
+                  No research opportunities currently available. Check back soon or contact us to discuss potential collaborations.
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
       </main>
 
       <Footer />
