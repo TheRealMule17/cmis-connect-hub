@@ -56,10 +56,10 @@ const Sponsor = () => {
   };
 
   const benefits = [
-    { icon: Handshake, title: "Talent Pipeline", description: "Connect with top students and graduates" },
-    { icon: TrendingUp, title: "Research Partnerships", description: "Collaborate on cutting-edge projects" },
-    { icon: Award, title: "Brand Recognition", description: "Showcase your commitment to education" },
-    { icon: Building2, title: "Campus Events", description: "Host recruiting and networking events" },
+    { icon: Handshake, title: "Talent Pipeline", description: "Connect with top students and graduates", path: "/talent-pipeline" },
+    { icon: TrendingUp, title: "Research Partnerships", description: "Collaborate on cutting-edge projects", path: "/research-partnerships" },
+    { icon: Award, title: "Brand Recognition", description: "Showcase your commitment to education", path: "/brand-recognition" },
+    { icon: Building2, title: "Campus Events", description: "Host recruiting and networking events", path: "/campus-events" },
   ];
 
   if (loading) {
@@ -117,7 +117,11 @@ const Sponsor = () => {
 
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           {benefits.map((benefit) => (
-            <Card key={benefit.title} className="hover:shadow-md transition-shadow">
+            <Card 
+              key={benefit.title} 
+              className="hover:shadow-md transition-shadow cursor-pointer hover:border-primary/50"
+              onClick={() => navigate(benefit.path)}
+            >
               <CardHeader>
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
