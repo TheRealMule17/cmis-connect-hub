@@ -9,8 +9,41 @@ const AnalyticsCommunicationDashboard = () => {
   const { data: events } = useQuery({
     queryKey: ["analytics_events"],
     queryFn: async () => {
-      const { data } = await supabase.from("events").select("*, event_registrations(count)");
+      const { data } = await supabase.from("events").select("id, title, capacity");
       return data;
+    },
+  });
+
+  // Fetch all registrations with user roles
+  const { data: registrations } = useQuery({
+    queryKey: ["analytics_registrations"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("event_registrations")
+        .select("event_id, user_id");
+      return data;
+    },
+  });
+
+  // Fetch student user IDs
+  const { data: studentUsers } = useQuery({
+    queryKey: ["analytics_student_users"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("student_profiles")
+        .select("user_id");
+      return data?.map(s => s.user_id) || [];
+    },
+  });
+
+  // Fetch alumni user IDs
+  const { data: alumniUsers } = useQuery({
+    queryKey: ["analytics_alumni_users"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("alumni_profiles")
+        .select("user_id");
+      return data?.map(a => a.user_id) || [];
     },
   });
 
@@ -38,11 +71,18 @@ const AnalyticsCommunicationDashboard = () => {
     },
   });
 
-  const eventChartData = events?.slice(0, 5).map(e => ({
-    name: e.title?.substring(0, 15) || "Event",
-    registrations: e.event_registrations?.[0]?.count || 0,
-    capacity: e.capacity || 0
-  })) || [];
+  const eventChartData = events?.slice(0, 5).map(e => {
+    const eventRegs = registrations?.filter(r => r.event_id === e.id) || [];
+    const studentCount = eventRegs.filter(r => studentUsers?.includes(r.user_id)).length;
+    const alumniCount = eventRegs.filter(r => alumniUsers?.includes(r.user_id)).length;
+    
+    return {
+      name: e.title?.substring(0, 15) || "Event",
+      students: studentCount,
+      alumni: alumniCount,
+      capacity: e.capacity || 0
+    };
+  }) || [];
 
   return (
     <div className="space-y-6">
@@ -109,7 +149,7 @@ const AnalyticsCommunicationDashboard = () => {
         <Card>
           <CardHeader>
             <CardTitle>Event Registration Trends</CardTitle>
-            <CardDescription>Student registrations vs capacity</CardDescription>
+            <CardDescription>Student and alumni registrations by event</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -119,8 +159,9 @@ const AnalyticsCommunicationDashboard = () => {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="registrations" fill="hsl(var(--primary))" name="Registrations" />
-                <Bar dataKey="capacity" fill="hsl(var(--secondary))" name="Capacity" />
+                <Bar dataKey="students" fill="hsl(var(--primary))" name="Students" />
+                <Bar dataKey="alumni" fill="hsl(var(--chart-2))" name="Alumni" />
+                <Bar dataKey="capacity" fill="hsl(var(--muted))" name="Capacity" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
