@@ -2,7 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, FileText, Trash2, ExternalLink, Download } from "lucide-react";
+import { Upload, FileText, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface ResumeUploadProps {
@@ -147,26 +147,6 @@ const ResumeUpload = ({ userId, currentResumeUrl, onResumeUpdate }: ResumeUpload
       <CardContent className="space-y-4">
         {currentResumeUrl ? (
           <>
-            {/* View/Download Buttons */}
-            <div className="flex gap-2 mb-3">
-              <Button 
-                variant="outline" 
-                className="flex-1"
-                onClick={() => window.open(currentResumeUrl, '_blank')}
-              >
-                <ExternalLink className="h-4 w-4 mr-2" />
-                View Resume
-              </Button>
-              <Button 
-                variant="outline"
-                asChild
-              >
-                <a href={currentResumeUrl} download>
-                  <Download className="h-4 w-4" />
-                </a>
-              </Button>
-            </div>
-
             {/* Live Preview */}
             {isPdf ? (
               <div className="border rounded-lg overflow-hidden">
