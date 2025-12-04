@@ -17,6 +17,10 @@ import Gallery from "./pages/Gallery";
 import SearchResults from "./pages/SearchResults";
 import CMIS from "./pages/CMIS";
 import NotFound from "./pages/NotFound";
+import TalentPipeline from "./pages/TalentPipeline";
+import ResearchPartnerships from "./pages/ResearchPartnerships";
+import BrandRecognition from "./pages/BrandRecognition";
+import CampusEvents from "./pages/CampusEvents";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +43,10 @@ const App = () => (
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/search" element={<SearchResults />} />
           <Route path="/cmis" element={<CMIS />} />
+          <Route path="/talent-pipeline" element={<TalentPipeline />} />
+          <Route path="/research-partnerships" element={<ResearchPartnerships />} />
+          <Route path="/brand-recognition" element={<BrandRecognition />} />
+          <Route path="/campus-events" element={<CampusEvents />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

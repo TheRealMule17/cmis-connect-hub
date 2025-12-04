@@ -1,0 +1,157 @@
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, TrendingUp, Lightbulb, FlaskConical, FileText, CheckCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+const ResearchPartnerships = () => {
+  const navigate = useNavigate();
+
+  const researchAreas = [
+    {
+      title: "Data Analytics & AI",
+      description: "Collaborate on machine learning, predictive analytics, and AI-driven business solutions.",
+      icon: Lightbulb,
+    },
+    {
+      title: "Cybersecurity",
+      description: "Partner on security research, threat detection, and risk management frameworks.",
+      icon: FlaskConical,
+    },
+    {
+      title: "Digital Transformation",
+      description: "Explore enterprise systems, cloud computing, and digital strategy initiatives.",
+      icon: TrendingUp,
+    },
+    {
+      title: "Business Intelligence",
+      description: "Develop visualization tools, reporting systems, and data-driven decision frameworks.",
+      icon: FileText,
+    },
+  ];
+
+  const benefits = [
+    "Access to faculty expertise and graduate researchers",
+    "State-of-the-art lab facilities and computing resources",
+    "Joint publication and intellectual property opportunities",
+    "Student project teams for applied research",
+    "Grant co-funding and collaborative proposals",
+    "Advisory board participation",
+  ];
+
+  const partnershipModels = [
+    {
+      title: "Sponsored Research",
+      description: "Fund specific research projects aligned with your strategic interests",
+      investment: "Starting at $25,000",
+    },
+    {
+      title: "Research Consortium",
+      description: "Join industry peers in multi-stakeholder research initiatives",
+      investment: "Annual membership",
+    },
+    {
+      title: "Graduate Fellowship",
+      description: "Sponsor graduate students working on industry-relevant research",
+      investment: "Starting at $15,000",
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
+      <Navigation />
+      
+      <main className="container mx-auto px-4 py-8 flex-1">
+        <Button variant="ghost" onClick={() => navigate("/sponsor")} className="mb-4">
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Sponsor Portal
+        </Button>
+
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center">
+              <TrendingUp className="h-7 w-7 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold text-foreground">Research Partnerships</h1>
+              <p className="text-lg text-muted-foreground">Collaborate on cutting-edge projects</p>
+            </div>
+          </div>
+        </div>
+
+        <Card className="mb-8 border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+          <CardHeader>
+            <CardTitle className="text-2xl">Driving Innovation Together</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-6">
+              Our research partnerships bridge academia and industry, creating practical solutions 
+              to real-world challenges. Partner with our faculty and students to explore emerging 
+              technologies, validate concepts, and develop competitive advantages.
+            </p>
+            <div className="grid md:grid-cols-2 gap-3">
+              {benefits.map((benefit) => (
+                <div key={benefit} className="flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <span className="text-sm">{benefit}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <h2 className="text-2xl font-bold mb-4">Research Focus Areas</h2>
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          {researchAreas.map((area) => (
+            <Card key={area.title} className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <area.icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle>{area.title}</CardTitle>
+                    <CardDescription className="mt-1">{area.description}</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+
+        <h2 className="text-2xl font-bold mb-4">Partnership Models</h2>
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
+          {partnershipModels.map((model) => (
+            <Card key={model.title}>
+              <CardHeader>
+                <CardTitle>{model.title}</CardTitle>
+                <CardDescription>{model.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm font-medium text-primary">{model.investment}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Start a Research Collaboration</CardTitle>
+            <CardDescription>Connect with our research office to explore partnership opportunities</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-4">
+              <Button size="lg" onClick={() => navigate("/contact")}>Contact Research Office</Button>
+              <Button size="lg" variant="outline">View Current Projects</Button>
+            </div>
+          </CardContent>
+        </Card>
+      </main>
+
+      <Footer />
+    </div>
+  );
+};
+
+export default ResearchPartnerships;
