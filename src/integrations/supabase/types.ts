@@ -577,6 +577,36 @@ export type Database = {
         }
         Relationships: []
       }
+      mentor_form_responses: {
+        Row: {
+          bio_expertise: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          student_capacity: number | null
+          updated_at: string
+        }
+        Insert: {
+          bio_expertise?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          student_capacity?: number | null
+          updated_at?: string
+        }
+        Update: {
+          bio_expertise?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          student_capacity?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       mentor_listings: {
         Row: {
           availability: string | null
@@ -613,6 +643,30 @@ export type Database = {
           status?: string | null
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      mentor_match_results: {
+        Row: {
+          id: string
+          matched_at: string
+          mentor_name: string
+          status: string | null
+          student_name: string
+        }
+        Insert: {
+          id?: string
+          matched_at?: string
+          mentor_name: string
+          status?: string | null
+          student_name: string
+        }
+        Update: {
+          id?: string
+          matched_at?: string
+          mentor_name?: string
+          status?: string | null
+          student_name?: string
         }
         Relationships: []
       }
@@ -771,6 +825,42 @@ export type Database = {
           updated_at?: string
           user_id?: string
           website_url?: string | null
+        }
+        Relationships: []
+      }
+      student_form_responses: {
+        Row: {
+          career_choice_1: string | null
+          career_choice_2: string | null
+          career_choice_3: string | null
+          career_interest_reason: string | null
+          created_at: string
+          full_name: string
+          id: string
+          tamu_email: string
+          updated_at: string
+        }
+        Insert: {
+          career_choice_1?: string | null
+          career_choice_2?: string | null
+          career_choice_3?: string | null
+          career_interest_reason?: string | null
+          created_at?: string
+          full_name: string
+          id?: string
+          tamu_email: string
+          updated_at?: string
+        }
+        Update: {
+          career_choice_1?: string | null
+          career_choice_2?: string | null
+          career_choice_3?: string | null
+          career_interest_reason?: string | null
+          created_at?: string
+          full_name?: string
+          id?: string
+          tamu_email?: string
+          updated_at?: string
         }
         Relationships: []
       }
