@@ -4,15 +4,31 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Calendar, MapPin, Users, Plus } from "lucide-react";
+import { Calendar, MapPin, Users, Plus, ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import EventDetailDialog from "./EventDetailDialog";
+
+interface Event {
+  id: string;
+  title: string;
+  description: string | null;
+  event_date: string;
+  location: string | null;
+  building: string | null;
+  room_number: string | null;
+  capacity: number | null;
+  event_type: string | null;
+  status: string | null;
+  event_registrations?: { count: number }[];
+}
 
 const EventManager = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isCreating, setIsCreating] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -165,13 +181,22 @@ const EventManager = () => {
 
       <div className="grid md:grid-cols-2 gap-6">
         {events?.map((event) => (
-          <Card key={event.id}>
+          <Card 
+            key={event.id} 
+            className="cursor-pointer hover:border-primary/50 transition-colors group"
+            onClick={() => setSelectedEvent(event)}
+          >
             <CardHeader>
-              <CardTitle>{event.title}</CardTitle>
-              <CardDescription>{event.event_type}</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>{event.title}</CardTitle>
+                  <CardDescription>{event.event_type}</CardDescription>
+                </div>
+                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+              </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <p className="text-sm text-muted-foreground">{event.description}</p>
+              <p className="text-sm text-muted-foreground line-clamp-2">{event.description}</p>
               <div className="flex items-center gap-2 text-sm">
                 <Calendar className="h-4 w-4" />
                 {new Date(event.event_date).toLocaleString()}
@@ -186,13 +211,19 @@ const EventManager = () => {
               )}
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Users className="h-4 w-4" />
-                {event.event_registrations?.[0]?.count || 0} students registered
+                {event.event_registrations?.[0]?.count || 0} registered
                 {event.capacity && ` / ${event.capacity} capacity`}
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
+
+      <EventDetailDialog 
+        event={selectedEvent}
+        open={!!selectedEvent}
+        onOpenChange={(open) => !open && setSelectedEvent(null)}
+      />
     </div>
   );
 };
