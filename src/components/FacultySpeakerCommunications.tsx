@@ -6,11 +6,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { MessageSquare, Plus, Users, Calendar, Trash2 } from "lucide-react";
+import { MessageSquare, Plus, Users, Calendar, Trash2, Mail } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import EmailReview from "./EmailReview";
 
 const FacultySpeakerCommunications = () => {
   const { toast } = useToast();
@@ -349,6 +350,20 @@ const FacultySpeakerCommunications = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Email Review Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Mail className="h-5 w-5" />
+            Email Review Queue
+          </CardTitle>
+          <CardDescription>Review and approve emails before sending</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <EmailReview />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
