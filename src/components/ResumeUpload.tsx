@@ -155,11 +155,17 @@ const ResumeUpload = ({ userId, currentResumeUrl, onResumeUpdate }: ResumeUpload
               className="block border rounded-lg overflow-hidden hover:ring-2 hover:ring-primary transition-all cursor-pointer"
             >
               {isPdf ? (
-                <iframe
-                  src={`${currentResumeUrl}#toolbar=0&navpanes=0`}
+                <object
+                  data={currentResumeUrl}
+                  type="application/pdf"
                   className="w-full h-[400px] pointer-events-none"
-                  title="Resume Preview"
-                />
+                >
+                  <div className="w-full h-[400px] bg-secondary flex flex-col items-center justify-center gap-2">
+                    <FileText className="h-12 w-12 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">PDF Preview unavailable</span>
+                    <span className="text-xs text-muted-foreground">Click to open in new tab</span>
+                  </div>
+                </object>
               ) : (
                 <div className="w-full h-[200px] bg-secondary flex flex-col items-center justify-center gap-2">
                   <FileText className="h-12 w-12 text-muted-foreground" />
