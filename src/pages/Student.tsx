@@ -8,7 +8,8 @@ import WorkshopList from "@/components/WorkshopList";
 import ProfileSettings from "@/components/ProfileSettings";
 import StudentEventRegistration from "@/components/StudentEventRegistration";
 import { Button } from "@/components/ui/button";
-import { LogOut, ArrowLeft } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { LogOut, ArrowLeft, Heart, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Student = () => {
@@ -109,6 +110,32 @@ const Student = () => {
               currentResumeUrl={resumeUrl}
               onResumeUpdate={setResumeUrl}
             />
+            
+            {/* Mentorship Program Registration */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Heart className="h-5 w-5" />
+                  Mentorship Program
+                </CardTitle>
+                <CardDescription>
+                  Connect with experienced alumni mentors to guide your career journey
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Our mentorship program matches you with industry professionals who can provide 
+                  career guidance, networking opportunities, and valuable insights into your field of interest.
+                </p>
+                <Button
+                  onClick={() => window.open('https://docs.google.com/forms/d/e/1FAIpQLSeOzuu2rq1BWK-jNATc8Jfz9NhlWemAYLuYsO7B8MpOY6YgrA/viewform?usp=header', '_blank')}
+                  className="w-full"
+                >
+                  Register for Mentorship Program
+                  <ExternalLink className="h-4 w-4 ml-2" />
+                </Button>
+              </CardContent>
+            </Card>
           </div>
           
           <div className="space-y-6">
