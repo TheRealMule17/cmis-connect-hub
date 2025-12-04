@@ -5,9 +5,7 @@ import Navigation from "@/components/Navigation";
 import ResumeUpload from "@/components/ResumeUpload";
 import WorkshopList from "@/components/WorkshopList";
 import ProfileSettings from "@/components/ProfileSettings";
-import JobTracking from "@/components/JobTracking";
 import StudentEventRegistration from "@/components/StudentEventRegistration";
-import StudentOrganization from "@/components/StudentOrganization";
 import { Button } from "@/components/ui/button";
 import { LogOut, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -98,16 +96,18 @@ const Student = () => {
           </Button>
         </div>
 
+        {/* Full-width Upcoming Events */}
+        <div className="mb-6">
+          <StudentEventRegistration userId={userId} />
+        </div>
+
         <div className="grid lg:grid-cols-2 gap-6">
           <div className="space-y-6">
-            <StudentOrganization />
             <ResumeUpload 
               userId={userId} 
               currentResumeUrl={resumeUrl}
               onResumeUpdate={setResumeUrl}
             />
-            <StudentEventRegistration userId={userId} />
-            <JobTracking userId={userId} />
           </div>
           
           <div className="space-y-6">
