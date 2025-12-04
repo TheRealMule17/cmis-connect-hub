@@ -323,26 +323,7 @@ const FacultySpeakerCommunications = () => {
                 </div>
               )}
 
-              <div>
-                <Label htmlFor="subject">Subject</Label>
-                <Input
-                  id="subject"
-                  value={formData.subject}
-                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="message">Message</Label>
-                <Textarea
-                  id="message"
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  rows={6}
-                  required
-                />
-              </div>
-              <Button type="submit">Post Message</Button>
+              <Button type="submit">Send Message</Button>
             </form>
           </CardContent>
         </Card>
