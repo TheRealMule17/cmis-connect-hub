@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 import MentorProgram from "@/components/MentorProgram";
 import CareerHistory from "@/components/CareerHistory";
 import SuccessStorySubmission from "@/components/SuccessStorySubmission";
@@ -82,10 +83,10 @@ const Alumni = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navigation />
       
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 flex-1">
         <Button
           variant="ghost"
           onClick={() => navigate("/")}
@@ -120,6 +121,8 @@ const Alumni = () => {
           </div>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 };

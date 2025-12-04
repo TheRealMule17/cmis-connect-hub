@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Building2, Handshake, TrendingUp, Award, LogOut, ArrowLeft } from "lucide-react";
@@ -73,10 +74,10 @@ const Sponsor = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navigation />
       
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 flex-1">
         <Button
           variant="ghost"
           onClick={() => navigate("/")}
@@ -160,6 +161,8 @@ const Sponsor = () => {
           </Card>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 };
