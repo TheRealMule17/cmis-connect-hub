@@ -60,8 +60,13 @@ const EventManager = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
+      // Convert local datetime to ISO string with timezone
+      const localDate = new Date(newEvent.event_date);
+      const isoDateString = localDate.toISOString();
+
       const { error } = await supabase.from("events").insert({
         ...newEvent,
+        event_date: isoDateString,
         capacity: newEvent.capacity ? parseInt(newEvent.capacity) : null,
         organizer_id: user.id,
       });
