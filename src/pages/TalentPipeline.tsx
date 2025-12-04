@@ -10,88 +10,78 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-
 const TalentPipeline = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
-  const [resumeModal, setResumeModal] = useState<{ open: boolean; url: string; name: string }>({
+  const [resumeModal, setResumeModal] = useState<{
+    open: boolean;
+    url: string;
+    name: string;
+  }>({
     open: false,
     url: "",
-    name: "",
+    name: ""
   });
 
   // Fetch all students
-  const { data: students } = useQuery({
+  const {
+    data: students
+  } = useQuery({
     queryKey: ["students_for_sponsors"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("student_profiles")
-        .select("id, name, email, skills, resume_url")
-        .order("name");
+      const {
+        data,
+        error
+      } = await supabase.from("student_profiles").select("id, name, email, skills, resume_url").order("name");
       if (error) throw error;
       return data;
-    },
+    }
   });
 
   // Get all unique skills from students
-  const allSkills = Array.from(
-    new Set(students?.flatMap(s => s.skills || []).filter(Boolean) || [])
-  ).sort();
+  const allSkills = Array.from(new Set(students?.flatMap(s => s.skills || []).filter(Boolean) || [])).sort();
 
   // Filter students based on search and skills
   const filteredStudents = students?.filter(student => {
-    const matchesSearch = !searchQuery || 
-      student.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      student.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      student.skills?.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    const matchesSkills = selectedSkills.length === 0 ||
-      selectedSkills.every(skill => student.skills?.includes(skill));
-    
+    const matchesSearch = !searchQuery || student.name?.toLowerCase().includes(searchQuery.toLowerCase()) || student.email?.toLowerCase().includes(searchQuery.toLowerCase()) || student.skills?.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesSkills = selectedSkills.length === 0 || selectedSkills.every(skill => student.skills?.includes(skill));
     return matchesSearch && matchesSkills;
   }) || [];
-
   const toggleSkill = (skill: string) => {
-    setSelectedSkills(prev => 
-      prev.includes(skill) 
-        ? prev.filter(s => s !== skill)
-        : [...prev, skill]
-    );
+    setSelectedSkills(prev => prev.includes(skill) ? prev.filter(s => s !== skill) : [...prev, skill]);
   };
-
   const clearFilters = () => {
     setSearchQuery("");
     setSelectedSkills([]);
   };
-
-  const programs = [
-    {
-      title: "Internship Program",
-      description: "Place your company's internship opportunities directly in front of our top-performing students.",
-      features: ["Priority job board placement", "Resume database access", "On-campus recruiting events"],
-    },
-    {
-      title: "Co-op Partnerships",
-      description: "Establish long-term cooperative education partnerships with structured rotation programs.",
-      features: ["Multi-semester placements", "Academic credit integration", "Dedicated coordinator support"],
-    },
-    {
-      title: "Graduate Recruitment",
-      description: "Connect with graduating seniors and graduate students ready to launch their careers.",
-      features: ["Career fair participation", "Info session hosting", "Direct interview scheduling"],
-    },
-  ];
-
-  const stats = [
-    { value: "500+", label: "Students placed annually" },
-    { value: "95%", label: "Placement satisfaction rate" },
-    { value: "60+", label: "Partner companies" },
-    { value: "85%", label: "Full-time conversion rate" },
-  ];
-
-  return (
-    <div className="min-h-screen bg-background flex flex-col">
+  const programs = [{
+    title: "Internship Program",
+    description: "Place your company's internship opportunities directly in front of our top-performing students.",
+    features: ["Priority job board placement", "Resume database access", "On-campus recruiting events"]
+  }, {
+    title: "Co-op Partnerships",
+    description: "Establish long-term cooperative education partnerships with structured rotation programs.",
+    features: ["Multi-semester placements", "Academic credit integration", "Dedicated coordinator support"]
+  }, {
+    title: "Graduate Recruitment",
+    description: "Connect with graduating seniors and graduate students ready to launch their careers.",
+    features: ["Career fair participation", "Info session hosting", "Direct interview scheduling"]
+  }];
+  const stats = [{
+    value: "500+",
+    label: "Students placed annually"
+  }, {
+    value: "95%",
+    label: "Placement satisfaction rate"
+  }, {
+    value: "60+",
+    label: "Partner companies"
+  }, {
+    value: "85%",
+    label: "Full-time conversion rate"
+  }];
+  return <div className="min-h-screen bg-background flex flex-col">
       <Navigation />
       
       <main className="container mx-auto px-4 py-8 flex-1">
@@ -113,14 +103,12 @@ const TalentPipeline = () => {
         </div>
 
         <div className="grid md:grid-cols-4 gap-4 mb-8">
-          {stats.map((stat) => (
-            <Card key={stat.label}>
+          {stats.map(stat => <Card key={stat.label}>
               <CardHeader className="pb-2">
                 <CardTitle className="text-3xl font-bold text-primary">{stat.value}</CardTitle>
                 <CardDescription>{stat.label}</CardDescription>
               </CardHeader>
-            </Card>
-          ))}
+            </Card>)}
         </div>
 
         <Card className="mb-8 border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
@@ -157,24 +145,20 @@ const TalentPipeline = () => {
 
         <h2 className="text-2xl font-bold mb-4">Recruitment Programs</h2>
         <div className="grid md:grid-cols-3 gap-6 mb-8">
-          {programs.map((program) => (
-            <Card key={program.title} className="hover:shadow-md transition-shadow">
+          {programs.map(program => <Card key={program.title} className="hover:shadow-md transition-shadow">
               <CardHeader>
                 <CardTitle>{program.title}</CardTitle>
                 <CardDescription>{program.description}</CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2">
-                  {program.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2 text-sm">
+                  {program.features.map(feature => <li key={feature} className="flex items-center gap-2 text-sm">
                       <CheckCircle className="h-4 w-4 text-primary" />
                       {feature}
-                    </li>
-                  ))}
+                    </li>)}
                 </ul>
               </CardContent>
-            </Card>
-          ))}
+            </Card>)}
         </div>
 
         {/* Student Search Section */}
@@ -190,96 +174,57 @@ const TalentPipeline = () => {
             <div className="flex gap-4">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search by name, email, or skill..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
+                <Input placeholder="Search by name, email, or skill..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10" />
               </div>
-              {(searchQuery || selectedSkills.length > 0) && (
-                <Button variant="outline" onClick={clearFilters}>
+              {(searchQuery || selectedSkills.length > 0) && <Button variant="outline" onClick={clearFilters}>
                   <X className="h-4 w-4 mr-2" />
                   Clear
-                </Button>
-              )}
+                </Button>}
             </div>
 
-            {allSkills.length > 0 && (
-              <div className="space-y-2">
+            {allSkills.length > 0 && <div className="space-y-2">
                 <p className="text-sm font-medium">Filter by Skills:</p>
                 <div className="flex flex-wrap gap-2">
-                  {allSkills.map((skill) => (
-                    <Badge
-                      key={skill}
-                      variant={selectedSkills.includes(skill) ? "default" : "outline"}
-                      className="cursor-pointer hover:bg-primary/80"
-                      onClick={() => toggleSkill(skill)}
-                    >
+                  {allSkills.map(skill => <Badge key={skill} variant={selectedSkills.includes(skill) ? "default" : "outline"} className="cursor-pointer hover:bg-primary/80" onClick={() => toggleSkill(skill)}>
                       {skill}
-                    </Badge>
-                  ))}
+                    </Badge>)}
                 </div>
-              </div>
-            )}
+              </div>}
 
-            {(searchQuery || selectedSkills.length > 0) && (
-              <div className="border-t pt-4">
+            {(searchQuery || selectedSkills.length > 0) && <div className="border-t pt-4">
                 <p className="text-sm text-muted-foreground mb-4">
                   {filteredStudents.length} student{filteredStudents.length !== 1 ? 's' : ''} found
                 </p>
                 
-                {filteredStudents.length > 0 ? (
-                  <div className="space-y-3">
-                    {filteredStudents.map((student) => (
-                      <div
-                        key={student.id}
-                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-                      >
+                {filteredStudents.length > 0 ? <div className="space-y-3">
+                    {filteredStudents.map(student => <div key={student.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
                         <div className="space-y-1">
                           <p className="font-medium">{student.name || "Unknown Student"}</p>
-                          {student.email && (
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          {student.email && <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <Mail className="h-4 w-4" />
                               <a href={`mailto:${student.email}`} className="hover:underline">
                                 {student.email}
                               </a>
-                            </div>
-                          )}
-                          {student.skills && student.skills.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mt-2">
-                              {student.skills.map((skill: string) => (
-                                <Badge key={skill} variant="secondary" className="text-xs">
+                            </div>}
+                          {student.skills && student.skills.length > 0 && <div className="flex flex-wrap gap-1 mt-2">
+                              {student.skills.map((skill: string) => <Badge key={skill} variant="secondary" className="text-xs">
                                   {skill}
-                                </Badge>
-                              ))}
-                            </div>
-                          )}
+                                </Badge>)}
+                            </div>}
                         </div>
-                        {student.resume_url && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setResumeModal({ 
-                              open: true, 
-                              url: student.resume_url!, 
-                              name: student.name || "Student" 
-                            })}
-                          >
+                        {student.resume_url && <Button variant="outline" size="sm" onClick={() => setResumeModal({
+                  open: true,
+                  url: student.resume_url!,
+                  name: student.name || "Student"
+                })}>
                             <FileText className="h-4 w-4 mr-2" />
                             View Resume
-                          </Button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-center text-muted-foreground py-8">
+                          </Button>}
+                      </div>)}
+                  </div> : <p className="text-center text-muted-foreground py-8">
                     No students match your search criteria. Try adjusting your filters.
-                  </p>
-                )}
-              </div>
-            )}
+                  </p>}
+              </div>}
           </CardContent>
         </Card>
 
@@ -291,7 +236,7 @@ const TalentPipeline = () => {
           <CardContent>
             <div className="flex gap-4">
               <Button size="lg" onClick={() => navigate("/contact")}>Contact Us</Button>
-              <Button size="lg" variant="outline">Download Program Guide</Button>
+              
             </div>
           </CardContent>
         </Card>
@@ -300,22 +245,19 @@ const TalentPipeline = () => {
       <Footer />
 
       {/* Resume Viewer Modal */}
-      <Dialog open={resumeModal.open} onOpenChange={(open) => setResumeModal(prev => ({ ...prev, open }))}>
+      <Dialog open={resumeModal.open} onOpenChange={open => setResumeModal(prev => ({
+      ...prev,
+      open
+    }))}>
         <DialogContent className="max-w-4xl h-[80vh]">
           <DialogHeader>
             <DialogTitle>{resumeModal.name}'s Resume</DialogTitle>
           </DialogHeader>
           <div className="flex-1 h-full min-h-0">
-            <iframe
-              src={`https://docs.google.com/viewer?url=${encodeURIComponent(resumeModal.url)}&embedded=true`}
-              className="w-full h-full min-h-[60vh] border rounded-lg"
-              title={`${resumeModal.name}'s Resume`}
-            />
+            <iframe src={`https://docs.google.com/viewer?url=${encodeURIComponent(resumeModal.url)}&embedded=true`} className="w-full h-full min-h-[60vh] border rounded-lg" title={`${resumeModal.name}'s Resume`} />
           </div>
         </DialogContent>
       </Dialog>
-    </div>
-  );
+    </div>;
 };
-
 export default TalentPipeline;
