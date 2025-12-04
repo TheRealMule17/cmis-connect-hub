@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Award, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const tiers = [
   {
@@ -39,6 +40,14 @@ const tiers = [
 ];
 
 const SponsorTierBenefits = () => {
+  const navigate = useNavigate();
+
+  const handleSelectTier = (tierName: string, tierPrice: string) => {
+    const subject = `Sponsorship Inquiry - ${tierName} Tier`;
+    const message = `I am interested in the ${tierName} sponsorship tier (${tierPrice}/year). Please provide more information about becoming a sponsor.`;
+    navigate(`/contact?subject=${encodeURIComponent(subject)}&message=${encodeURIComponent(message)}`);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -65,10 +74,8 @@ const SponsorTierBenefits = () => {
                   </li>
                 ))}
               </ul>
-              <Button className="w-full" asChild>
-                <a href={`mailto:cmis@tamu.edu?subject=Sponsorship Inquiry - ${tier.name} Tier&body=I am interested in the ${tier.name} sponsorship tier (${tier.price}/year). Please provide more information about becoming a sponsor.`}>
-                  Select {tier.name}
-                </a>
+              <Button className="w-full" onClick={() => handleSelectTier(tier.name, tier.price)}>
+                Select {tier.name}
               </Button>
             </div>
           ))}

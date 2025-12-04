@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Mail, MapPin, Phone, Bot } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
@@ -19,6 +20,7 @@ const contactSchema = z.object({
 });
 
 const Contact = () => {
+  const [searchParams] = useSearchParams();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -27,6 +29,19 @@ const Contact = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+
+  // Prepopulate form from URL query params
+  useEffect(() => {
+    const subject = searchParams.get("subject");
+    const message = searchParams.get("message");
+    if (subject || message) {
+      setFormData(prev => ({
+        ...prev,
+        subject: subject || prev.subject,
+        message: message || prev.message,
+      }));
+    }
+  }, [searchParams]);
 
   const handleOpenHowdyHelper = () => {
     window.dispatchEvent(new Event('openHowdyHelper'));
