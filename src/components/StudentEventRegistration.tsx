@@ -1,10 +1,16 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Bell, Users } from "lucide-react";
+import { Calendar, MapPin, Bell, Users, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+
+const MENTORSHIP_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeOzuu2rq1BWK-jNATc8Jfz9NhlWemAYLuYsO7B8MpOY6YgrA/viewform?usp=header";
+
+const isMentorshipEvent = (event: { title: string }) => {
+  return event.title?.toLowerCase().includes("mentorship");
+};
 
 interface Event {
   id: string;
@@ -188,14 +194,24 @@ const StudentEventRegistration = ({ userId }: StudentEventRegistrationProps) => 
                       </span>
                     )}
                   </div>
-                  <Button
-                    onClick={() => isRegistered ? handleUnregister(event.id) : handleRegister(event.id)}
-                    variant={isRegistered ? "outline" : "default"}
-                    size="sm"
-                    className="w-full h-7 text-xs"
-                  >
-                    {isRegistered ? "Unregister" : "Register"}
-                  </Button>
+                  {isMentorshipEvent(event) ? (
+                    <Button
+                      onClick={() => window.open(MENTORSHIP_FORM_URL, '_blank')}
+                      size="sm"
+                      className="w-full h-7 text-xs"
+                    >
+                      Register <ExternalLink className="h-3 w-3 ml-1" />
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => isRegistered ? handleUnregister(event.id) : handleRegister(event.id)}
+                      variant={isRegistered ? "outline" : "default"}
+                      size="sm"
+                      className="w-full h-7 text-xs"
+                    >
+                      {isRegistered ? "Unregister" : "Register"}
+                    </Button>
+                  )}
                 </div>
               );
             })}
