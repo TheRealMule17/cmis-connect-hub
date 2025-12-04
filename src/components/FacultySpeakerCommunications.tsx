@@ -19,7 +19,7 @@ const FacultySpeakerCommunications = () => {
     message_type: "thank_you",
     subject: "",
     message: "",
-    target_tier: "all",
+    target_tier: "individual",
   });
 
   const { data: communications } = useQuery({
@@ -89,7 +89,7 @@ const FacultySpeakerCommunications = () => {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="target_tier">Target Sponsors</Label>
+                  <Label htmlFor="target_tier">Recipient</Label>
                   <Select value={formData.target_tier} onValueChange={(val) => setFormData({ ...formData, target_tier: val })}>
                     <SelectTrigger>
                       <SelectValue />
