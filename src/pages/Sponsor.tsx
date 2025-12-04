@@ -108,8 +108,13 @@ const Sponsor = () => {
               innovative research opportunities, and meaningful engagement with the CMIS community.
             </p>
             <div className="flex gap-4">
-              <Button size="lg" className="bg-accent hover:bg-accent/90">Become a Sponsor</Button>
-              <Button size="lg" variant="outline">Download Partnership Guide</Button>
+              <Button 
+                size="lg" 
+                className="bg-accent hover:bg-accent/90"
+                onClick={() => document.getElementById('sponsorship-tiers')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                Become a Sponsor
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -136,7 +141,9 @@ const Sponsor = () => {
           ))}
         </div>
 
-        <SponsorTierBenefits />
+        <div id="sponsorship-tiers">
+          <SponsorTierBenefits />
+        </div>
 
         {sponsorId && (
           <div className="mt-8">
