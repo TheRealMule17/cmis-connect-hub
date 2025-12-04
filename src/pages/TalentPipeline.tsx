@@ -4,7 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Users, Search, ExternalLink, Mail, X, CheckCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ArrowLeft, Users, Search, FileText, Mail, X, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -14,6 +15,11 @@ const TalentPipeline = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [resumeModal, setResumeModal] = useState<{ open: boolean; url: string; name: string }>({
+    open: false,
+    url: "",
+    name: "",
+  });
 
   // Fetch all students
   const { data: students } = useQuery({
@@ -254,9 +260,13 @@ const TalentPipeline = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => window.open(student.resume_url, '_blank', 'noopener,noreferrer')}
+                            onClick={() => setResumeModal({ 
+                              open: true, 
+                              url: student.resume_url!, 
+                              name: student.name || "Student" 
+                            })}
                           >
-                            <ExternalLink className="h-4 w-4 mr-2" />
+                            <FileText className="h-4 w-4 mr-2" />
                             View Resume
                           </Button>
                         )}
@@ -288,6 +298,22 @@ const TalentPipeline = () => {
       </main>
 
       <Footer />
+
+      {/* Resume Viewer Modal */}
+      <Dialog open={resumeModal.open} onOpenChange={(open) => setResumeModal(prev => ({ ...prev, open }))}>
+        <DialogContent className="max-w-4xl h-[80vh]">
+          <DialogHeader>
+            <DialogTitle>{resumeModal.name}'s Resume</DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 h-full min-h-0">
+            <iframe
+              src={resumeModal.url}
+              className="w-full h-full min-h-[60vh] border rounded-lg"
+              title={`${resumeModal.name}'s Resume`}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
