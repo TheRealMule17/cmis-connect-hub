@@ -85,7 +85,7 @@ const FacultySpeakerCommunications = () => {
     enabled: selectedCategory === "sponsors",
   });
 
-  // Fetch alumni
+  // Fetch alumni - always fetch for thank you workflow
   const { data: alumni } = useQuery({
     queryKey: ["alumni_list"],
     queryFn: async () => {
@@ -96,12 +96,11 @@ const FacultySpeakerCommunications = () => {
       if (error) throw error;
       return data;
     },
-    enabled: selectedCategory === "alumni",
   });
 
   const [isTriggeringWorkflow, setIsTriggeringWorkflow] = useState(false);
 
-  const triggerN8nThankYouWorkflow = async () => {
+  const triggerN8nThankYouWorkflow = async (alumniIds: string[], eventId: string | null) => {
     try {
       await fetch(N8N_THANK_YOU_WORKFLOW_URL, {
         method: "POST",
@@ -110,6 +109,8 @@ const FacultySpeakerCommunications = () => {
         },
         mode: "no-cors",
         body: JSON.stringify({
+          alumni_ids: alumniIds,
+          event_id: eventId,
           timestamp: new Date().toISOString(),
           triggered_from: window.location.origin,
         }),
@@ -155,7 +156,22 @@ const FacultySpeakerCommunications = () => {
       // If this is a thank you note, also trigger the n8n workflow
       if (newComm.message_type === "thank_you") {
         setIsTriggeringWorkflow(true);
-        await triggerN8nThankYouWorkflow();
+        
+        // Collect alumni IDs based on target tier
+        let alumniIds: string[] = [];
+        if (newComm.target_tier === "event_attendees" && eventId) {
+          // Get attendees for the specific event
+          const { data: registrations } = await supabase
+            .from("event_registrations")
+            .select("user_id")
+            .eq("event_id", eventId);
+          alumniIds = registrations?.map(r => r.user_id) || [];
+        } else {
+          // Send all alumni IDs
+          alumniIds = alumni?.map(a => a.id) || [];
+        }
+        
+        await triggerN8nThankYouWorkflow(alumniIds, eventId);
         setIsTriggeringWorkflow(false);
       }
     },
