@@ -101,15 +101,35 @@ const FacultySpeakerCommunications = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
+      // Get recipient name based on selection
+      let recipientName: string | null = null;
+      let recipientId: string | null = null;
+      let eventId: string | null = null;
+      let eventName: string | null = null;
+
+      if (newComm.target_tier === "individual" && selectedRecipient) {
+        recipientId = selectedRecipient;
+        const recipient = recipientsList.find(r => r.id === selectedRecipient);
+        recipientName = recipient?.label || null;
+      } else if (newComm.target_tier === "event_attendees" && selectedEvent) {
+        eventId = selectedEvent;
+        const event = events?.find(e => e.id === selectedEvent);
+        eventName = event?.title || null;
+      }
+
       const { error } = await supabase.from("faculty_communications").insert({
         ...newComm,
         created_by: user.id,
+        recipient_id: recipientId,
+        recipient_name: recipientName,
+        event_id: eventId,
+        event_name: eventName,
       });
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["faculty_communications"] });
-      toast({ title: "Message posted successfully" });
+      toast({ title: "Message sent successfully" });
       setIsCreating(false);
       setFormData({ message_type: "thank_you", subject: "", message: "", target_tier: "individual" });
       setSelectedCategory("");
@@ -348,16 +368,24 @@ const FacultySpeakerCommunications = () => {
                 update: "General Update",
               }[comm.message_type] || comm.message_type?.replace("_", " ");
 
-              const targetLabel = {
-                all: "All Sponsors",
-                individual: "Individual",
-                event_attendees: "Event Attendees",
-                exabyte: "Exabyte Tier",
-                petabyte: "Petabyte Tier",
-                terabyte: "Terabyte Tier",
-              }[comm.target_tier] || comm.target_tier;
+              // Determine target display name
+              let targetDisplay: string;
+              if (comm.target_tier === "individual" && comm.recipient_name) {
+                targetDisplay = comm.recipient_name;
+              } else if (comm.target_tier === "event_attendees" && comm.event_name) {
+                targetDisplay = `${comm.event_name} Attendees`;
+              } else {
+                targetDisplay = {
+                  all: "All Sponsors",
+                  individual: "Individual",
+                  event_attendees: "Event Attendees",
+                  exabyte: "Exabyte Tier",
+                  petabyte: "Petabyte Tier",
+                  terabyte: "Terabyte Tier",
+                }[comm.target_tier || ""] || comm.target_tier || "Unknown";
+              }
 
-              const title = `${messageTypeLabel} to ${targetLabel}`;
+              const title = `${messageTypeLabel} to ${targetDisplay}`;
 
               return (
                 <div key={comm.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors">
