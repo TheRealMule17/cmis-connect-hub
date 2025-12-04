@@ -231,15 +231,9 @@ const FacultyMentorMatcher = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">Mentor Matcher</h2>
-          <p className="text-muted-foreground">Match mentors and students based on interests and goals</p>
-        </div>
-        <Button onClick={() => autoMatch.mutate()}>
-          <Sparkles className="mr-2 h-4 w-4" />
-          Auto-Match All
-        </Button>
+      <div>
+        <h2 className="text-2xl font-bold text-foreground">Mentor Matcher</h2>
+        <p className="text-muted-foreground">Match mentors and students based on interests and goals</p>
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
