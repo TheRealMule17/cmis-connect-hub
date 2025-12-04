@@ -6,12 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { MessageSquare, Plus, Users, Calendar, Trash2, Mail } from "lucide-react";
+import { MessageSquare, Plus, Users, Calendar, Trash2, Mail, RefreshCw } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import EmailReview from "./EmailReview";
+
+const N8N_THANK_YOU_WORKFLOW_URL = "https://mule17.app.n8n.cloud/webhook/93302a7a-7929-4ab4-84bf-1f536e8bb856";
 
 const FacultySpeakerCommunications = () => {
   const { toast } = useToast();
@@ -97,6 +99,28 @@ const FacultySpeakerCommunications = () => {
     enabled: selectedCategory === "alumni",
   });
 
+  const [isTriggeringWorkflow, setIsTriggeringWorkflow] = useState(false);
+
+  const triggerN8nThankYouWorkflow = async () => {
+    try {
+      await fetch(N8N_THANK_YOU_WORKFLOW_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "no-cors",
+        body: JSON.stringify({
+          timestamp: new Date().toISOString(),
+          triggered_from: window.location.origin,
+        }),
+      });
+      return true;
+    } catch (error) {
+      console.error("Error triggering n8n workflow:", error);
+      return false;
+    }
+  };
+
   const createCommunication = useMutation({
     mutationFn: async (newComm: typeof formData) => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -127,10 +151,22 @@ const FacultySpeakerCommunications = () => {
         event_name: eventName,
       });
       if (error) throw error;
+
+      // If this is a thank you note, also trigger the n8n workflow
+      if (newComm.message_type === "thank_you") {
+        setIsTriggeringWorkflow(true);
+        await triggerN8nThankYouWorkflow();
+        setIsTriggeringWorkflow(false);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["faculty_communications"] });
-      toast({ title: "Message sent successfully" });
+      toast({ 
+        title: "Message sent successfully",
+        description: formData.message_type === "thank_you" 
+          ? "Thank you workflow has also been triggered." 
+          : undefined
+      });
       setIsCreating(false);
       setFormData({ message_type: "thank_you", subject: "", message: "", target_tier: "individual" });
       setSelectedCategory("");
@@ -345,7 +381,16 @@ const FacultySpeakerCommunications = () => {
                 </div>
               )}
 
-              <Button type="submit">Send Message</Button>
+              <Button type="submit" disabled={createCommunication.isPending || isTriggeringWorkflow}>
+                {createCommunication.isPending || isTriggeringWorkflow ? (
+                  <>
+                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                    {isTriggeringWorkflow ? "Triggering Workflow..." : "Sending..."}
+                  </>
+                ) : (
+                  "Send Message"
+                )}
+              </Button>
             </form>
           </CardContent>
         </Card>
