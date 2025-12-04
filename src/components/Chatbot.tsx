@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MessageCircle, X, Send } from "lucide-react";
+import { MessageCircle, X, Send, Maximize2, Minimize2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { useLocation } from "react-router-dom";
@@ -173,14 +173,24 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
             <h3 className={cn("font-semibold", isExpanded && "text-2xl")}>
               {isExpanded ? "Ask Our Howdy Helper" : "The Howdy Helper"}
             </h3>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleClose}
-              className="text-white hover:bg-white/20"
-            >
-              <X className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="text-white hover:bg-white/20"
+              >
+                {isExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleClose}
+                className="text-white hover:bg-white/20"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
 
           {/* White Body */}
@@ -190,7 +200,7 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
                 <div className="text-center text-sm py-8 text-gray-500">
                   {isExpanded 
                     ? "Howdy! Ask me anything about CMIS programs, events, mentorship, and more!" 
-                    : "Hi! I'm here to help you navigate the CMIS portal. Ask me anything!"}
+                    : "Howdy! I'm here to help you navigate the CMIS portal. Ask me anything!"}
                 </div>
               )}
               {messages.map((msg, idx) => (
