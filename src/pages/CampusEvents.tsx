@@ -156,10 +156,7 @@ const CampusEvents = () => {
             <CardDescription>Contact our events team to discuss hosting opportunities and sponsorship packages</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex gap-4">
-              <Button size="lg" onClick={() => navigate("/contact")}>Contact Events Team</Button>
-              <Button size="lg" variant="outline">View Event Calendar</Button>
-            </div>
+            <Button size="lg" onClick={() => navigate("/contact")}>Contact Events Team</Button>
           </CardContent>
         </Card>
       </main>
