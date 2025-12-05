@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, UserCheck, Sparkles, Loader2, Download, RefreshCw } from "lucide-react";
+import { Users, UserCheck, Sparkles, Loader2, Download, RefreshCw, Database } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -30,7 +30,43 @@ const FacultyMentorMatcher = () => {
   const queryClient = useQueryClient();
   const [n8nMatches, setN8nMatches] = useState<N8nMatch[]>([]);
   const [n8nLoading, setN8nLoading] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
   const [lastRunTime, setLastRunTime] = useState<string | null>(null);
+
+  // Synced data queries
+  const { data: syncedStudents } = useQuery({
+    queryKey: ["synced-students"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("student_form_responses")
+        .select("*");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: syncedMentors } = useQuery({
+    queryKey: ["synced-mentors"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("mentor_form_responses")
+        .select("*");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: syncedMatches } = useQuery({
+    queryKey: ["synced-matches"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("mentor_match_results")
+        .select("*");
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const { data: mentors } = useQuery({
     queryKey: ["mentors_list"],
     queryFn: async () => {
@@ -64,6 +100,46 @@ const FacultyMentorMatcher = () => {
       return data;
     },
   });
+
+  const syncData = async () => {
+    setIsSyncing(true);
+    try {
+      const response = await fetch(
+        "https://mitchpeif.app.n8n.cloud/webhook/cf748cb3-bba2-4714-84be-25c078cb6104",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "sync" }),
+        }
+      );
+
+      if (response.ok) {
+        toast({
+          title: "Data synced successfully!",
+          description: "Refreshing data from Google Sheets...",
+        });
+        // Invalidate queries to refetch fresh data
+        queryClient.invalidateQueries({ queryKey: ["synced-students"] });
+        queryClient.invalidateQueries({ queryKey: ["synced-mentors"] });
+        queryClient.invalidateQueries({ queryKey: ["synced-matches"] });
+      } else {
+        toast({
+          title: "Sync failed",
+          description: "Could not sync data from Google Sheets",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Sync error:", error);
+      toast({
+        title: "Sync failed",
+        description: "Failed to connect to sync service",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   const autoMatch = useMutation({
     mutationFn: async () => {
@@ -231,34 +307,67 @@ const FacultyMentorMatcher = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-foreground">Mentor Matcher</h2>
-        <p className="text-muted-foreground">Match mentors and students based on interests and goals</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-foreground">Mentor Matcher</h2>
+          <p className="text-muted-foreground">Match mentors and students based on interests and goals</p>
+        </div>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="outline" disabled={isSyncing}>
+              {isSyncing ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Syncing...
+                </>
+              ) : (
+                <>
+                  <Database className="mr-2 h-4 w-4" />
+                  Sync Data
+                </>
+              )}
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Sync Data from Google Sheets?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will refresh student, mentor, and match data from Google Sheets. 
+                Existing data in the tables will be replaced.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={syncData}>Sync Data</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
 
+      {/* Synced Data Summary */}
       <div className="grid md:grid-cols-3 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-3xl font-bold text-primary">{mentors?.length || 0}</CardTitle>
-            <CardDescription className="flex items-center gap-2">
-              <UserCheck className="h-4 w-4" />
-              Active Mentors
-            </CardDescription>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-3xl font-bold text-primary">{students?.length || 0}</CardTitle>
+            <CardTitle className="text-3xl font-bold text-primary">{syncedStudents?.length || 0}</CardTitle>
             <CardDescription className="flex items-center gap-2">
               <Users className="h-4 w-4" />
-              Total Students
+              Synced Students
             </CardDescription>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle className="text-3xl font-bold text-primary">{unmatchedStudents}</CardTitle>
-            <CardDescription>Unmatched Students</CardDescription>
+            <CardTitle className="text-3xl font-bold text-primary">{syncedMentors?.length || 0}</CardTitle>
+            <CardDescription className="flex items-center gap-2">
+              <UserCheck className="h-4 w-4" />
+              Synced Mentors
+            </CardDescription>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-3xl font-bold text-primary">{syncedMatches?.length || 0}</CardTitle>
+            <CardDescription>Synced Matches</CardDescription>
           </CardHeader>
         </Card>
       </div>
