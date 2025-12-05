@@ -23,13 +23,14 @@ interface Email {
 }
 
 interface N8nEmail {
-  name?: string;
-  recipient_name?: string;
-  email?: string;
-  recipient_email?: string;
-  subject: string;
-  body: string;
-  status?: string;
+  id?: string;
+  "Email ID"?: string;
+  Recipient?: string;
+  Subject?: string;
+  "Email Body"?: string;
+  Status?: string;
+  "Generated Date"?: string;
+  createdTime?: string;
 }
 
 interface EmailReviewProps {
@@ -72,13 +73,13 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
       // Handle both array and single object responses
       const emailsArray = Array.isArray(data) ? data : [data];
       
-      const mappedEmails: Email[] = emailsArray.map((item: N8nEmail, index: number) => ({
-        id: `n8n-${index}-${Date.now()}`,
-        recipient_name: item.name || item.recipient_name || "Unknown",
-        recipient_email: item.email || item.recipient_email || "",
-        subject: item.subject || "No Subject",
-        body: item.body || "",
-        status: "pending",
+      const mappedEmails: Email[] = emailsArray.map((item: any, index: number) => ({
+        id: item.id || item["Email ID"] || `n8n-${index}-${Date.now()}`,
+        recipient_name: item.Recipient?.split('@')[0] || "Unknown",
+        recipient_email: item.Recipient || "",
+        subject: item.Subject || "No Subject",
+        body: item["Email Body"] || "",
+        status: item.Status?.trim().toLowerCase() || "pending",
         scheduled_at: null,
         batch_id: "",
         source: "n8n" as const,
