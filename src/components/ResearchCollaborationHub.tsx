@@ -9,11 +9,24 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import ResearchDetailDialog from "./ResearchDetailDialog";
+
+interface ResearchCollaboration {
+  id: string;
+  title: string;
+  description: string | null;
+  research_area: string | null;
+  collaboration_type: string | null;
+  seeking_roles: string[] | null;
+  requirements: string | null;
+  status: string | null;
+}
 
 const ResearchCollaborationHub = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isCreating, setIsCreating] = useState(false);
+  const [selectedCollab, setSelectedCollab] = useState<ResearchCollaboration | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -31,7 +44,7 @@ const ResearchCollaborationHub = () => {
         .select("*")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data;
+      return data as ResearchCollaboration[];
     },
   });
 
@@ -138,7 +151,11 @@ const ResearchCollaborationHub = () => {
 
       <div className="grid md:grid-cols-2 gap-6">
         {collaborations?.map((collab) => (
-          <Card key={collab.id}>
+          <Card 
+            key={collab.id} 
+            className="cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => setSelectedCollab(collab)}
+          >
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FlaskConical className="h-5 w-5" />
@@ -151,7 +168,7 @@ const ResearchCollaborationHub = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
-              <p className="text-sm text-muted-foreground">{collab.description}</p>
+              <p className="text-sm text-muted-foreground line-clamp-2">{collab.description}</p>
               {collab.research_area && (
                 <p className="text-sm">
                   <span className="font-medium">Research Area: </span>
@@ -168,22 +185,25 @@ const ResearchCollaborationHub = () => {
                 <div>
                   <span className="text-sm font-medium">Seeking: </span>
                   <div className="flex flex-wrap gap-2 mt-1">
-                    {collab.seeking_roles.map((role, idx) => (
+                    {collab.seeking_roles.slice(0, 3).map((role, idx) => (
                       <Badge key={idx} variant="outline">{role}</Badge>
                     ))}
+                    {collab.seeking_roles.length > 3 && (
+                      <Badge variant="outline">+{collab.seeking_roles.length - 3} more</Badge>
+                    )}
                   </div>
                 </div>
-              )}
-              {collab.requirements && (
-                <p className="text-sm">
-                  <span className="font-medium">Requirements: </span>
-                  {collab.requirements}
-                </p>
               )}
             </CardContent>
           </Card>
         ))}
       </div>
+
+      <ResearchDetailDialog
+        collaboration={selectedCollab}
+        open={!!selectedCollab}
+        onOpenChange={(open) => !open && setSelectedCollab(null)}
+      />
     </div>
   );
 };
