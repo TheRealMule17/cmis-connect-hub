@@ -206,7 +206,7 @@ const SponsorShowcase = () => {
       <Card className="border-2 border-yellow-500/20 bg-gradient-to-br from-yellow-50/50 to-background dark:from-yellow-950/10">
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">Exabyte Sponsors
+            <CardTitle className="flex items-center gap-2 text-2xl md:text-3xl">Exabyte Sponsors
             <Building2 className="h-5 w-5 md:h-6 md:w-6 text-yellow-600 dark:text-yellow-500" />
               ​
             </CardTitle>
@@ -224,7 +224,7 @@ const SponsorShowcase = () => {
       <Card className="border-2 border-gray-400/20 bg-gradient-to-br from-gray-50/50 to-background dark:from-gray-900/10">
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">Petabyte Sponsors<Building2 className="h-5 w-5 md:h-6 md:w-6 text-gray-500" />
+            <CardTitle className="flex items-center gap-2 text-2xl md:text-3xl">Petabyte Sponsors<Building2 className="h-5 w-5 md:h-6 md:w-6 text-gray-500" />
               ​
             </CardTitle>
             <Badge className="bg-gray-500 hover:bg-gray-600 text-white text-xs md:text-sm">
@@ -241,7 +241,7 @@ const SponsorShowcase = () => {
       <Card className="border-2 border-orange-700/20 bg-gradient-to-br from-orange-50/50 to-background dark:from-orange-950/10">
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <CardTitle className="flex items-center gap-2 text-xl md:text-2xl">Terabyte Sponsors<Building2 className="h-5 w-5 md:h-6 md:w-6 text-orange-700 dark:text-orange-600" />
+            <CardTitle className="flex items-center gap-2 text-2xl md:text-3xl">Terabyte Sponsors<Building2 className="h-5 w-5 md:h-6 md:w-6 text-orange-700 dark:text-orange-600" />
               ​
             </CardTitle>
             <Badge className="bg-orange-700 hover:bg-orange-800 text-white text-xs md:text-sm">
