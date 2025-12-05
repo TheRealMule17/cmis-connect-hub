@@ -46,6 +46,7 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
   const { toast } = useToast();
   const [emails, setEmails] = useState<Email[]>([]);
   const [n8nEmails, setN8nEmails] = useState<Email[]>([]);
+  const [originalN8nStatuses, setOriginalN8nStatuses] = useState<Record<string, string>>({});
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editedEmail, setEditedEmail] = useState<Partial<Email>>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -90,6 +91,10 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
       }));
 
       setN8nEmails(mappedEmails);
+      // Store original statuses to track changes
+      const statuses: Record<string, string> = {};
+      mappedEmails.forEach(e => { statuses[e.id] = e.status; });
+      setOriginalN8nStatuses(statuses);
     } catch (error: any) {
       console.error("Error fetching n8n emails:", error);
       // Don't show error toast for n8n - just silently fail if no data
@@ -211,81 +216,85 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
     }
   };
 
-  const updateN8nEmailStatus = async (email: Email, newStatus: string) => {
-    // Update local state immediately for responsive UI
+  const updateN8nEmailStatusLocal = (email: Email, newStatus: string) => {
+    // Only update local state - don't send to n8n yet
     setN8nEmails(prev => 
       prev.map(e => e.id === email.id ? { ...e, status: newStatus } : e)
     );
-
-    try {
-      const response = await fetch(N8N_STATUS_UPDATE_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          emailId: email.airtable_id || email.id, // Use Email ID (OUTREACH_xxx format)
-          recipientEmail: email.recipient_email,
-          subject: email.subject,
-          newStatus: newStatus.charAt(0).toUpperCase() + newStatus.slice(1),
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      toast({
-        title: "Status Updated",
-        description: `Email marked as ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}`,
-      });
-    } catch (error: any) {
-      console.error("Error updating n8n email status:", error);
-      // Revert on error
-      setN8nEmails(prev => 
-        prev.map(e => e.id === email.id ? { ...e, status: email.status } : e)
-      );
-      toast({
-        title: "Error",
-        description: "Failed to update email status",
-        variant: "destructive",
-      });
-    }
   };
 
-  const sendApprovedEmails = async () => {
-    const approvedEmails = emails.filter(e => e.status === "approved");
+  // Get emails with changed statuses
+  const getChangedN8nEmails = () => {
+    return n8nEmails.filter(e => e.status !== originalN8nStatuses[e.id]);
+  };
+
+  const hasUnsavedChanges = getChangedN8nEmails().length > 0;
+
+  const updateAllStatuses = async () => {
+    const changedEmails = getChangedN8nEmails();
     
-    if (approvedEmails.length === 0) {
+    if (changedEmails.length === 0) {
       toast({
-        title: "No Approved Emails",
-        description: "Please approve at least one email before sending",
+        title: "No Changes",
+        description: "No status changes to update",
         variant: "destructive",
       });
       return;
     }
 
     setIsSending(true);
+    let successCount = 0;
+    let errorCount = 0;
+
     try {
-      const { data, error } = await supabase.functions.invoke("send-emails", {
-        body: { emailIds: approvedEmails.map(e => e.id) },
-      });
+      // Send status updates for all changed n8n emails
+      for (const email of changedEmails) {
+        try {
+          const response = await fetch(N8N_STATUS_UPDATE_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              emailId: email.airtable_id || email.id,
+              recipientEmail: email.recipient_email,
+              subject: email.subject,
+              newStatus: email.status.charAt(0).toUpperCase() + email.status.slice(1),
+            }),
+          });
 
-      if (error) throw error;
+          if (response.ok) {
+            successCount++;
+          } else {
+            errorCount++;
+          }
+        } catch (error) {
+          console.error("Error updating email:", email.id, error);
+          errorCount++;
+        }
+      }
 
-      const successCount = data.results.filter((r: any) => r.success).length;
-      
-      toast({
-        title: "Emails Sent",
-        description: `Successfully sent ${successCount} of ${approvedEmails.length} emails`,
-      });
-
-      fetchEmails();
+      if (successCount > 0) {
+        toast({
+          title: "Statuses Updated",
+          description: `Successfully updated ${successCount} email${successCount > 1 ? 's' : ''}${errorCount > 0 ? `, ${errorCount} failed` : ''}`,
+        });
+        // Update original statuses to reflect saved state
+        const newOriginal = { ...originalN8nStatuses };
+        changedEmails.forEach(e => { newOriginal[e.id] = e.status; });
+        setOriginalN8nStatuses(newOriginal);
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to update statuses",
+          variant: "destructive",
+        });
+      }
     } catch (error: any) {
-      console.error("Error sending emails:", error);
+      console.error("Error updating statuses:", error);
       toast({
         title: "Error",
-        description: "Failed to send emails",
+        description: "Failed to update statuses",
         variant: "destructive",
       });
     } finally {
@@ -320,12 +329,12 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
                 Refresh
               </Button>
               <Button
-                onClick={sendApprovedEmails}
-                disabled={isSending || !allEmails.some(e => e.status === "approved")}
+                onClick={updateAllStatuses}
+                disabled={isSending || !hasUnsavedChanges}
                 size="lg"
               >
                 <Send className="mr-2 h-4 w-4" />
-                Send Approved ({allEmails.filter(e => e.status === "approved").length})
+                Update Status ({getChangedN8nEmails().length})
               </Button>
             </div>
           </div>
@@ -344,7 +353,7 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
                 {email.source === "n8n" ? (
                   <Select
                     value={email.status}
-                    onValueChange={(value) => updateN8nEmailStatus(email, value)}
+                    onValueChange={(value) => updateN8nEmailStatusLocal(email, value)}
                   >
                     <SelectTrigger className={`w-32 ${
                       email.status === "approved" ? "bg-green-100 text-green-800 border-green-300" :
