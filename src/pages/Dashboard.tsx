@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navigation from "@/components/Navigation";
+import BreadcrumbNav from "@/components/BreadcrumbNav";
 import Footer from "@/components/Footer";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2, LogOut } from "lucide-react";
+import { Loader2, LogOut } from "lucide-react";
 import EventManager from "@/components/EventManager";
 import FacultySpeakerCommunications from "@/components/FacultySpeakerCommunications";
 import FacultyMentorMatcher from "@/components/FacultyMentorMatcher";
@@ -88,16 +89,10 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navigation />
+      <BreadcrumbNav />
       
       <main className="container mx-auto px-4 py-8 flex-1">
-        <div className="flex justify-between items-center mb-4">
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/")}
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Home
-          </Button>
+        <div className="flex justify-end mb-4">
           <Button
             variant="outline"
             onClick={handleSignOut}
