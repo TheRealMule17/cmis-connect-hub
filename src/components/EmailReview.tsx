@@ -312,7 +312,8 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
     }
 
     setIsSending(true);
-    let successCount = 0;
+    let approvedCount = 0;
+    let rejectedCount = 0;
     let errorCount = 0;
 
     try {
@@ -338,7 +339,8 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
           });
 
           if (response.ok) {
-            successCount++;
+            if (email.status === "approved") approvedCount++;
+            else if (email.status === "rejected") rejectedCount++;
             
             // Send to communication history n8n workflow
             await fetch(N8N_COMM_HISTORY_URL, {
@@ -364,10 +366,16 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
         }
       }
 
+      const successCount = approvedCount + rejectedCount;
       if (successCount > 0) {
+        const parts = [];
+        if (approvedCount > 0) parts.push(`${approvedCount} approved`);
+        if (rejectedCount > 0) parts.push(`${rejectedCount} rejected`);
+        if (errorCount > 0) parts.push(`${errorCount} failed`);
+        
         toast({
           title: "Statuses Updated",
-          description: `Successfully updated ${successCount} email${successCount > 1 ? 's' : ''}${errorCount > 0 ? `, ${errorCount} failed` : ''}`,
+          description: parts.join(", "),
         });
         
         // Remove approved/rejected emails from the queue
