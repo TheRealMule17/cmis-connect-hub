@@ -101,9 +101,9 @@ Deno.serve(async (req) => {
           headers: { "Content-Type": "application/json" },
         };
         
-        // Only include body for POST requests
-        if (httpMethod === "POST" && data) {
-          fetchOptions.body = JSON.stringify(data);
+        // Include body for POST requests (send empty object if no data)
+        if (httpMethod === "POST") {
+          fetchOptions.body = JSON.stringify(data || { timestamp: new Date().toISOString() });
         }
         
         const n8nResponse = await fetch(webhookUrl, fetchOptions);
