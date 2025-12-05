@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import ScrollFadeIn from "@/components/ScrollFadeIn";
 import ResumeUpload from "@/components/ResumeUpload";
 import WorkshopList from "@/components/WorkshopList";
 import ProfileSettings from "@/components/ProfileSettings";
@@ -86,34 +87,42 @@ const Student = () => {
           Back to Home
         </Button>
         
-        <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2">Student Portal</h1>
-            <p className="text-base md:text-lg text-muted-foreground">Welcome back, {userName}!</p>
+        <ScrollFadeIn>
+          <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2">Student Portal</h1>
+              <p className="text-base md:text-lg text-muted-foreground">Welcome back, {userName}!</p>
+            </div>
+            <Button variant="outline" onClick={handleSignOut} className="w-fit">
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </Button>
           </div>
-          <Button variant="outline" onClick={handleSignOut} className="w-fit">
-            <LogOut className="h-4 w-4 mr-2" />
-            Sign Out
-          </Button>
-        </div>
+        </ScrollFadeIn>
 
         {/* Full-width Upcoming Events */}
-        <div className="mb-6">
-          <StudentEventRegistration userId={userId} />
-        </div>
+        <ScrollFadeIn delay={0.1}>
+          <div className="mb-6">
+            <StudentEventRegistration userId={userId} />
+          </div>
+        </ScrollFadeIn>
 
         <div className="grid lg:grid-cols-2 gap-6">
-          <div className="space-y-6">
-            <ResumeUpload 
-              userId={userId} 
-              currentResumeUrl={resumeUrl}
-              onResumeUpdate={setResumeUrl}
-            />
-          </div>
+          <ScrollFadeIn direction="right" delay={0.2}>
+            <div className="space-y-6">
+              <ResumeUpload 
+                userId={userId} 
+                currentResumeUrl={resumeUrl}
+                onResumeUpdate={setResumeUrl}
+              />
+            </div>
+          </ScrollFadeIn>
           
-          <div className="space-y-6">
-            <ProfileSettings userId={userId} />
-          </div>
+          <ScrollFadeIn direction="left" delay={0.3}>
+            <div className="space-y-6">
+              <ProfileSettings userId={userId} />
+            </div>
+          </ScrollFadeIn>
         </div>
       </main>
 
