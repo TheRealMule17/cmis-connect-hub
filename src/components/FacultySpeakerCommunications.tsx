@@ -165,8 +165,8 @@ const FacultySpeakerCommunications = () => {
       });
       if (error) throw error;
 
-      // If this is a batch email with outreach, trigger the batch outreach workflow
-      if (newComm.target_tier === "batch_emails" && newComm.message_type === "out_reach") {
+      // If this is a batch email with event invitation, trigger the batch outreach workflow
+      if (newComm.target_tier === "batch_emails" && newComm.message_type === "event_invitation") {
         setIsTriggeringWorkflow(true);
         await triggerN8nBatchOutreach();
         setIsTriggeringWorkflow(false);
@@ -199,7 +199,7 @@ const FacultySpeakerCommunications = () => {
         title: "Message sent successfully",
         description: formData.message_type === "thank_you" 
           ? "Thank you workflow has also been triggered." 
-          : formData.target_tier === "batch_emails" && formData.message_type === "out_reach"
+          : formData.target_tier === "batch_emails" && formData.message_type === "event_invitation"
           ? "Batch outreach workflow has been triggered."
           : undefined
       });
@@ -283,8 +283,8 @@ const FacultySpeakerCommunications = () => {
                     <SelectContent className="bg-background">
                       <SelectItem value="thank_you">Thank You Note</SelectItem>
                       <SelectItem value="sponsor_request">Sponsor Request</SelectItem>
+                      <SelectItem value="event_invitation">Event Invitation</SelectItem>
                       <SelectItem value="update">General Update</SelectItem>
-                      <SelectItem value="out_reach">Out Reach</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -481,8 +481,8 @@ const FacultySpeakerCommunications = () => {
               const messageTypeLabel = {
                 thank_you: "Thank You",
                 sponsor_request: "Sponsor Request",
+                event_invitation: "Event Invitation",
                 update: "General Update",
-                out_reach: "Out Reach",
               }[comm.message_type] || comm.message_type?.replace("_", " ");
 
               // Determine target display name
