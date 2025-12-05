@@ -258,6 +258,24 @@ const FacultyMentorMatcher = () => {
       if (matches.length > 0) {
         setN8nMatches(matches);
         setLastRunTime(new Date().toLocaleString());
+        
+        // Save matches to database for persistence
+        const matchesToInsert = matches.map((match) => ({
+          student_name: match["Student Name"],
+          mentor_name: match["Mentor Name"],
+        }));
+        
+        // Clear existing matches and insert new ones
+        await supabase.from("mentor_match_results").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+        const { error: insertError } = await supabase.from("mentor_match_results").insert(matchesToInsert);
+        
+        if (insertError) {
+          console.error("Failed to save matches:", insertError);
+        } else {
+          // Refresh the synced matches query
+          queryClient.invalidateQueries({ queryKey: ["synced-matches"] });
+        }
+        
         toast({
           title: "Matching complete!",
           description: `${matches.length} students matched with mentors.`,
