@@ -115,7 +115,7 @@ const Dashboard = () => {
               <TabsTrigger value="analytics" className="flex-1 min-w-fit text-xs sm:text-sm">Analytics</TabsTrigger>
               <TabsTrigger value="events" className="flex-1 min-w-fit text-xs sm:text-sm">Events</TabsTrigger>
               <TabsTrigger value="speakers" className="flex-1 min-w-fit text-xs sm:text-sm">Communications</TabsTrigger>
-              <TabsTrigger value="mentors" className="flex-1 min-w-fit text-xs sm:text-sm">Mentors</TabsTrigger>
+              <TabsTrigger value="mentors" className="flex-1 min-w-fit text-xs sm:text-sm">Mentor Matching</TabsTrigger>
               <TabsTrigger value="research" className="flex-1 min-w-fit text-xs sm:text-sm">Research</TabsTrigger>
             </TabsList>
 
