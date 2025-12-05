@@ -124,6 +124,16 @@ Deno.serve(async (req) => {
         break;
       }
 
+      case "reset_data": {
+        // Call the reset_sync_data function to truncate all sync tables
+        console.log("Resetting all sync data...");
+        const { error: resetError } = await supabase.rpc("reset_sync_data");
+        
+        if (resetError) throw resetError;
+        result = { reset: true, message: "All sync data cleared successfully" };
+        break;
+      }
+
       case "sync_all": {
         // Sync all three at once
         const { students, mentors, matches } = data;
@@ -171,7 +181,7 @@ Deno.serve(async (req) => {
 
       default:
         return new Response(
-          JSON.stringify({ error: "Invalid action. Use: sync_students, sync_mentors, sync_matches, or sync_all" }),
+          JSON.stringify({ error: "Invalid action. Use: sync_students, sync_mentors, sync_matches, sync_all, reset_data, or trigger_n8n" }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
     }
