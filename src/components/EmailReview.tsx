@@ -27,6 +27,8 @@ interface Email {
 interface N8nEmail {
   id?: string;
   "Email ID"?: string;
+  "Alumni Name"?: string;
+  alumni_name?: string;
   Recipient?: string;
   Subject?: string;
   "Email Body"?: string;
@@ -97,7 +99,7 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
       const mappedEmails: Email[] = emailsArray.map((item: any, index: number) => ({
         id: item.id || `n8n-${index}-${Date.now()}`,
         airtable_id: item["Email ID"], // Store the Email ID (e.g., OUTREACH_20251204_233047_zb1qxyhd)
-        recipient_name: formatName(item.Recipient),
+        recipient_name: item["Alumni Name"] || item.alumni_name || formatName(item.Recipient),
         recipient_email: item.Recipient || "",
         subject: item.Subject || "No Subject",
         body: item["Email Body"] || "",
@@ -143,7 +145,7 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
       const mappedEmails: Email[] = emailsArray.map((item: any, index: number) => ({
         id: item.id || `history-${index}-${Date.now()}`,
         airtable_id: item["Email ID"] || item.emailId,
-        recipient_name: formatName(item.Recipient || item.recipientName),
+        recipient_name: item["Alumni Name"] || item.alumni_name || formatName(item.Recipient || item.recipientName),
         recipient_email: item.Recipient || item.recipientEmail || "",
         subject: item.Subject || item.subject || "No Subject",
         body: item["Email Body"] || item.body || "",
