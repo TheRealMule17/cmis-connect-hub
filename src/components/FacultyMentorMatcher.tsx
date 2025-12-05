@@ -186,7 +186,7 @@ const FacultyMentorMatcher = () => {
 
       // Trigger n8n workflow
       try {
-        await fetch("https://mitchpeif.app.n8n.cloud/webhook/0b97e85d-b99b-431a-bdfc-cc7e083a309d", {
+        await fetch("https://mitchpeif.app.n8n.cloud/webhook/b479c25d-001f-4fc7-ab70-0e7154895329", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           mode: "no-cors",
@@ -226,7 +226,7 @@ const FacultyMentorMatcher = () => {
       const response = await supabase.functions.invoke('sync-mentor-data', {
         body: { 
           action: 'trigger_n8n',
-          webhookUrl: 'https://mitchpeif.app.n8n.cloud/webhook/0b97e85d-b99b-431a-bdfc-cc7e083a309d'
+          webhookUrl: 'https://mitchpeif.app.n8n.cloud/webhook/b479c25d-001f-4fc7-ab70-0e7154895329'
         }
       });
       
