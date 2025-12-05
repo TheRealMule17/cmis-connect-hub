@@ -222,20 +222,20 @@ const FacultyMentorMatcher = () => {
     
     try {
       console.log('Starting matching workflow...');
-      const response = await fetch(
-        "https://mitchpeif.app.n8n.cloud/webhook/0b97e85d-b99b-431a-bdfc-cc7e083a309d",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+      // Route through edge function to avoid CORS issues
+      const response = await supabase.functions.invoke('sync-mentor-data', {
+        body: { 
+          action: 'trigger_n8n',
+          webhookUrl: 'https://mitchpeif.app.n8n.cloud/webhook/0b97e85d-b99b-431a-bdfc-cc7e083a309d'
         }
-      );
+      });
       
-      if (!response.ok) {
-        throw new Error("Failed to run matching workflow");
+      if (response.error) {
+        throw new Error(response.error.message || "Failed to run matching workflow");
       }
       
       // Expect n8n to return matches directly in the response
-      const data = await response.json();
+      const data = response.data;
       console.log('Workflow response:', data);
       
       // Handle different response formats
