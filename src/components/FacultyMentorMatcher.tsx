@@ -104,12 +104,17 @@ const FacultyMentorMatcher = () => {
   const syncData = async () => {
     setIsSyncing(true);
     try {
-      // Use edge function to proxy request to n8n (avoids CORS)
-      const { data, error } = await supabase.functions.invoke("sync-mentor-data", {
-        body: { action: "trigger_n8n" },
-      });
+      // Direct GET request to n8n webhook
+      const response = await fetch(
+        "https://mitchpeif.app.n8n.cloud/webhook/sync-matching",
+        {
+          method: "GET",
+        }
+      );
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error(`Sync failed with status: ${response.status}`);
+      }
 
       toast({
         title: "Data synced successfully!",
