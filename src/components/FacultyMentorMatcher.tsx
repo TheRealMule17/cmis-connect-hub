@@ -245,12 +245,32 @@ const FacultyMentorMatcher = () => {
         matches = data;
       } else if (data.matches && Array.isArray(data.matches)) {
         matches = data.matches;
-      } else if (data.message) {
-        // Workflow started but no matches returned yet
+      } else if (data.message || data.success) {
+        // Workflow completed - matches written to Google Sheets
+        // Now sync to pull matches from Google Sheets into database
         toast({
-          title: "Workflow Started",
-          description: data.message || "Check Google Sheets for results.",
+          title: "Matching complete!",
+          description: "Syncing results from Google Sheets...",
         });
+        
+        // Auto-sync to pull matches from Google Sheets
+        try {
+          const syncResponse = await supabase.functions.invoke("sync-mentor-data", {
+            body: { action: "trigger_n8n" }, // Uses default sync-matching webhook
+          });
+          
+          if (!syncResponse.error) {
+            queryClient.invalidateQueries({ queryKey: ["synced-matches"] });
+            setLastRunTime(new Date().toLocaleString());
+            toast({
+              title: "Sync complete!",
+              description: "Matches have been loaded from Google Sheets.",
+            });
+          }
+        } catch (syncError) {
+          console.error("Auto-sync failed:", syncError);
+        }
+        
         setN8nLoading(false);
         return;
       }
