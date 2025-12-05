@@ -12,9 +12,7 @@ import aaronBeckerPhoto from "@/assets/faculty/aaron-becker.jpg";
 import gregHeimPhoto from "@/assets/faculty/greg-heim.jpg";
 import michaelScialdonePhoto from "@/assets/faculty/michael-scialdone.jpg";
 import dwayneWhittenPhoto from "@/assets/faculty/dwayne-whitten.jpg";
-
 const events = ["CMIS Summer Workshop", "Speed Networking and MIS Mixer", "Case Competitions", "MIS Career Fair", "Career Night", "Scholarships"];
-
 const CMIS = () => {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -24,9 +22,7 @@ const CMIS = () => {
       });
     }
   };
-
-  return (
-    <div className="min-h-screen bg-background flex flex-col">
+  return <div className="min-h-screen bg-background flex flex-col">
       <Navigation />
       <BreadcrumbNav />
 
@@ -85,25 +81,18 @@ const CMIS = () => {
                 <div>
                   <p className="font-semibold mb-3">To accomplish our mission, CMIS coordinates the following events:</p>
                   <ul className="space-y-2 mb-6">
-                    {events.map(event => (
-                      <li key={event} className="flex items-center gap-2">
+                    {events.map(event => <li key={event} className="flex items-center gap-2">
                         <span className="w-2 h-2 bg-primary rounded-full" />
                         <span className="font-medium">{event}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </div>
                 <div>
                   <p className="font-semibold mb-3">CMIS also coordinates the following conferences:</p>
                   <ul className="space-y-2">
                     <li className="flex items-center gap-2">
-                      <span className="w-2 h-2 bg-primary rounded-full" />
-                      <a 
-                        href="https://mays.tamu.edu/departments/information-and-operations-management/council-for-the-management-of-information-systems/2025-cmis-ai-conference-thriving-in-an-ai-world/#Registration" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="font-medium text-primary hover:text-primary/80 hover:underline transition-colors"
-                      >
+                      
+                      <a href="https://mays.tamu.edu/departments/information-and-operations-management/council-for-the-management-of-information-systems/2025-cmis-ai-conference-thriving-in-an-ai-world/#Registration" target="_blank" rel="noopener noreferrer" className="font-medium text-primary hover:text-primary/80 hover:underline transition-colors">
                         Thriving in an AI World
                       </a>
                     </li>
@@ -139,32 +128,31 @@ const CMIS = () => {
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto">
                   {[{
-                    id: 1,
-                    name: "Dr. Aaron Becker",
-                    role: "Faculty Advisory Board",
-                    image: aaronBeckerPhoto
-                  }, {
-                    id: 2,
-                    name: "Dr. David Gomillion",
-                    role: "Co-Director of CMIS",
-                    image: davidGomillionPhoto
-                  }, {
-                    id: 3,
-                    name: "Dr. Greg Heim",
-                    role: "Faculty Advisory Board",
-                    image: gregHeimPhoto
-                  }, {
-                    id: 4,
-                    name: "Dr. Michael Scialdone",
-                    role: "Faculty Advisory Board",
-                    image: michaelScialdonePhoto
-                  }, {
-                    id: 5,
-                    name: "Dr. Dwayne Whitten",
-                    role: "Co-Director of CMIS",
-                    image: dwayneWhittenPhoto
-                  }].map(person => (
-                    <Card key={person.id} className="overflow-hidden hover:shadow-lg transition-all duration-300">
+                  id: 1,
+                  name: "Dr. Aaron Becker",
+                  role: "Faculty Advisory Board",
+                  image: aaronBeckerPhoto
+                }, {
+                  id: 2,
+                  name: "Dr. David Gomillion",
+                  role: "Co-Director of CMIS",
+                  image: davidGomillionPhoto
+                }, {
+                  id: 3,
+                  name: "Dr. Greg Heim",
+                  role: "Faculty Advisory Board",
+                  image: gregHeimPhoto
+                }, {
+                  id: 4,
+                  name: "Dr. Michael Scialdone",
+                  role: "Faculty Advisory Board",
+                  image: michaelScialdonePhoto
+                }, {
+                  id: 5,
+                  name: "Dr. Dwayne Whitten",
+                  role: "Co-Director of CMIS",
+                  image: dwayneWhittenPhoto
+                }].map(person => <Card key={person.id} className="overflow-hidden hover:shadow-lg transition-all duration-300">
                       <CardContent className="p-0">
                         <div className="aspect-square bg-muted flex items-center justify-center">
                           <img src={person.image} alt={person.name} className="w-full h-full object-cover" />
@@ -174,8 +162,7 @@ const CMIS = () => {
                           <p className="text-sm text-muted-foreground">{person.role}</p>
                         </div>
                       </CardContent>
-                    </Card>
-                  ))}
+                    </Card>)}
                 </div>
               </div>
             </ScrollFadeIn>
@@ -190,11 +177,9 @@ const CMIS = () => {
                 <Card className="max-w-4xl mx-auto">
                   <CardContent className="p-6 md:p-8">
                     <div className="flex flex-wrap gap-2 justify-center">
-                      {["Mitchell Peiffer", "Poorav Desai", "Khushi Gupta", "Josh Bittlestone", "Benjamin McCaulley", "Lazzia Ellankil", "Emioritse Abraham", "Michael Hudgins", "Sanketh Marampally", "Taj Singh", "Anoushka Pai", "Raahim Shahzad", "Shragvi Pendyam", "Traci Lu"].map((name, index) => (
-                        <Badge key={index} variant="secondary" className="text-sm px-4 py-2 hover:bg-primary hover:text-primary-foreground transition-colors cursor-default">
+                      {["Mitchell Peiffer", "Poorav Desai", "Khushi Gupta", "Josh Bittlestone", "Benjamin McCaulley", "Lazzia Ellankil", "Emioritse Abraham", "Michael Hudgins", "Sanketh Marampally", "Taj Singh", "Anoushka Pai", "Raahim Shahzad", "Shragvi Pendyam", "Traci Lu"].map((name, index) => <Badge key={index} variant="secondary" className="text-sm px-4 py-2 hover:bg-primary hover:text-primary-foreground transition-colors cursor-default">
                           {name}
-                        </Badge>
-                      ))}
+                        </Badge>)}
                     </div>
                   </CardContent>
                 </Card>
@@ -218,8 +203,6 @@ const CMIS = () => {
       </main>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default CMIS;
