@@ -92,7 +92,7 @@ const CMIS = () => {
                   <ul className="space-y-2">
                     <li className="flex items-center gap-2">
                       
-                      <a href="https://mays.tamu.edu/departments/information-and-operations-management/council-for-the-management-of-information-systems/2025-cmis-ai-conference-thriving-in-an-ai-world/#Registration" target="_blank" rel="noopener noreferrer" className="font-medium text-primary hover:text-primary/80 hover:underline transition-colors">
+                      <a href="https://mays.tamu.edu/departments/information-and-operations-management/council-for-the-management-of-information-systems/2025-cmis-ai-conference-thriving-in-an-ai-world/#Registration" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 hover:underline transition-colors font-bold">
                         Thriving in an AI World
                       </a>
                     </li>
