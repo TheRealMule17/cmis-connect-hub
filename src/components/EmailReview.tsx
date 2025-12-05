@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { CheckCircle, XCircle, Send, Edit2, Save, Calendar } from "lucide-react";
+import { CheckCircle, XCircle, Send, Edit2, Save, Calendar, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
 
 interface Email {
@@ -19,23 +19,79 @@ interface Email {
   status: string;
   scheduled_at: string | null;
   batch_id: string;
+  source?: "database" | "n8n";
+}
+
+interface N8nEmail {
+  name?: string;
+  recipient_name?: string;
+  email?: string;
+  recipient_email?: string;
+  subject: string;
+  body: string;
+  status?: string;
 }
 
 interface EmailReviewProps {
   batchId?: string;
 }
 
+const N8N_WEBHOOK_URL = "https://mule17.app.n8n.cloud/webhook/c083eafb-18e4-4931-aa30-1b1323f08655";
+
 const EmailReview = ({ batchId }: EmailReviewProps) => {
   const { toast } = useToast();
   const [emails, setEmails] = useState<Email[]>([]);
+  const [n8nEmails, setN8nEmails] = useState<Email[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editedEmail, setEditedEmail] = useState<Partial<Email>>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingN8n, setIsLoadingN8n] = useState(true);
   const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
     fetchEmails();
+    fetchN8nEmails();
   }, [batchId]);
+
+  const fetchN8nEmails = async () => {
+    setIsLoadingN8n(true);
+    try {
+      const response = await fetch(N8N_WEBHOOK_URL, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // Handle both array and single object responses
+      const emailsArray = Array.isArray(data) ? data : [data];
+      
+      const mappedEmails: Email[] = emailsArray.map((item: N8nEmail, index: number) => ({
+        id: `n8n-${index}-${Date.now()}`,
+        recipient_name: item.name || item.recipient_name || "Unknown",
+        recipient_email: item.email || item.recipient_email || "",
+        subject: item.subject || "No Subject",
+        body: item.body || "",
+        status: "pending",
+        scheduled_at: null,
+        batch_id: "",
+        source: "n8n" as const,
+      }));
+
+      setN8nEmails(mappedEmails);
+    } catch (error: any) {
+      console.error("Error fetching n8n emails:", error);
+      // Don't show error toast for n8n - just silently fail if no data
+    } finally {
+      setIsLoadingN8n(false);
+    }
+  };
 
   const fetchEmails = async () => {
     try {
@@ -51,7 +107,7 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
       const { data, error } = await query;
 
       if (error) throw error;
-      setEmails(data || []);
+      setEmails((data || []).map(e => ({ ...e, source: "database" as const })));
     } catch (error: any) {
       console.error("Error fetching emails:", error);
       toast({
@@ -190,7 +246,9 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
     }
   };
 
-  if (isLoading) {
+  const allEmails = [...n8nEmails, ...emails];
+
+  if (isLoading && isLoadingN8n) {
     return <div>Loading emails...</div>;
   }
 
@@ -205,20 +263,30 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
                 Review, edit, and approve emails before sending
               </CardDescription>
             </div>
-            <Button
-              onClick={sendApprovedEmails}
-              disabled={isSending || !emails.some(e => e.status === "approved")}
-              size="lg"
-            >
-              <Send className="mr-2 h-4 w-4" />
-              Send Approved ({emails.filter(e => e.status === "approved").length})
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={fetchN8nEmails}
+                disabled={isLoadingN8n}
+              >
+                <RefreshCw className={`mr-2 h-4 w-4 ${isLoadingN8n ? "animate-spin" : ""}`} />
+                Refresh
+              </Button>
+              <Button
+                onClick={sendApprovedEmails}
+                disabled={isSending || !allEmails.some(e => e.status === "approved")}
+                size="lg"
+              >
+                <Send className="mr-2 h-4 w-4" />
+                Send Approved ({allEmails.filter(e => e.status === "approved").length})
+              </Button>
+            </div>
           </div>
         </CardHeader>
       </Card>
 
       <div className="space-y-4">
-        {emails.map((email) => (
+        {allEmails.map((email) => (
           <Card key={email.id}>
             <CardHeader>
               <div className="flex items-start justify-between">
@@ -268,7 +336,7 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
                     <Label className="text-sm font-semibold">Body:</Label>
                     <pre className="mt-1 whitespace-pre-wrap font-sans text-sm">{email.body}</pre>
                   </div>
-                  {email.status !== "sent" && (
+                  {email.status !== "sent" && email.source === "database" && (
                     <div className="flex gap-2">
                       <Button
                         variant="outline"
@@ -298,6 +366,11 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
                       </Button>
                     </div>
                   )}
+                  {email.source === "n8n" && (
+                    <Badge variant="outline" className="mt-2">
+                      From n8n Workflow
+                    </Badge>
+                  )}
                 </>
               )}
             </CardContent>
@@ -305,7 +378,7 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
         ))}
       </div>
 
-      {emails.length === 0 && (
+      {allEmails.length === 0 && (
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
             No emails to review. Generate a batch to get started.
