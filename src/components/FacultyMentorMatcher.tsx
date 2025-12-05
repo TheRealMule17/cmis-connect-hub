@@ -377,7 +377,7 @@ const FacultyMentorMatcher = () => {
                   : "Run the matching workflow to see student-mentor pairings"}
               </CardDescription>
             </div>
-            {n8nMatches.length > 0 && (
+            {(n8nMatches.length > 0 || (syncedMatches && syncedMatches.length > 0)) && (
               <div className="relative flex-1 max-w-xs">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -471,9 +471,11 @@ const FacultyMentorMatcher = () => {
             </div>
           )}
           
-          {!n8nLoading && n8nMatches.length > 0 && (
+          {!n8nLoading && (n8nMatches.length > 0 || (syncedMatches && syncedMatches.length > 0)) && (
             <div className="space-y-4">
-              <Badge variant="secondary">{n8nMatches.length} matches found</Badge>
+              <Badge variant="secondary">
+                {n8nMatches.length > 0 ? n8nMatches.length : syncedMatches?.length || 0} matches found
+              </Badge>
               
               <ScrollArea className="h-[400px] rounded-md border">
                 <Table>
@@ -484,31 +486,55 @@ const FacultyMentorMatcher = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {n8nMatches
-                      .filter((match) => {
-                        if (!searchQuery.trim()) return true;
-                        const query = searchQuery.toLowerCase();
-                        return (
-                          match["Student Name"]?.toLowerCase().includes(query) ||
-                          match["Mentor Name"]?.toLowerCase().includes(query)
-                        );
-                      })
-                      .map((match, idx) => (
-                        <TableRow key={idx}>
-                          <TableCell className="font-medium">{match["Student Name"]}</TableCell>
-                          <TableCell>{match["Mentor Name"]}</TableCell>
-                        </TableRow>
-                      ))}
+                    {n8nMatches.length > 0 ? (
+                      n8nMatches
+                        .filter((match) => {
+                          if (!searchQuery.trim()) return true;
+                          const query = searchQuery.toLowerCase();
+                          return (
+                            match["Student Name"]?.toLowerCase().includes(query) ||
+                            match["Mentor Name"]?.toLowerCase().includes(query)
+                          );
+                        })
+                        .map((match, idx) => (
+                          <TableRow key={idx}>
+                            <TableCell className="font-medium">{match["Student Name"]}</TableCell>
+                            <TableCell>{match["Mentor Name"]}</TableCell>
+                          </TableRow>
+                        ))
+                    ) : (
+                      syncedMatches
+                        ?.filter((match) => {
+                          if (!searchQuery.trim()) return true;
+                          const query = searchQuery.toLowerCase();
+                          return (
+                            match.student_name?.toLowerCase().includes(query) ||
+                            match.mentor_name?.toLowerCase().includes(query)
+                          );
+                        })
+                        .map((match) => (
+                          <TableRow key={match.id}>
+                            <TableCell className="font-medium">{match.student_name}</TableCell>
+                            <TableCell>{match.mentor_name}</TableCell>
+                          </TableRow>
+                        ))
+                    )}
                   </TableBody>
                 </Table>
               </ScrollArea>
             </div>
           )}
           
-          {!n8nLoading && n8nMatches.length === 0 && (
-            <p className="text-center text-muted-foreground py-8">
-              Click "Run Matching" to generate and view student-mentor matches
-            </p>
+          {!n8nLoading && n8nMatches.length === 0 && (!syncedMatches || syncedMatches.length === 0) && (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <Users className="h-12 w-12 text-muted-foreground/50 mb-4" />
+              <p className="text-muted-foreground">
+                No matches to display yet.
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Click "Run Matching" to generate student-mentor pairings.
+              </p>
+            </div>
           )}
         </CardContent>
       </Card>
