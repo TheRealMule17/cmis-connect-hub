@@ -368,7 +368,7 @@ const FacultyMentorMatcher = () => {
       {/* Current Matches - populated by n8n workflow */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <div>
               <CardTitle>Current Matches</CardTitle>
               <CardDescription>
@@ -377,6 +377,17 @@ const FacultyMentorMatcher = () => {
                   : "Run the matching workflow to see student-mentor pairings"}
               </CardDescription>
             </div>
+            {n8nMatches.length > 0 && (
+              <div className="relative flex-1 max-w-xs">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search by name..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+            )}
             <div className="flex gap-2">
               {n8nMatches.length > 0 && (
                 <>
@@ -462,18 +473,7 @@ const FacultyMentorMatcher = () => {
           
           {!n8nLoading && n8nMatches.length > 0 && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between gap-4">
-                <Badge variant="secondary">{n8nMatches.length} matches found</Badge>
-                <div className="relative flex-1 max-w-sm">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search by name..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9"
-                  />
-                </div>
-              </div>
+              <Badge variant="secondary">{n8nMatches.length} matches found</Badge>
               
               <ScrollArea className="h-[400px] rounded-md border">
                 <Table>
