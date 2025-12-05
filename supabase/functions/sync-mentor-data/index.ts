@@ -91,10 +91,14 @@ Deno.serve(async (req) => {
       }
 
       case "trigger_n8n": {
-        // Proxy GET request to n8n webhook to avoid CORS
-        const n8nUrl = "https://mitchpeif.app.n8n.cloud/webhook/sync-matching";
-        const n8nResponse = await fetch(n8nUrl, {
-          method: "GET",
+        // Proxy POST request to n8n webhook to avoid CORS
+        const webhookUrl = body.webhookUrl || "https://mitchpeif.app.n8n.cloud/webhook/sync-matching";
+        console.log("Triggering n8n webhook:", webhookUrl);
+        
+        const n8nResponse = await fetch(webhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data || {}),
         });
 
         if (!n8nResponse.ok) {
@@ -108,6 +112,7 @@ Deno.serve(async (req) => {
           n8nData = { success: true };
         }
 
+        console.log("n8n response:", JSON.stringify(n8nData, null, 2));
         result = n8nData;
         break;
       }
