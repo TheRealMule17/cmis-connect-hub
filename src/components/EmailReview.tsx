@@ -351,6 +351,8 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
         setOriginalN8nStatuses(newOriginal);
         // Refresh communication history to show new entries
         fetchCommunicationHistory();
+        // Refresh the email review queue to get updated list
+        fetchN8nEmails();
       } else {
         toast({
           title: "Error",
