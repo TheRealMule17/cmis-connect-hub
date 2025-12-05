@@ -321,12 +321,12 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                recipientName: email.recipient_name,
+                emailId: email.airtable_id || email.id,
                 recipientEmail: email.recipient_email,
+                recipientName: email.recipient_name,
                 subject: email.subject,
                 body: email.body,
-                status: email.status.charAt(0).toUpperCase() + email.status.slice(1),
-                timestamp: now,
+                newStatus: email.status.charAt(0).toUpperCase() + email.status.slice(1),
               }),
             });
           } else {
