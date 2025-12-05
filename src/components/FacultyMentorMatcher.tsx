@@ -226,7 +226,8 @@ const FacultyMentorMatcher = () => {
       const response = await supabase.functions.invoke('sync-mentor-data', {
         body: { 
           action: 'trigger_n8n',
-          webhookUrl: 'https://mitchpeif.app.n8n.cloud/webhook/b479c25d-001f-4fc7-ab70-0e7154895329'
+          webhookUrl: 'https://mitchpeif.app.n8n.cloud/webhook/b479c25d-001f-4fc7-ab70-0e7154895329',
+          method: 'POST'
         }
       });
       
