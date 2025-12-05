@@ -43,6 +43,19 @@ const N8N_WEBHOOK_URL = "https://mule17.app.n8n.cloud/webhook/c083eafb-18e4-4931
 const N8N_STATUS_UPDATE_URL = "https://mule17.app.n8n.cloud/webhook/5cf035b6-8865-479c-a26a-4e8faf6daf8b";
 const N8N_COMM_HISTORY_URL = "https://mule17.app.n8n.cloud/webhook/c8c2e929-0880-4937-8fa9-a86c15a88782";
 
+// Helper function to format name professionally (capitalize each word)
+const formatName = (name: string | undefined): string => {
+  if (!name) return "Unknown";
+  // Handle email format (take part before @)
+  const namePart = name.includes('@') ? name.split('@')[0] : name;
+  // Replace dots, underscores, hyphens with spaces and capitalize each word
+  return namePart
+    .replace(/[._-]/g, ' ')
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 const EmailReview = ({ batchId }: EmailReviewProps) => {
   const { toast } = useToast();
   const [emails, setEmails] = useState<Email[]>([]);
@@ -84,7 +97,7 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
       const mappedEmails: Email[] = emailsArray.map((item: any, index: number) => ({
         id: item.id || `n8n-${index}-${Date.now()}`,
         airtable_id: item["Email ID"], // Store the Email ID (e.g., OUTREACH_20251204_233047_zb1qxyhd)
-        recipient_name: item.Recipient?.split('@')[0] || "Unknown",
+        recipient_name: formatName(item.Recipient),
         recipient_email: item.Recipient || "",
         subject: item.Subject || "No Subject",
         body: item["Email Body"] || "",
@@ -130,7 +143,7 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
       const mappedEmails: Email[] = emailsArray.map((item: any, index: number) => ({
         id: item.id || `history-${index}-${Date.now()}`,
         airtable_id: item["Email ID"] || item.emailId,
-        recipient_name: item.Recipient?.split('@')[0] || item.recipientName || "Unknown",
+        recipient_name: formatName(item.Recipient || item.recipientName),
         recipient_email: item.Recipient || item.recipientEmail || "",
         subject: item.Subject || item.subject || "No Subject",
         body: item["Email Body"] || item.body || "",
