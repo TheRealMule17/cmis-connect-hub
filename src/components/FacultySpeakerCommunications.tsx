@@ -14,7 +14,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import EmailReview from "./EmailReview";
 
 const N8N_THANK_YOU_WORKFLOW_URL = "https://mule17.app.n8n.cloud/webhook/93302a7a-7929-4ab4-84bf-1f536e8bb856";
-const N8N_BATCH_OUTREACH_URL = "https://mule17.app.n8n.cloud/webhook/516303a6-03fc-40b8-bb4e-1b9e661c2be9";
 
 const FacultySpeakerCommunications = () => {
   const { toast } = useToast();
@@ -122,10 +121,16 @@ const FacultySpeakerCommunications = () => {
 
   const triggerN8nBatchOutreach = async () => {
     try {
-      const response = await fetch(N8N_BATCH_OUTREACH_URL, {
-        method: "GET",
-      });
-      return response.ok;
+      console.log("Triggering batch outreach via Edge Function...");
+      const { data, error } = await supabase.functions.invoke('trigger-n8n-outreach');
+      
+      if (error) {
+        console.error("Edge function error:", error);
+        return false;
+      }
+      
+      console.log("Batch outreach response:", data);
+      return data?.success === true;
     } catch (error) {
       console.error("Error triggering batch outreach workflow:", error);
       return false;
