@@ -62,18 +62,33 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
   }, [messages, isLoading]);
 
   useEffect(() => {
-    const footer = document.querySelector('footer');
-    if (!footer || !chatbotRef.current) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsOverFooter(entry.isIntersecting);
-      },
-      { threshold: 0.1 }
-    );
-
-    observer.observe(footer);
-    return () => observer.disconnect();
+    const checkOverlap = () => {
+      const footer = document.querySelector('footer');
+      const chatButton = chatbotRef.current;
+      
+      if (!footer || !chatButton) return;
+      
+      const footerRect = footer.getBoundingClientRect();
+      const buttonRect = chatButton.getBoundingClientRect();
+      
+      // Check if the button overlaps with the footer
+      const isOverlapping = buttonRect.bottom > footerRect.top && 
+                            buttonRect.top < footerRect.bottom;
+      
+      setIsOverFooter(isOverlapping);
+    };
+    
+    // Check on scroll and resize
+    window.addEventListener('scroll', checkOverlap);
+    window.addEventListener('resize', checkOverlap);
+    
+    // Initial check
+    checkOverlap();
+    
+    return () => {
+      window.removeEventListener('scroll', checkOverlap);
+      window.removeEventListener('resize', checkOverlap);
+    };
   }, []);
 
   const callBedrockAgent = async (userMessage: string) => {
