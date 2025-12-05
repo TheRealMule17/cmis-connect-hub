@@ -78,7 +78,7 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
       
       const mappedEmails: Email[] = emailsArray.map((item: any, index: number) => ({
         id: item.id || `n8n-${index}-${Date.now()}`,
-        airtable_id: item.id, // Store the Airtable record ID explicitly
+        airtable_id: item["Email ID"], // Store the Email ID (e.g., OUTREACH_20251204_233047_zb1qxyhd)
         recipient_name: item.Recipient?.split('@')[0] || "Unknown",
         recipient_email: item.Recipient || "",
         subject: item.Subject || "No Subject",
@@ -224,8 +224,7 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          emailId: email.airtable_id || email.id, // Use Airtable record ID
-          airtableRecordId: email.airtable_id, // Explicitly include Airtable ID
+          emailId: email.airtable_id || email.id, // Use Email ID (OUTREACH_xxx format)
           recipientEmail: email.recipient_email,
           subject: email.subject,
           newStatus: newStatus.charAt(0).toUpperCase() + newStatus.slice(1),
