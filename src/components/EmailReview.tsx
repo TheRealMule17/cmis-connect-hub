@@ -21,6 +21,7 @@ interface Email {
   scheduled_at: string | null;
   batch_id: string;
   source?: "database" | "n8n";
+  airtable_id?: string; // Airtable record ID for n8n emails
 }
 
 interface N8nEmail {
@@ -76,7 +77,8 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
       const emailsArray = Array.isArray(data) ? data : [data];
       
       const mappedEmails: Email[] = emailsArray.map((item: any, index: number) => ({
-        id: item.id || item["Email ID"] || `n8n-${index}-${Date.now()}`,
+        id: item.id || `n8n-${index}-${Date.now()}`,
+        airtable_id: item.id, // Store the Airtable record ID explicitly
         recipient_name: item.Recipient?.split('@')[0] || "Unknown",
         recipient_email: item.Recipient || "",
         subject: item.Subject || "No Subject",
@@ -222,7 +224,8 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          emailId: email.id,
+          emailId: email.airtable_id || email.id, // Use Airtable record ID
+          airtableRecordId: email.airtable_id, // Explicitly include Airtable ID
           recipientEmail: email.recipient_email,
           subject: email.subject,
           newStatus: newStatus.charAt(0).toUpperCase() + newStatus.slice(1),
