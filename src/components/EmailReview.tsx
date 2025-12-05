@@ -126,14 +126,16 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
       // Handle both array and single object responses
       const emailsArray = Array.isArray(data) ? data : [data];
       
+      // Use same format as pending emails (Airtable format)
       const mappedEmails: Email[] = emailsArray.map((item: any, index: number) => ({
         id: item.id || `history-${index}-${Date.now()}`,
-        recipient_name: item.recipientName || item.Recipient?.split('@')[0] || "Unknown",
-        recipient_email: item.recipientEmail || item.Recipient || "",
-        subject: item.subject || item.Subject || "No Subject",
-        body: item.body || item["Email Body"] || "",
-        status: (item.status || item.Status || "sent").toLowerCase(),
-        scheduled_at: item.timestamp || item.createdTime || null,
+        airtable_id: item["Email ID"] || item.emailId,
+        recipient_name: item.Recipient?.split('@')[0] || item.recipientName || "Unknown",
+        recipient_email: item.Recipient || item.recipientEmail || "",
+        subject: item.Subject || item.subject || "No Subject",
+        body: item["Email Body"] || item.body || "",
+        status: (item.Status || item.newStatus || item.status || "sent").trim().toLowerCase(),
+        scheduled_at: item["Generated Date"] || item.createdTime || item.timestamp || null,
         batch_id: "",
         source: "n8n" as const,
       }));
