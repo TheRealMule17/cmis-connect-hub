@@ -415,16 +415,41 @@ const FacultyMentorMatcher = () => {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Run Matching Workflow?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This will match students with mentors and send notification emails to all participants.
-                      This action may take 10-30 seconds to complete.
+                    <AlertDialogTitle>Have you synced the latest data?</AlertDialogTitle>
+                    <AlertDialogDescription className="space-y-3">
+                      <span className="block">
+                        Before running the matching workflow, make sure you have the latest student and mentor data from Google Sheets.
+                      </span>
+                      <span className="block text-muted-foreground text-sm">
+                        If you haven't synced recently, click "Sync Data First" below.
+                      </span>
                     </AlertDialogDescription>
                   </AlertDialogHeader>
-                  <AlertDialogFooter>
+                  <AlertDialogFooter className="flex-col sm:flex-row gap-2">
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      className="bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        syncData();
+                      }}
+                      disabled={isSyncing}
+                    >
+                      {isSyncing ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Syncing...
+                        </>
+                      ) : (
+                        <>
+                          <Database className="mr-2 h-4 w-4" />
+                          Sync Data First
+                        </>
+                      )}
+                    </AlertDialogAction>
                     <AlertDialogAction onClick={runN8nWorkflow}>
-                      Run Workflow
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      Run Matching
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
