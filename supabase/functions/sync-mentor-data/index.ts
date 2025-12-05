@@ -91,15 +91,22 @@ Deno.serve(async (req) => {
       }
 
       case "trigger_n8n": {
-        // Proxy POST request to n8n webhook to avoid CORS
+        // Proxy request to n8n webhook to avoid CORS
         const webhookUrl = body.webhookUrl || "https://mitchpeif.app.n8n.cloud/webhook/sync-matching";
-        console.log("Triggering n8n webhook:", webhookUrl);
+        const httpMethod = body.method || "GET";
+        console.log("Triggering n8n webhook:", webhookUrl, "method:", httpMethod);
         
-        const n8nResponse = await fetch(webhookUrl, {
-          method: "POST",
+        const fetchOptions: RequestInit = {
+          method: httpMethod,
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data || {}),
-        });
+        };
+        
+        // Only include body for POST requests
+        if (httpMethod === "POST" && data) {
+          fetchOptions.body = JSON.stringify(data);
+        }
+        
+        const n8nResponse = await fetch(webhookUrl, fetchOptions);
 
         if (!n8nResponse.ok) {
           throw new Error(`n8n webhook returned ${n8nResponse.status}`);
