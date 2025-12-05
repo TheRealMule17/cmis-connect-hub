@@ -105,7 +105,7 @@ const FacultyMentorMatcher = () => {
     setIsSyncing(true);
     try {
       const response = await fetch(
-        "https://mitchpeif.app.n8n.cloud/webhook/cf748cb3-bba2-4714-84be-25c078cb6104",
+        "https://mitchpeif.app.n8n.cloud/webhook/sync-google-sheet",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
