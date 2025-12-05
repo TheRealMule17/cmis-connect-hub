@@ -107,17 +107,17 @@ const Dashboard = () => {
         </div>
         
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Faculty Portal</h1>
-          <p className="text-lg text-muted-foreground">Comprehensive management tools for all campus activities</p>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2">Faculty Portal</h1>
+          <p className="text-base md:text-lg text-muted-foreground">Comprehensive management tools for all campus activities</p>
         </div>
 
         <Tabs defaultValue={defaultTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-5 mb-8">
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="events">Events</TabsTrigger>
-            <TabsTrigger value="speakers">Communications</TabsTrigger>
-            <TabsTrigger value="mentors">Mentor Matcher</TabsTrigger>
-            <TabsTrigger value="research">Research</TabsTrigger>
+          <TabsList className="flex w-full overflow-x-auto mb-8 h-auto flex-wrap sm:flex-nowrap">
+            <TabsTrigger value="analytics" className="flex-1 min-w-fit text-xs sm:text-sm">Analytics</TabsTrigger>
+            <TabsTrigger value="events" className="flex-1 min-w-fit text-xs sm:text-sm">Events</TabsTrigger>
+            <TabsTrigger value="speakers" className="flex-1 min-w-fit text-xs sm:text-sm">Comms</TabsTrigger>
+            <TabsTrigger value="mentors" className="flex-1 min-w-fit text-xs sm:text-sm">Mentors</TabsTrigger>
+            <TabsTrigger value="research" className="flex-1 min-w-fit text-xs sm:text-sm">Research</TabsTrigger>
           </TabsList>
 
           <TabsContent value="analytics">

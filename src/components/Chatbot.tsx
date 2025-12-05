@@ -157,18 +157,18 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
   return (
     <>
       {!isOpen && !isExpanded && (
-        <div ref={chatbotRef} className="fixed bottom-6 right-6 z-50">
+        <div ref={chatbotRef} className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
           <Button
             onClick={() => setIsOpen(true)}
             className={cn(
-              "h-14 w-14 rounded-full shadow-lg transition-colors duration-300",
+              "h-12 w-12 sm:h-14 sm:w-14 rounded-full shadow-lg transition-colors duration-300",
               isInverted
                 ? "bg-background text-foreground border-2 border-foreground hover:bg-foreground hover:text-background" 
                 : ""
             )}
             size="icon"
           >
-            <MessageCircle className="h-6 w-6" />
+            <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />
           </Button>
         </div>
       )}
@@ -180,7 +180,7 @@ export const Chatbot = ({ expanded = false, onClose }: ChatbotProps) => {
             "rounded-lg shadow-xl flex flex-col transition-all duration-300 overflow-hidden",
             isExpanded
               ? "fixed inset-0 md:inset-4 z-50 w-auto h-auto bg-white border"
-              : "fixed bottom-6 right-6 w-96 h-[500px] z-50 bg-white border"
+              : "fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-[calc(100vw-2rem)] sm:w-96 h-[70vh] sm:h-[500px] max-h-[500px] z-50 bg-white border"
           )}
         >
           {/* Maroon Header */}
