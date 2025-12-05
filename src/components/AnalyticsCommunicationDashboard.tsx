@@ -1,11 +1,27 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Activity, Users, Calendar, TrendingUp } from "lucide-react";
+import { Activity, Users, Calendar, TrendingUp, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 const AnalyticsCommunicationDashboard = () => {
+  const [communications, setCommunications] = useState([
+    { id: 1, title: "Event Reminders", badge: "Auto-sent", description: "Triggered for upcoming events" },
+    { id: 2, title: "Registration Confirmations", badge: "Auto-sent", description: "Sent upon event registration" },
+    { id: 3, title: "Sponsor Thank You", badge: "Manual", description: "Sent via Communications tab" },
+  ]);
+
+  const handleClearAll = () => {
+    setCommunications([]);
+    toast({
+      title: "Communications Cleared",
+      description: "All communication history has been cleared.",
+    });
+  };
   const { data: events } = useQuery({
     queryKey: ["analytics_events"],
     queryFn: async () => {
@@ -192,33 +208,38 @@ const AnalyticsCommunicationDashboard = () => {
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Communication Repository</CardTitle>
-            <CardDescription>Automated communications sent</CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <div>
+              <CardTitle>Communication Repository</CardTitle>
+              <CardDescription>Automated communications sent</CardDescription>
+            </div>
+            {communications.length > 0 && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleClearAll}
+                className="text-destructive hover:text-destructive"
+              >
+                <Trash2 className="h-4 w-4 mr-1" />
+                Clear All
+              </Button>
+            )}
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <div className="p-3 border rounded-lg">
-                <div className="flex justify-between items-start mb-1">
-                  <span className="font-medium text-sm">Event Reminders</span>
-                  <Badge variant="outline">Auto-sent</Badge>
-                </div>
-                <p className="text-xs text-muted-foreground">Triggered for upcoming events</p>
-              </div>
-              <div className="p-3 border rounded-lg">
-                <div className="flex justify-between items-start mb-1">
-                  <span className="font-medium text-sm">Registration Confirmations</span>
-                  <Badge variant="outline">Auto-sent</Badge>
-                </div>
-                <p className="text-xs text-muted-foreground">Sent upon event registration</p>
-              </div>
-              <div className="p-3 border rounded-lg">
-                <div className="flex justify-between items-start mb-1">
-                  <span className="font-medium text-sm">Sponsor Thank You</span>
-                  <Badge variant="outline">Manual</Badge>
-                </div>
-                <p className="text-xs text-muted-foreground">Sent via Communications tab</p>
-              </div>
+              {communications.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4">No communications in history</p>
+              ) : (
+                communications.map((comm) => (
+                  <div key={comm.id} className="p-3 border rounded-lg">
+                    <div className="flex justify-between items-start mb-1">
+                      <span className="font-medium text-sm">{comm.title}</span>
+                      <Badge variant="outline">{comm.badge}</Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground">{comm.description}</p>
+                  </div>
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
