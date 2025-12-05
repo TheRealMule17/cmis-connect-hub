@@ -63,13 +63,17 @@ const AnalyticsCommunicationDashboard = () => {
     },
   });
 
-  const { data: sponsors } = useQuery({
+  const { data: dbSponsors } = useQuery({
     queryKey: ["analytics_sponsors"],
     queryFn: async () => {
-      const { count } = await supabase.from("sponsor_profiles").select("*", { count: "exact", head: true });
-      return count;
+      const { data } = await supabase.from("sponsor_profiles").select("id");
+      return data || [];
     },
   });
+
+  // Static sponsors count (matching SponsorShowcase)
+  const staticSponsorCount = 13; // 3 Exabyte + 1 Petabyte + 9 Terabyte
+  const totalSponsors = staticSponsorCount + (dbSponsors?.length || 0);
 
   const eventChartData = events?.slice(0, 5).map(e => {
     const eventRegs = registrations?.filter(r => r.event_id === e.id) || [];
@@ -139,7 +143,7 @@ const AnalyticsCommunicationDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{sponsors || 0}</div>
+            <div className="text-3xl font-bold">{totalSponsors}</div>
             <Badge variant="secondary" className="mt-2">Live Data</Badge>
           </CardContent>
         </Card>
