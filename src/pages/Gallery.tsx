@@ -1,6 +1,7 @@
 import Navigation from "@/components/Navigation";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import Footer from "@/components/Footer";
+import ScrollFadeIn from "@/components/ScrollFadeIn";
 import { Card, CardContent } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
 import caseCompImage from "@/assets/gallery/UG_CMIS_CaseComp.jpg";
@@ -12,6 +13,7 @@ import tailgateImage from "@/assets/gallery/MS_MIS_ONLINE_TG.jpg";
 import welcomeImage from "@/assets/gallery/MS_MIS_WELCOME.jpg";
 import communityImage from "@/assets/gallery/CommunityService.jpg";
 import teamBuildingImage from "@/assets/gallery/MS_MIS_TeamBuilding_26.jpg";
+
 const Gallery = () => {
   const eventImages = [{
     id: 1,
@@ -68,43 +70,55 @@ const Gallery = () => {
     image: teamBuildingImage,
     linkedIn: "https://www.linkedin.com/posts/info-dept-mbs_managmenetinformationsystems-classof2026-activity-7304866283483734017-TmfL?utm_source=share&utm_medium=member_desktop"
   }];
-  return <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 flex flex-col">
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 flex flex-col">
       <Navigation />
       <BreadcrumbNav />
       
       <main className="container mx-auto px-4 py-8 md:py-16 flex-1">
-        <div className="text-center mb-8 md:mb-12">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 md:mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            Gallery
-          </h1>
-          <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
-            Explore highlights from our events and activities
-          </p>
-        </div>
+        <ScrollFadeIn>
+          <div className="text-center mb-8 md:mb-12">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 md:mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              Gallery
+            </h1>
+            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
+              Explore highlights from our events and activities
+            </p>
+          </div>
+        </ScrollFadeIn>
 
         {/* Events Section */}
         <section>
-          <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-foreground">Our Events</h2>
+          <ScrollFadeIn>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-foreground">Our Events</h2>
+          </ScrollFadeIn>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {eventImages.map(event => <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <CardContent className="p-0">
-                  <div className="aspect-video bg-muted flex items-center justify-center overflow-hidden">
-                    <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
-                  </div>
-                  <div className="p-4">
-                    <a href={event.linkedIn} target="_blank" rel="noopener noreferrer" className="font-semibold text-lg mb-1 hover:text-primary transition-colors flex items-center gap-2 group">
-                      {event.title}
-                      <ExternalLink className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </a>
-                    <p className="text-sm text-muted-foreground">{event.category}</p>
-                  </div>
-                </CardContent>
-              </Card>)}
+            {eventImages.map((event, index) => (
+              <ScrollFadeIn key={event.id} delay={index * 0.1}>
+                <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <CardContent className="p-0">
+                    <div className="aspect-video bg-muted flex items-center justify-center overflow-hidden">
+                      <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="p-4">
+                      <a href={event.linkedIn} target="_blank" rel="noopener noreferrer" className="font-semibold text-lg mb-1 hover:text-primary transition-colors flex items-center gap-2 group">
+                        {event.title}
+                        <ExternalLink className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </a>
+                      <p className="text-sm text-muted-foreground">{event.category}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </ScrollFadeIn>
+            ))}
           </div>
         </section>
       </main>
       
       <Footer />
-    </div>;
+    </div>
+  );
 };
+
 export default Gallery;

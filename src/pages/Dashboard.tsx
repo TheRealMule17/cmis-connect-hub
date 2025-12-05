@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import ScrollFadeIn from "@/components/ScrollFadeIn";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2, LogOut } from "lucide-react";
@@ -106,40 +107,44 @@ const Dashboard = () => {
           </Button>
         </div>
         
-        <div className="mb-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2">Faculty Portal</h1>
-          <p className="text-base md:text-lg text-muted-foreground">Comprehensive management tools for all campus activities</p>
-        </div>
+        <ScrollFadeIn>
+          <div className="mb-8">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2">Faculty Portal</h1>
+            <p className="text-base md:text-lg text-muted-foreground">Comprehensive management tools for all campus activities</p>
+          </div>
+        </ScrollFadeIn>
 
-        <Tabs defaultValue={defaultTab} className="w-full">
-          <TabsList className="flex w-full overflow-x-auto mb-8 h-auto flex-wrap sm:flex-nowrap">
-            <TabsTrigger value="analytics" className="flex-1 min-w-fit text-xs sm:text-sm">Analytics</TabsTrigger>
-            <TabsTrigger value="events" className="flex-1 min-w-fit text-xs sm:text-sm">Events</TabsTrigger>
-            <TabsTrigger value="speakers" className="flex-1 min-w-fit text-xs sm:text-sm">Comms</TabsTrigger>
-            <TabsTrigger value="mentors" className="flex-1 min-w-fit text-xs sm:text-sm">Mentors</TabsTrigger>
-            <TabsTrigger value="research" className="flex-1 min-w-fit text-xs sm:text-sm">Research</TabsTrigger>
-          </TabsList>
+        <ScrollFadeIn delay={0.1}>
+          <Tabs defaultValue={defaultTab} className="w-full">
+            <TabsList className="flex w-full overflow-x-auto mb-8 h-auto flex-wrap sm:flex-nowrap">
+              <TabsTrigger value="analytics" className="flex-1 min-w-fit text-xs sm:text-sm">Analytics</TabsTrigger>
+              <TabsTrigger value="events" className="flex-1 min-w-fit text-xs sm:text-sm">Events</TabsTrigger>
+              <TabsTrigger value="speakers" className="flex-1 min-w-fit text-xs sm:text-sm">Comms</TabsTrigger>
+              <TabsTrigger value="mentors" className="flex-1 min-w-fit text-xs sm:text-sm">Mentors</TabsTrigger>
+              <TabsTrigger value="research" className="flex-1 min-w-fit text-xs sm:text-sm">Research</TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="analytics">
-            <AnalyticsCommunicationDashboard />
-          </TabsContent>
+            <TabsContent value="analytics">
+              <AnalyticsCommunicationDashboard />
+            </TabsContent>
 
-          <TabsContent value="events">
-            <EventManager />
-          </TabsContent>
+            <TabsContent value="events">
+              <EventManager />
+            </TabsContent>
 
-          <TabsContent value="speakers">
-            <FacultySpeakerCommunications />
-          </TabsContent>
+            <TabsContent value="speakers">
+              <FacultySpeakerCommunications />
+            </TabsContent>
 
-          <TabsContent value="mentors">
-            <FacultyMentorMatcher />
-          </TabsContent>
+            <TabsContent value="mentors">
+              <FacultyMentorMatcher />
+            </TabsContent>
 
-          <TabsContent value="research">
-            <ResearchCollaborationHub />
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="research">
+              <ResearchCollaborationHub />
+            </TabsContent>
+          </Tabs>
+        </ScrollFadeIn>
       </main>
 
       <Footer />
