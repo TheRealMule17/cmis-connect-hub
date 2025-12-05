@@ -109,7 +109,7 @@ const CMIS = () => {
 
             {/* Faculty Advisory Board */}
             <div id="faculty-partners" className="mb-16">
-              <h3 className="text-xl md:text-2xl font-bold mb-6 text-center">Faculty Partners</h3>
+              <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center">Faculty Partners</h3>
               <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
                 Our dedicated faculty advisors who provide guidance, mentorship, and leadership to the CMIS community.
               </p>
@@ -155,7 +155,7 @@ const CMIS = () => {
 
             {/* Student Advisory Board */}
             <div id="student-leaders">
-              <h3 className="text-xl md:text-2xl font-bold mb-6 text-center">Student Leaders</h3>
+              <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center">Student Leaders</h3>
               <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
                 Our dedicated student leaders who help shape the future of CMIS and bridge the gap between students and faculty.
               </p>
