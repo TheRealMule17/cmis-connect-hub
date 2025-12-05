@@ -135,12 +135,20 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
         subject: item.Subject || item.subject || "No Subject",
         body: item["Email Body"] || item.body || "",
         status: (item.Status || item.newStatus || item.status || "sent").trim().toLowerCase(),
-        scheduled_at: item["Generated Date"] || item.createdTime || item.timestamp || null,
+        scheduled_at: item["Sent Date"] || item.sentDate || item.timestamp || null,
         batch_id: "",
         source: "n8n" as const,
       }));
 
-      setCommHistory(mappedEmails);
+      // Sort by sent date with most recent first
+      const sortedEmails = mappedEmails.sort((a, b) => {
+        if (!a.scheduled_at && !b.scheduled_at) return 0;
+        if (!a.scheduled_at) return 1;
+        if (!b.scheduled_at) return -1;
+        return new Date(b.scheduled_at).getTime() - new Date(a.scheduled_at).getTime();
+      });
+
+      setCommHistory(sortedEmails);
     } catch (error: any) {
       console.error("Error fetching communication history:", error);
     } finally {
@@ -582,7 +590,7 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
                     </div>
                     {email.scheduled_at && (
                       <div className="text-xs text-muted-foreground">
-                        Processed: {format(new Date(email.scheduled_at), "PPpp")}
+                        Sent: {format(new Date(email.scheduled_at), "PPpp")}
                       </div>
                     )}
                   </CardContent>
