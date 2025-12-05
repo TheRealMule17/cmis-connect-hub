@@ -443,13 +443,32 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
                 disabled={isSending || !hasUnsavedChanges}
                 size="lg"
               >
-                <Send className="mr-2 h-4 w-4" />
-                Update Status ({getChangedN8nEmails().length})
+                {isSending ? (
+                  <>
+                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <Send className="mr-2 h-4 w-4" />
+                    Update Status ({getChangedN8nEmails().length})
+                  </>
+                )}
               </Button>
             </div>
           </div>
         </CardHeader>
       </Card>
+
+      {isSending && (
+        <Card className="border-primary/50 bg-primary/5">
+          <CardContent className="py-6 text-center">
+            <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-3 text-primary" />
+            <p className="text-lg font-medium">Processing email statuses...</p>
+            <p className="text-sm text-muted-foreground">Please wait while we update your approvals and rejections.</p>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="space-y-4">
         {allEmails.map((email) => (
