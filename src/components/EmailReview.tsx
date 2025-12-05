@@ -369,14 +369,22 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
           title: "Statuses Updated",
           description: `Successfully updated ${successCount} email${successCount > 1 ? 's' : ''}${errorCount > 0 ? `, ${errorCount} failed` : ''}`,
         });
-        // Update original statuses to reflect saved state
+        
+        // Remove approved/rejected emails from the queue
+        const processedEmailIds = changedEmails
+          .filter(e => e.status === "approved" || e.status === "rejected")
+          .map(e => e.id);
+        
+        setN8nEmails(prev => prev.filter(e => !processedEmailIds.includes(e.id)));
+        
+        // Update original statuses to reflect saved state (for remaining emails)
         const newOriginal = { ...originalN8nStatuses };
-        changedEmails.forEach(e => { newOriginal[e.id] = e.status; });
+        processedEmailIds.forEach(id => delete newOriginal[id]);
+        changedEmails.filter(e => e.status === "pending").forEach(e => { newOriginal[e.id] = e.status; });
         setOriginalN8nStatuses(newOriginal);
+        
         // Refresh communication history to show new entries
         fetchCommunicationHistory();
-        // Refresh the email review queue to get updated list
-        fetchN8nEmails();
       } else {
         toast({
           title: "Error",
@@ -561,14 +569,49 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
                 Previously sent and processed emails
               </CardDescription>
             </div>
-            <Button
-              variant="outline"
-              onClick={fetchCommunicationHistory}
-              disabled={isLoadingHistory}
-            >
-              <RefreshCw className={`mr-2 h-4 w-4 ${isLoadingHistory ? "animate-spin" : ""}`} />
-              Refresh
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={fetchCommunicationHistory}
+                disabled={isLoadingHistory}
+              >
+                <RefreshCw className={`mr-2 h-4 w-4 ${isLoadingHistory ? "animate-spin" : ""}`} />
+                Refresh
+              </Button>
+              {commHistory.length > 0 && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline" className="text-destructive hover:text-destructive">
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Clear All
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Clear all communication history?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will remove all emails from your local communication history view.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => {
+                          setCommHistory([]);
+                          toast({
+                            title: "History Cleared",
+                            description: "All communication history has been cleared.",
+                          });
+                        }}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Clear All
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+            </div>
           </div>
         </CardHeader>
         <CardContent>
