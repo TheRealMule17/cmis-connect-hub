@@ -18,7 +18,11 @@ serve(async (req) => {
 
   try {
     const response = await fetch(N8N_BATCH_OUTREACH_URL, {
-      method: 'GET',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({}),
     });
 
     console.log('N8N response status:', response.status);
