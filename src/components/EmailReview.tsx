@@ -246,6 +246,9 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
     let successCount = 0;
     let errorCount = 0;
 
+    // Get current user for logging
+    const { data: { user } } = await supabase.auth.getUser();
+
     try {
       // Send status updates for all changed n8n emails
       for (const email of changedEmails) {
@@ -265,6 +268,22 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
 
           if (response.ok) {
             successCount++;
+            
+            // Log to communication history for approved/rejected/sent emails
+            if (user && (email.status === "approved" || email.status === "rejected" || email.status === "sent")) {
+              const now = new Date().toISOString();
+              await supabase.from("generated_emails").insert({
+                created_by: user.id,
+                recipient_name: email.recipient_name,
+                recipient_email: email.recipient_email,
+                subject: email.subject,
+                body: email.body,
+                status: email.status,
+                email_type: "outreach",
+                sent_at: email.status === "sent" ? now : null,
+                batch_id: email.airtable_id || email.id,
+              });
+            }
           } else {
             errorCount++;
           }
@@ -283,6 +302,8 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
         const newOriginal = { ...originalN8nStatuses };
         changedEmails.forEach(e => { newOriginal[e.id] = e.status; });
         setOriginalN8nStatuses(newOriginal);
+        // Refresh the email list to show new records
+        fetchEmails();
       } else {
         toast({
           title: "Error",
