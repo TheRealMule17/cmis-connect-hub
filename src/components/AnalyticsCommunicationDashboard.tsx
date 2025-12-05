@@ -166,8 +166,26 @@ const AnalyticsCommunicationDashboard = () => {
                 <YAxis allowDecimals={false} />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="students" fill="hsl(var(--primary))" name="Students" />
-                <Bar dataKey="alumni" fill="hsl(var(--chart-2))" name="Alumni" />
+                <Bar 
+                  dataKey="students" 
+                  fill="hsl(var(--primary))" 
+                  name="Students"
+                  isAnimationActive={true}
+                  animationDuration={800}
+                  animationEasing="ease-out"
+                  animationBegin={0}
+                  radius={[4, 4, 0, 0]}
+                />
+                <Bar 
+                  dataKey="alumni" 
+                  fill="hsl(var(--chart-2))" 
+                  name="Alumni"
+                  isAnimationActive={true}
+                  animationDuration={800}
+                  animationEasing="ease-out"
+                  animationBegin={200}
+                  radius={[4, 4, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
