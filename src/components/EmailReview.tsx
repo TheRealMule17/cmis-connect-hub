@@ -225,7 +225,7 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
           emailId: email.id,
           recipientEmail: email.recipient_email,
           subject: email.subject,
-          newStatus: newStatus,
+          newStatus: newStatus.charAt(0).toUpperCase() + newStatus.slice(1),
         }),
       });
 
