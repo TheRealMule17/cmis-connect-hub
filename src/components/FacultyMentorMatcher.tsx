@@ -114,10 +114,22 @@ const FacultyMentorMatcher = () => {
       );
 
       if (response.ok) {
+        const data = await response.json();
+        
+        // Handle array response (multiple records) or single object
+        const records = Array.isArray(data) ? data : [data];
+        const recordCount = records.length;
+        
+        // Check if it's the expected n8n format with Email ID, Recipient, etc.
+        const hasEmailFormat = records.some(r => r["Email ID"] || r["Recipient"] || r["Email Body"]);
+        
         toast({
           title: "Data synced successfully!",
-          description: "Refreshing data from Google Sheets...",
+          description: hasEmailFormat 
+            ? `Synced ${recordCount} record${recordCount !== 1 ? 's' : ''} from n8n`
+            : "Refreshing data from Google Sheets...",
         });
+        
         // Invalidate queries to refetch fresh data
         queryClient.invalidateQueries({ queryKey: ["synced-students"] });
         queryClient.invalidateQueries({ queryKey: ["synced-mentors"] });
