@@ -293,6 +293,8 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
       // Send status updates for all changed n8n emails
       for (const email of changedEmails) {
         try {
+          const now = new Date().toISOString();
+          
           // Update status in Airtable
           const response = await fetch(N8N_STATUS_UPDATE_URL, {
             method: "POST",
@@ -311,6 +313,22 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
 
           if (response.ok) {
             successCount++;
+            
+            // Send to communication history n8n workflow
+            await fetch(N8N_COMM_HISTORY_URL, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                recipientName: email.recipient_name,
+                recipientEmail: email.recipient_email,
+                subject: email.subject,
+                body: email.body,
+                status: email.status.charAt(0).toUpperCase() + email.status.slice(1),
+                timestamp: now,
+              }),
+            });
           } else {
             errorCount++;
           }
