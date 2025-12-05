@@ -235,7 +235,7 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
 
       toast({
         title: "Status Updated",
-        description: `Email marked as ${newStatus}`,
+        description: `Email marked as ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}`,
       });
     } catch (error: any) {
       console.error("Error updating n8n email status:", error);
@@ -363,7 +363,7 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
                     email.status === "approved" ? "secondary" :
                     email.status === "rejected" ? "destructive" : "outline"
                   }>
-                    {email.status}
+                    {email.status.charAt(0).toUpperCase() + email.status.slice(1)}
                   </Badge>
                 )}
               </div>
