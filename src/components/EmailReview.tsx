@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { CheckCircle, XCircle, Send, Edit2, Save, Calendar, RefreshCw } from "lucide-react";
+import { CheckCircle, XCircle, Send, Edit2, Save, Calendar, RefreshCw, Trash2 } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { format } from "date-fns";
 
 interface Email {
@@ -585,13 +586,39 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
                         <CardTitle className="text-base">{email.recipient_name}</CardTitle>
                         <CardDescription className="text-sm">{email.recipient_email}</CardDescription>
                       </div>
-                      <Badge variant={
-                        email.status === "sent" ? "default" :
-                        email.status === "approved" ? "secondary" :
-                        email.status === "rejected" ? "destructive" : "outline"
-                      }>
-                        {email.status.charAt(0).toUpperCase() + email.status.slice(1)}
-                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <Badge variant={
+                          email.status === "sent" ? "default" :
+                          email.status === "approved" ? "secondary" :
+                          email.status === "rejected" ? "destructive" : "outline"
+                        }>
+                          {email.status.charAt(0).toUpperCase() + email.status.slice(1)}
+                        </Badge>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete from history?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will remove this email from your local communication history view.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => setCommHistory(prev => prev.filter(e => e.id !== email.id))}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </div>
                   </CardHeader>
                   <CardContent className="pt-2 space-y-2">

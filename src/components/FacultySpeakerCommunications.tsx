@@ -5,8 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { MessageSquare, Plus, Users, Calendar, Trash2, Mail, RefreshCw } from "lucide-react";
+import { Plus, Users, Calendar, RefreshCw, Mail } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -29,17 +28,6 @@ const FacultySpeakerCommunications = () => {
   const [selectedRecipient, setSelectedRecipient] = useState<string>("");
   const [selectedEvent, setSelectedEvent] = useState<string>("");
 
-  const { data: communications } = useQuery({
-    queryKey: ["faculty_communications"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("faculty_communications")
-        .select("*")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-  });
 
   // Fetch recent/upcoming events
   const { data: events } = useQuery({
@@ -472,99 +460,6 @@ const FacultySpeakerCommunications = () => {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5" />
-            Communication History
-          </CardTitle>
-          <CardDescription>Repository of past communications</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {communications?.map((comm) => {
-              const messageTypeLabel = {
-                thank_you: "Thank You",
-                sponsor_request: "Sponsor Request",
-                event_invitation: "Event Invitation",
-                update: "General Update",
-              }[comm.message_type] || comm.message_type?.replace("_", " ");
-
-              // Determine target display name
-              let targetDisplay: string;
-              if (comm.target_tier === "individual" && comm.recipient_name) {
-                targetDisplay = comm.recipient_name;
-              } else if (comm.target_tier === "event_attendees" && comm.event_name) {
-                targetDisplay = `${comm.event_name} Attendees`;
-              } else {
-                targetDisplay = {
-                  all: "All Sponsors",
-                  individual: "Individual",
-                  event_attendees: "Event Attendees",
-                  exabyte: "Exabyte Tier",
-                  petabyte: "Petabyte Tier",
-                  terabyte: "Terabyte Tier",
-                }[comm.target_tier || ""] || comm.target_tier || "Unknown";
-              }
-
-              const title = `${messageTypeLabel} to ${targetDisplay}`;
-
-              return (
-                <div key={comm.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors">
-                  <div className="space-y-1">
-                    <h4 className="font-medium">{title}</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(comm.created_at).toLocaleDateString()} at {new Date(comm.created_at).toLocaleTimeString()}
-                    </p>
-                  </div>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently delete this communication from the history.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={async () => {
-                            const { error } = await supabase
-                              .from("faculty_communications")
-                              .delete()
-                              .eq("id", comm.id);
-                            if (error) {
-                              toast({
-                                title: "Error",
-                                description: "Failed to delete communication",
-                                variant: "destructive",
-                              });
-                            } else {
-                              queryClient.invalidateQueries({ queryKey: ["faculty_communications"] });
-                              toast({ title: "Communication deleted" });
-                            }
-                          }}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
-              );
-            })}
-            {!communications?.length && (
-              <p className="text-center text-muted-foreground py-8">No communications yet</p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };
