@@ -91,11 +91,10 @@ Deno.serve(async (req) => {
       }
 
       case "trigger_n8n": {
-        // Proxy request to n8n webhook to avoid CORS
+        // Proxy GET request to n8n webhook to avoid CORS
         const n8nUrl = "https://mitchpeif.app.n8n.cloud/webhook/sync-matching";
         const n8nResponse = await fetch(n8nUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+          method: "GET",
         });
 
         if (!n8nResponse.ok) {
