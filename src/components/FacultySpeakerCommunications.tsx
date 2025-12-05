@@ -442,10 +442,10 @@ const FacultySpeakerCommunications = () => {
                 {createCommunication.isPending || isTriggeringWorkflow ? (
                   <>
                     <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                    {isTriggeringWorkflow ? "Triggering Workflow..." : "Sending..."}
+                    {isTriggeringWorkflow ? "Triggering Workflow..." : "Generating..."}
                   </>
                 ) : (
-                  "Send Message"
+                  "Generate Message"
                 )}
               </Button>
             </form>
