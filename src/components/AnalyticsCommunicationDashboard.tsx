@@ -168,7 +168,6 @@ const AnalyticsCommunicationDashboard = () => {
                 <Legend />
                 <Bar dataKey="students" fill="hsl(var(--primary))" name="Students" />
                 <Bar dataKey="alumni" fill="hsl(var(--chart-2))" name="Alumni" />
-                <Bar dataKey="capacity" fill="hsl(var(--muted))" name="Capacity" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
