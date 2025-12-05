@@ -1028,6 +1028,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      reset_sync_data: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "faculty" | "student" | "alumni" | "admin" | "sponsor"
