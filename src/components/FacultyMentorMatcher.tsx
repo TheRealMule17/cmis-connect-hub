@@ -105,29 +105,17 @@ const FacultyMentorMatcher = () => {
     setIsSyncing(true);
     try {
       const response = await fetch(
-        "https://mitchpeif.app.n8n.cloud/webhook/sync-google-sheet",
+        "https://mitchpeif.app.n8n.cloud/webhook/sync-matching",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "sync" }),
         }
       );
 
       if (response.ok) {
-        const data = await response.json();
-        
-        // Handle array response (multiple records) or single object
-        const records = Array.isArray(data) ? data : [data];
-        const recordCount = records.length;
-        
-        // Check if it's the expected n8n format with Email ID, Recipient, etc.
-        const hasEmailFormat = records.some(r => r["Email ID"] || r["Recipient"] || r["Email Body"]);
-        
         toast({
           title: "Data synced successfully!",
-          description: hasEmailFormat 
-            ? `Synced ${recordCount} record${recordCount !== 1 ? 's' : ''} from n8n`
-            : "Refreshing data from Google Sheets...",
+          description: "Student, mentor, and match data has been refreshed.",
         });
         
         // Invalidate queries to refetch fresh data
@@ -137,7 +125,7 @@ const FacultyMentorMatcher = () => {
       } else {
         toast({
           title: "Sync failed",
-          description: "Could not sync data from Google Sheets",
+          description: "Could not sync data. Please try again.",
           variant: "destructive",
         });
       }
