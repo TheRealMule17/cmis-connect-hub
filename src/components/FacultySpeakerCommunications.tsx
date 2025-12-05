@@ -14,6 +14,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import EmailReview from "./EmailReview";
 
 const N8N_THANK_YOU_WORKFLOW_URL = "https://mule17.app.n8n.cloud/webhook/93302a7a-7929-4ab4-84bf-1f536e8bb856";
+const N8N_BATCH_OUTREACH_URL = "https://mule17.app.n8n.cloud/webhook/516303a6-03fc-40b8-bb4e-1b9e661c2be9";
 
 const FacultySpeakerCommunications = () => {
   const { toast } = useToast();
@@ -119,6 +120,18 @@ const FacultySpeakerCommunications = () => {
     }
   };
 
+  const triggerN8nBatchOutreach = async () => {
+    try {
+      const response = await fetch(N8N_BATCH_OUTREACH_URL, {
+        method: "GET",
+      });
+      return response.ok;
+    } catch (error) {
+      console.error("Error triggering batch outreach workflow:", error);
+      return false;
+    }
+  };
+
   const createCommunication = useMutation({
     mutationFn: async (newComm: typeof formData) => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -138,6 +151,8 @@ const FacultySpeakerCommunications = () => {
         eventId = selectedEvent;
         const event = events?.find(e => e.id === selectedEvent);
         eventName = event?.title || null;
+      } else if (newComm.target_tier === "batch_emails" && selectedCategory === "all_alumni") {
+        recipientName = "All Alumni (Batch)";
       }
 
       const { error } = await supabase.from("faculty_communications").insert({
@@ -150,8 +165,14 @@ const FacultySpeakerCommunications = () => {
       });
       if (error) throw error;
 
+      // If this is a batch email with outreach, trigger the batch outreach workflow
+      if (newComm.target_tier === "batch_emails" && newComm.message_type === "out_reach") {
+        setIsTriggeringWorkflow(true);
+        await triggerN8nBatchOutreach();
+        setIsTriggeringWorkflow(false);
+      }
       // If this is a thank you note, also trigger the n8n workflow
-      if (newComm.message_type === "thank_you") {
+      else if (newComm.message_type === "thank_you") {
         setIsTriggeringWorkflow(true);
         
         // Collect alumni IDs based on target tier
@@ -178,6 +199,8 @@ const FacultySpeakerCommunications = () => {
         title: "Message sent successfully",
         description: formData.message_type === "thank_you" 
           ? "Thank you workflow has also been triggered." 
+          : formData.target_tier === "batch_emails" && formData.message_type === "out_reach"
+          ? "Batch outreach workflow has been triggered."
           : undefined
       });
       setIsCreating(false);
@@ -262,6 +285,7 @@ const FacultySpeakerCommunications = () => {
                       <SelectItem value="sponsor_request">Sponsor Request</SelectItem>
                       <SelectItem value="event_invitation">Event Invitation</SelectItem>
                       <SelectItem value="update">General Update</SelectItem>
+                      <SelectItem value="out_reach">Out Reach</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -286,6 +310,7 @@ const FacultySpeakerCommunications = () => {
                     <SelectContent className="bg-background">
                       <SelectItem value="individual">Individual Message</SelectItem>
                       <SelectItem value="event_attendees">Event Attendees</SelectItem>
+                      <SelectItem value="batch_emails">Batch Emails</SelectItem>
                       <SelectItem value="all">All Sponsors</SelectItem>
                       <SelectItem value="exabyte">Exabyte Tier Only</SelectItem>
                       <SelectItem value="petabyte">Petabyte Tier Only</SelectItem>
@@ -326,6 +351,26 @@ const FacultySpeakerCommunications = () => {
                           No events found
                         </div>
                       )}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {/* Batch Emails selection */}
+              {formData.target_tier === "batch_emails" && (
+                <div>
+                  <Label htmlFor="batch_target">Batch Target</Label>
+                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose batch target..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background">
+                      <SelectItem value="all_alumni">
+                        <div className="flex items-center gap-2">
+                          <Users className="h-4 w-4" />
+                          All Alumni
+                        </div>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
