@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navigation from "@/components/Navigation";
+import BreadcrumbNav from "@/components/BreadcrumbNav";
 import Footer from "@/components/Footer";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Building2, Handshake, TrendingUp, Award, LogOut, ArrowLeft } from "lucide-react";
+import { Building2, Handshake, TrendingUp, Award, LogOut } from "lucide-react";
 import SponsorTierBenefits from "@/components/SponsorTierBenefits";
 import SpeakerProposalForm from "@/components/SpeakerProposalForm";
 import { useToast } from "@/hooks/use-toast";
@@ -83,13 +84,9 @@ const Sponsor = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navigation />
+      <BreadcrumbNav />
       
       <main className="container mx-auto px-4 py-8 flex-1">
-        <Button variant="ghost" onClick={() => navigate("/")} className="mb-4">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Home
-        </Button>
-        
         <ScrollFadeIn>
           <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>

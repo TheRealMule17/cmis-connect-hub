@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navigation from "@/components/Navigation";
+import BreadcrumbNav from "@/components/BreadcrumbNav";
 import Footer from "@/components/Footer";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import ResumeUpload from "@/components/ResumeUpload";
@@ -9,7 +10,7 @@ import WorkshopList from "@/components/WorkshopList";
 import ProfileSettings from "@/components/ProfileSettings";
 import StudentEventRegistration from "@/components/StudentEventRegistration";
 import { Button } from "@/components/ui/button";
-import { LogOut, ArrowLeft } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Student = () => {
@@ -76,17 +77,9 @@ const Student = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navigation />
+      <BreadcrumbNav />
       
       <main className="container mx-auto px-4 py-8 flex-1">
-        <Button
-          variant="ghost"
-          onClick={() => navigate("/")}
-          className="mb-4"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Home
-        </Button>
-        
         <ScrollFadeIn>
           <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
