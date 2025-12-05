@@ -186,7 +186,7 @@ const FacultyMentorMatcher = () => {
 
       // Trigger n8n workflow
       try {
-        await fetch("https://mitchpeif.app.n8n.cloud/webhook-test/cf748cb3-bba2-4714-84be-25c078cb6104", {
+        await fetch("https://mitchpeif.app.n8n.cloud/webhook/0b97e85d-b99b-431a-bdfc-cc7e083a309d", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           mode: "no-cors",
@@ -223,7 +223,7 @@ const FacultyMentorMatcher = () => {
     try {
       console.log('Starting matching workflow...');
       const response = await fetch(
-        "https://mitchpeif.app.n8n.cloud/webhook/cf748cb3-bba2-4714-84be-25c078cb6104",
+        "https://mitchpeif.app.n8n.cloud/webhook/0b97e85d-b99b-431a-bdfc-cc7e083a309d",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
