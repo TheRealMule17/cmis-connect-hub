@@ -96,12 +96,12 @@ const Alumni = () => {
           Back to Home
         </Button>
         
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold text-foreground mb-2">Alumni Portal</h1>
-            <p className="text-lg text-muted-foreground">Welcome back, {userName}!</p>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2">Alumni Portal</h1>
+            <p className="text-base md:text-lg text-muted-foreground">Welcome back, {userName}!</p>
           </div>
-          <Button variant="outline" onClick={handleSignOut}>
+          <Button variant="outline" onClick={handleSignOut} className="w-fit">
             <LogOut className="h-4 w-4 mr-2" />
             Sign Out
           </Button>

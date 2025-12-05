@@ -152,12 +152,12 @@ const ResumeUpload = ({ userId, currentResumeUrl, onResumeUpdate }: ResumeUpload
               <div className="border rounded-lg overflow-hidden">
                 <iframe
                   src={`https://docs.google.com/viewer?url=${encodeURIComponent(currentResumeUrl)}&embedded=true`}
-                  className="w-full h-[500px]"
+                  className="w-full h-[300px] sm:h-[400px] md:h-[500px]"
                   title="Resume Preview"
                 />
               </div>
             ) : (
-              <div className="border rounded-lg p-6 bg-secondary flex flex-col items-center justify-center gap-2 h-[500px]">
+              <div className="border rounded-lg p-6 bg-secondary flex flex-col items-center justify-center gap-2 h-[300px] sm:h-[400px] md:h-[500px]">
                 <FileText className="h-12 w-12 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">Word document uploaded</span>
               </div>
@@ -184,7 +184,7 @@ const ResumeUpload = ({ userId, currentResumeUrl, onResumeUpdate }: ResumeUpload
             </div>
           </>
         ) : (
-          <div className="border-2 border-dashed rounded-lg p-6 text-center h-[500px] flex flex-col items-center justify-center">
+          <div className="border-2 border-dashed rounded-lg p-6 text-center h-[200px] sm:h-[300px] md:h-[400px] flex flex-col items-center justify-center">
             <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
             <p className="text-sm text-muted-foreground mb-4">No resume uploaded</p>
             <label htmlFor="resume-upload">
