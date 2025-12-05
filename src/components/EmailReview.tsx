@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { CheckCircle, XCircle, Send, Edit2, Save, Calendar, RefreshCw } from "lucide-react";
@@ -38,6 +39,7 @@ interface EmailReviewProps {
 }
 
 const N8N_WEBHOOK_URL = "https://mule17.app.n8n.cloud/webhook/c083eafb-18e4-4931-aa30-1b1323f08655";
+const N8N_STATUS_UPDATE_URL = "https://mule17.app.n8n.cloud/webhook/5cf035b6-8865-479c-a26a-4e8faf6daf8b";
 
 const EmailReview = ({ batchId }: EmailReviewProps) => {
   const { toast } = useToast();
@@ -207,6 +209,48 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
     }
   };
 
+  const updateN8nEmailStatus = async (email: Email, newStatus: string) => {
+    // Update local state immediately for responsive UI
+    setN8nEmails(prev => 
+      prev.map(e => e.id === email.id ? { ...e, status: newStatus } : e)
+    );
+
+    try {
+      const response = await fetch(N8N_STATUS_UPDATE_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          emailId: email.id,
+          recipientEmail: email.recipient_email,
+          subject: email.subject,
+          newStatus: newStatus,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      toast({
+        title: "Status Updated",
+        description: `Email marked as ${newStatus}`,
+      });
+    } catch (error: any) {
+      console.error("Error updating n8n email status:", error);
+      // Revert on error
+      setN8nEmails(prev => 
+        prev.map(e => e.id === email.id ? { ...e, status: email.status } : e)
+      );
+      toast({
+        title: "Error",
+        description: "Failed to update email status",
+        variant: "destructive",
+      });
+    }
+  };
+
   const sendApprovedEmails = async () => {
     const approvedEmails = emails.filter(e => e.status === "approved");
     
@@ -295,13 +339,33 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
                   <CardTitle className="text-lg">{email.recipient_name}</CardTitle>
                   <CardDescription>{email.recipient_email}</CardDescription>
                 </div>
-                <Badge variant={
-                  email.status === "sent" ? "default" :
-                  email.status === "approved" ? "secondary" :
-                  email.status === "rejected" ? "destructive" : "outline"
-                }>
-                  {email.status}
-                </Badge>
+                {email.source === "n8n" ? (
+                  <Select
+                    value={email.status}
+                    onValueChange={(value) => updateN8nEmailStatus(email, value)}
+                  >
+                    <SelectTrigger className={`w-32 ${
+                      email.status === "approved" ? "bg-green-100 text-green-800 border-green-300" :
+                      email.status === "rejected" ? "bg-red-100 text-red-800 border-red-300" :
+                      "bg-muted"
+                    }`}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="approved">Approved</SelectItem>
+                      <SelectItem value="rejected">Rejected</SelectItem>
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Badge variant={
+                    email.status === "sent" ? "default" :
+                    email.status === "approved" ? "secondary" :
+                    email.status === "rejected" ? "destructive" : "outline"
+                  }>
+                    {email.status}
+                  </Badge>
+                )}
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -366,11 +430,6 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
                         Reject
                       </Button>
                     </div>
-                  )}
-                  {email.source === "n8n" && (
-                    <Badge variant="outline" className="mt-2">
-                      From n8n Workflow
-                    </Badge>
                   )}
                 </>
               )}
