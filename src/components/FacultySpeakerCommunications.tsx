@@ -283,7 +283,6 @@ const FacultySpeakerCommunications = () => {
                     <SelectContent className="bg-background">
                       <SelectItem value="thank_you">Thank You Note</SelectItem>
                       <SelectItem value="sponsor_request">Sponsor Request</SelectItem>
-                      <SelectItem value="event_invitation">Event Invitation</SelectItem>
                       <SelectItem value="update">General Update</SelectItem>
                       <SelectItem value="out_reach">Out Reach</SelectItem>
                     </SelectContent>
@@ -482,8 +481,8 @@ const FacultySpeakerCommunications = () => {
               const messageTypeLabel = {
                 thank_you: "Thank You",
                 sponsor_request: "Sponsor Request",
-                event_invitation: "Event Invitation",
                 update: "General Update",
+                out_reach: "Out Reach",
               }[comm.message_type] || comm.message_type?.replace("_", " ");
 
               // Determine target display name
