@@ -47,16 +47,19 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
   const { toast } = useToast();
   const [emails, setEmails] = useState<Email[]>([]);
   const [n8nEmails, setN8nEmails] = useState<Email[]>([]);
+  const [commHistory, setCommHistory] = useState<Email[]>([]);
   const [originalN8nStatuses, setOriginalN8nStatuses] = useState<Record<string, string>>({});
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editedEmail, setEditedEmail] = useState<Partial<Email>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingN8n, setIsLoadingN8n] = useState(true);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
   const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
     fetchEmails();
     fetchN8nEmails();
+    fetchCommunicationHistory();
   }, [batchId]);
 
   const fetchN8nEmails = async () => {
@@ -101,6 +104,45 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
       // Don't show error toast for n8n - just silently fail if no data
     } finally {
       setIsLoadingN8n(false);
+    }
+  };
+
+  const fetchCommunicationHistory = async () => {
+    setIsLoadingHistory(true);
+    try {
+      const response = await fetch(N8N_COMM_HISTORY_URL, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // Handle both array and single object responses
+      const emailsArray = Array.isArray(data) ? data : [data];
+      
+      const mappedEmails: Email[] = emailsArray.map((item: any, index: number) => ({
+        id: item.id || `history-${index}-${Date.now()}`,
+        recipient_name: item.recipientName || item.Recipient?.split('@')[0] || "Unknown",
+        recipient_email: item.recipientEmail || item.Recipient || "",
+        subject: item.subject || item.Subject || "No Subject",
+        body: item.body || item["Email Body"] || "",
+        status: (item.status || item.Status || "sent").toLowerCase(),
+        scheduled_at: item.timestamp || item.createdTime || null,
+        batch_id: "",
+        source: "n8n" as const,
+      }));
+
+      setCommHistory(mappedEmails);
+    } catch (error: any) {
+      console.error("Error fetching communication history:", error);
+    } finally {
+      setIsLoadingHistory(false);
     }
   };
 
@@ -251,8 +293,6 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
       // Send status updates for all changed n8n emails
       for (const email of changedEmails) {
         try {
-          const now = new Date().toISOString();
-          
           // Update status in Airtable
           const response = await fetch(N8N_STATUS_UPDATE_URL, {
             method: "POST",
@@ -262,29 +302,15 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
             body: JSON.stringify({
               emailId: email.airtable_id || email.id,
               recipientEmail: email.recipient_email,
+              recipientName: email.recipient_name,
               subject: email.subject,
+              body: email.body,
               newStatus: email.status.charAt(0).toUpperCase() + email.status.slice(1),
             }),
           });
 
           if (response.ok) {
             successCount++;
-            
-            // Send to communication history n8n workflow
-            await fetch(N8N_COMM_HISTORY_URL, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                recipientName: email.recipient_name,
-                recipientEmail: email.recipient_email,
-                subject: email.subject,
-                body: email.body,
-                status: email.status.charAt(0).toUpperCase() + email.status.slice(1),
-                timestamp: now,
-              }),
-            });
           } else {
             errorCount++;
           }
@@ -303,6 +329,8 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
         const newOriginal = { ...originalN8nStatuses };
         changedEmails.forEach(e => { newOriginal[e.id] = e.status; });
         setOriginalN8nStatuses(newOriginal);
+        // Refresh communication history to show new entries
+        fetchCommunicationHistory();
       } else {
         toast({
           title: "Error",
@@ -476,6 +504,72 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
           </CardContent>
         </Card>
       )}
+
+      {/* Communication History Section */}
+      <Card className="mt-8">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Communication History</CardTitle>
+              <CardDescription>
+                Previously sent and processed emails
+              </CardDescription>
+            </div>
+            <Button
+              variant="outline"
+              onClick={fetchCommunicationHistory}
+              disabled={isLoadingHistory}
+            >
+              <RefreshCw className={`mr-2 h-4 w-4 ${isLoadingHistory ? "animate-spin" : ""}`} />
+              Refresh
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {isLoadingHistory ? (
+            <div className="text-center py-6 text-muted-foreground">Loading history...</div>
+          ) : commHistory.length === 0 ? (
+            <div className="text-center py-6 text-muted-foreground">No communication history yet.</div>
+          ) : (
+            <div className="space-y-4">
+              {commHistory.map((email) => (
+                <Card key={email.id} className="bg-muted/50">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-1">
+                        <CardTitle className="text-base">{email.recipient_name}</CardTitle>
+                        <CardDescription className="text-sm">{email.recipient_email}</CardDescription>
+                      </div>
+                      <Badge variant={
+                        email.status === "sent" ? "default" :
+                        email.status === "approved" ? "secondary" :
+                        email.status === "rejected" ? "destructive" : "outline"
+                      }>
+                        {email.status.charAt(0).toUpperCase() + email.status.slice(1)}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-2 space-y-2">
+                    <div>
+                      <Label className="text-sm font-semibold">Subject:</Label>
+                      <p className="text-sm">{email.subject}</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-semibold">Body:</Label>
+                      <pre className="mt-1 whitespace-pre-wrap font-sans text-xs max-h-32 overflow-y-auto">{email.body}</pre>
+                    </div>
+                    {email.scheduled_at && (
+                      <div className="text-xs text-muted-foreground">
+                        Processed: {format(new Date(email.scheduled_at), "PPpp")}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };
