@@ -41,6 +41,7 @@ interface EmailReviewProps {
 
 const N8N_WEBHOOK_URL = "https://mule17.app.n8n.cloud/webhook/c083eafb-18e4-4931-aa30-1b1323f08655";
 const N8N_STATUS_UPDATE_URL = "https://mule17.app.n8n.cloud/webhook/5cf035b6-8865-479c-a26a-4e8faf6daf8b";
+const N8N_COMM_HISTORY_URL = "https://mule17.app.n8n.cloud/webhook/c8c2e929-0880-4937-8fa9-a86c15a88782";
 
 const EmailReview = ({ batchId }: EmailReviewProps) => {
   const { toast } = useToast();
@@ -246,13 +247,13 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
     let successCount = 0;
     let errorCount = 0;
 
-    // Get current user for logging
-    const { data: { user } } = await supabase.auth.getUser();
-
     try {
       // Send status updates for all changed n8n emails
       for (const email of changedEmails) {
         try {
+          const now = new Date().toISOString();
+          
+          // Update status in Airtable
           const response = await fetch(N8N_STATUS_UPDATE_URL, {
             method: "POST",
             headers: {
@@ -269,21 +270,21 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
           if (response.ok) {
             successCount++;
             
-            // Log to communication history for approved/rejected/sent emails
-            if (user && (email.status === "approved" || email.status === "rejected" || email.status === "sent")) {
-              const now = new Date().toISOString();
-              await supabase.from("generated_emails").insert({
-                created_by: user.id,
-                recipient_name: email.recipient_name,
-                recipient_email: email.recipient_email,
+            // Send to communication history n8n workflow
+            await fetch(N8N_COMM_HISTORY_URL, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                recipientName: email.recipient_name,
+                recipientEmail: email.recipient_email,
                 subject: email.subject,
                 body: email.body,
-                status: email.status,
-                email_type: "outreach",
-                sent_at: email.status === "sent" ? now : null,
-                batch_id: email.airtable_id || email.id,
-              });
-            }
+                status: email.status.charAt(0).toUpperCase() + email.status.slice(1),
+                timestamp: now,
+              }),
+            });
           } else {
             errorCount++;
           }
@@ -302,8 +303,6 @@ const EmailReview = ({ batchId }: EmailReviewProps) => {
         const newOriginal = { ...originalN8nStatuses };
         changedEmails.forEach(e => { newOriginal[e.id] = e.status; });
         setOriginalN8nStatuses(newOriginal);
-        // Refresh the email list to show new records
-        fetchEmails();
       } else {
         toast({
           title: "Error",
