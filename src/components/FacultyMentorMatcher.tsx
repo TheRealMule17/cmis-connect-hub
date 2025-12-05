@@ -104,31 +104,22 @@ const FacultyMentorMatcher = () => {
   const syncData = async () => {
     setIsSyncing(true);
     try {
-      const response = await fetch(
-        "https://mitchpeif.app.n8n.cloud/webhook/sync-matching",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      // Use edge function to proxy request to n8n (avoids CORS)
+      const { data, error } = await supabase.functions.invoke("sync-mentor-data", {
+        body: { action: "trigger_n8n" },
+      });
 
-      if (response.ok) {
-        toast({
-          title: "Data synced successfully!",
-          description: "Student, mentor, and match data has been refreshed.",
-        });
-        
-        // Invalidate queries to refetch fresh data
-        queryClient.invalidateQueries({ queryKey: ["synced-students"] });
-        queryClient.invalidateQueries({ queryKey: ["synced-mentors"] });
-        queryClient.invalidateQueries({ queryKey: ["synced-matches"] });
-      } else {
-        toast({
-          title: "Sync failed",
-          description: "Could not sync data. Please try again.",
-          variant: "destructive",
-        });
-      }
+      if (error) throw error;
+
+      toast({
+        title: "Data synced successfully!",
+        description: "Student, mentor, and match data has been refreshed.",
+      });
+      
+      // Invalidate queries to refetch fresh data
+      queryClient.invalidateQueries({ queryKey: ["synced-students"] });
+      queryClient.invalidateQueries({ queryKey: ["synced-mentors"] });
+      queryClient.invalidateQueries({ queryKey: ["synced-matches"] });
     } catch (error) {
       console.error("Sync error:", error);
       toast({
