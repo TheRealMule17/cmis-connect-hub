@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, UserCheck, Sparkles, Loader2, Download, RefreshCw, Database } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Users, UserCheck, Sparkles, Loader2, Download, RefreshCw, Database, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,6 +33,7 @@ const FacultyMentorMatcher = () => {
   const [n8nLoading, setN8nLoading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [lastRunTime, setLastRunTime] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Synced data queries
   const { data: syncedStudents } = useQuery({
@@ -460,7 +462,18 @@ const FacultyMentorMatcher = () => {
           
           {!n8nLoading && n8nMatches.length > 0 && (
             <div className="space-y-4">
-              <Badge variant="secondary">{n8nMatches.length} matches found</Badge>
+              <div className="flex items-center justify-between gap-4">
+                <Badge variant="secondary">{n8nMatches.length} matches found</Badge>
+                <div className="relative flex-1 max-w-sm">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search by name..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+              </div>
               
               <ScrollArea className="h-[400px] rounded-md border">
                 <Table>
@@ -471,12 +484,21 @@ const FacultyMentorMatcher = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {n8nMatches.map((match, idx) => (
-                      <TableRow key={idx}>
-                        <TableCell className="font-medium">{match["Student Name"]}</TableCell>
-                        <TableCell>{match["Mentor Name"]}</TableCell>
-                      </TableRow>
-                    ))}
+                    {n8nMatches
+                      .filter((match) => {
+                        if (!searchQuery.trim()) return true;
+                        const query = searchQuery.toLowerCase();
+                        return (
+                          match["Student Name"]?.toLowerCase().includes(query) ||
+                          match["Mentor Name"]?.toLowerCase().includes(query)
+                        );
+                      })
+                      .map((match, idx) => (
+                        <TableRow key={idx}>
+                          <TableCell className="font-medium">{match["Student Name"]}</TableCell>
+                          <TableCell>{match["Mentor Name"]}</TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </ScrollArea>
