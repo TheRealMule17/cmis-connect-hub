@@ -75,18 +75,23 @@ const AnalyticsCommunicationDashboard = () => {
   const staticSponsorCount = 13; // 3 Exabyte + 1 Petabyte + 9 Terabyte
   const totalSponsors = staticSponsorCount + (dbSponsors?.length || 0);
 
-  const eventChartData = events?.slice(0, 5).map(e => {
-    const eventRegs = registrations?.filter(r => r.event_id === e.id) || [];
-    const studentCount = eventRegs.filter(r => studentUsers?.includes(r.user_id)).length;
-    const alumniCount = eventRegs.filter(r => alumniUsers?.includes(r.user_id)).length;
-    
-    return {
-      name: e.title?.substring(0, 15) || "Event",
-      students: studentCount,
-      alumni: alumniCount,
-      capacity: e.capacity || 0
-    };
-  }) || [];
+  const eventChartData = events
+    ?.filter(e => 
+      e.title?.toLowerCase().includes("mentorship") || 
+      e.title?.toLowerCase().includes("case competition")
+    )
+    .map(e => {
+      const eventRegs = registrations?.filter(r => r.event_id === e.id) || [];
+      const studentCount = eventRegs.filter(r => studentUsers?.includes(r.user_id)).length;
+      const alumniCount = eventRegs.filter(r => alumniUsers?.includes(r.user_id)).length;
+      
+      return {
+        name: e.title?.substring(0, 15) || "Event",
+        students: studentCount,
+        alumni: alumniCount,
+        capacity: e.capacity || 0
+      };
+    }) || [];
 
   return (
     <div className="space-y-6">
@@ -160,7 +165,7 @@ const AnalyticsCommunicationDashboard = () => {
               <BarChart data={eventChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
-                <YAxis />
+                <YAxis allowDecimals={false} />
                 <Tooltip />
                 <Legend />
                 <Bar dataKey="students" fill="hsl(var(--primary))" name="Students" />
