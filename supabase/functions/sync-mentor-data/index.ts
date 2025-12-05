@@ -90,6 +90,29 @@ Deno.serve(async (req) => {
         break;
       }
 
+      case "trigger_n8n": {
+        // Proxy request to n8n webhook to avoid CORS
+        const n8nUrl = "https://mitchpeif.app.n8n.cloud/webhook/sync-matching";
+        const n8nResponse = await fetch(n8nUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (!n8nResponse.ok) {
+          throw new Error(`n8n webhook returned ${n8nResponse.status}`);
+        }
+
+        let n8nData;
+        try {
+          n8nData = await n8nResponse.json();
+        } catch {
+          n8nData = { success: true };
+        }
+
+        result = n8nData;
+        break;
+      }
+
       case "sync_all": {
         // Sync all three at once
         const { students, mentors, matches } = data;
